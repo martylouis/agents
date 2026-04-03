@@ -1,24 +1,24 @@
-[submodule "lib/anthropics-skills"]
-	path = lib/anthropics-skills
+[submodule "skills/anthropics"]
+	path = skills/anthropics
 	url = https://github.com/anthropics/skills
-[submodule "lib/cloudflare-skills"]
-	path = lib/cloudflare-skills
+[submodule "skills/cloudflare"]
+	path = skills/cloudflare
 	url = https://github.com/cloudflare/skills
-[submodule "lib/figma-mcp"]
-	path = lib/figma-mcp
+[submodule "skills/figma-mcp"]
+	path = skills/figma-mcp
 	url = https://github.com/anthropics/figma-mcp
-[submodule "lib/google-stitch-skills"]
-	path = lib/google-stitch-skills
+[submodule "skills/google-stitch"]
+	path = skills/google-stitch
 	url = https://github.com/google-labs-code/stitch-skills
-[submodule "lib/mattpocock-skills"]
-	path = lib/mattpocock-skills
+[submodule "skills/mattpocock"]
+	path = skills/mattpocock
 	url = https://github.com/mattpocock/skills
-[submodule "lib/obsidian-skills"]
-	path = lib/obsidian-skills
+[submodule "skills/obsidian"]
+	path = skills/obsidian
 	url = https://github.com/kepano/obsidian-skills
-[submodule "lib/shaping-skills"]
-	path = lib/shaping-skills
+[submodule "skills/shaping"]
+	path = skills/shaping
 	url = https://github.com/rjs/shaping-skills
-[submodule "lib/vercel-skills"]
-	path = lib/vercel-skills
+[submodule "skills/vercel"]
+	path = skills/vercel
 	url = https://github.com/vercel-labs/agent-skills
