@@ -1,0 +1,24 @@
+[submodule "lib/anthropics-skills"]
+	path = lib/anthropics-skills
+	url = https://github.com/anthropics/skills
+[submodule "lib/cloudflare-skills"]
+	path = lib/cloudflare-skills
+	url = https://github.com/cloudflare/skills
+[submodule "lib/figma-mcp"]
+	path = lib/figma-mcp
+	url = https://github.com/anthropics/figma-mcp
+[submodule "lib/google-stitch-skills"]
+	path = lib/google-stitch-skills
+	url = https://github.com/google-labs-code/stitch-skills
+[submodule "lib/mattpocock-skills"]
+	path = lib/mattpocock-skills
+	url = https://github.com/mattpocock/skills
+[submodule "lib/obsidian-skills"]
+	path = lib/obsidian-skills
+	url = https://github.com/kepano/obsidian-skills
+[submodule "lib/shaping-skills"]
+	path = lib/shaping-skills
+	url = https://github.com/rjs/shaping-skills
+[submodule "lib/vercel-skills"]
+	path = lib/vercel-skills
+	url = https://github.com/vercel-labs/agent-skills
