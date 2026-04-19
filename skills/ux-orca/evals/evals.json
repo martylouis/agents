@@ -1,0 +1,27 @@
+{
+  "skill_name": "ux-orca",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I just had a kickoff meeting about redesigning SingleCheck's cross-carrier feature. Here are the meeting notes and intake docs. Can you run ORCA on this to figure out the objects and structure before we start designing screens?\n\nInput files:\n- /Users/marty/obsidian/everbrain/Meetings/2026/04/2026-04-06 Cisive Singlecheck UX Discussion.md\n- /Users/marty/obsidian/everbrain/Inbox/2026-04-06 - Recap & Next Steps - Single Check UX Discussion (All-Carriers Option).md\n- /Users/marty/obsidian/everbrain/Wiki/UX Design/SingleCheck Cross-Carrier Intake.md",
+      "expected_output": "Full 4-round ORCA document with noun foraging, nested-object matrix, CTA matrix, object map mermaid diagram, object guide, MCSFD, OO user stories, attribute details, state diagrams, nav flow, CTA phasing, and block-beta wireframes. Should identify ~6 objects (Driver, Record, Report, Carrier, Account, Order). Output quality comparable to the existing SingleCheck ORCA doc.",
+      "files": [
+        "/Users/marty/obsidian/everbrain/Meetings/2026/04/2026-04-06 Cisive Singlecheck UX Discussion.md",
+        "/Users/marty/obsidian/everbrain/Inbox/2026-04-06 - Recap & Next Steps - Single Check UX Discussion (All-Carriers Option).md",
+        "/Users/marty/obsidian/everbrain/Wiki/UX Design/SingleCheck Cross-Carrier Intake.md"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "I'm building an internal tool for our implementation team to onboard new ATS clients. Basically when a company wants to use our background check service through their Workday instance, someone on our team has to set up OAuth credentials, pull their packages from Workday, map them to our internal packages, map statuses between the two systems, and configure what PII we send back. Right now it's all done manually in the database. We want a proper UI for it. Can you run ORCA on this?",
+      "expected_output": "Should interview for more details then produce ORCA output. Should identify objects like Client, Credential Set, Package Mapping, Status Mapping, etc. Should handle the complexity of internal vs external packages/statuses. Quality comparable to the existing ats-orca.md but with full 4-round structure.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I want to run ORCA on our existing ATS codebase to reverse-engineer the object model. The app is at /Users/marty/code/cisive/cisive-ui/apps/ats/ — look at the data models, API routes, and components to figure out what the objects are, then run through the full ORCA process.",
+      "expected_output": "Should explore the codebase (data models, schemas, API routes, components), extract objects from the code, then produce full ORCA output. Objects should roughly match what's in the existing ats-orca.md since it's the same project.",
+      "files": []
+    }
+  ]
+}

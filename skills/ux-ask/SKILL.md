@@ -1,5 +1,5 @@
 ---
-name: ask-ux
+name: ux-ask
 description: Interviews users about their feature plans to generate comprehensive spec files. Explores and documents requirements, UI/UX decisions, concerns, and tradeoffs. Use when the user asks to "interview me about the plan", "generate a spec", "askux", or "UX interview".
 ---
 
