@@ -1,6 +1,6 @@
 ---
 name: to-md-issues
-description: Break a plan, spec, or PRD into independently-grabbable issues written as markdown files under docs/issues/ (not GitHub issues). Each file has YAML frontmatter (status, blocked_by, blocks, user stories, HITL/AFK type) and a generated README index with a live dependency graph that reflects current status. Use when the user wants issues as local markdown files, when gh is unavailable, when a repo tracks work in-tree instead of on GitHub, or when the user says "no gh" or "log these locally." Also use in --sync mode to regenerate the README after manually editing issue frontmatter (e.g., marking an issue complete). Prefer this over `/to-issues` whenever the user asks to write issues to a directory, track issues as files, or keep the issue index in the repo itself.
+description: Break a plan, spec, or PRD into independently-grabbable issues written as markdown files under docs/issues/ (not GitHub issues). Each file has YAML frontmatter (status, blocked_by, blocks, user stories) and a generated README index with a live dependency graph that reflects current status. Use when the user wants issues as local markdown files, when gh is unavailable, when a repo tracks work in-tree instead of on GitHub, or when the user says "no gh" or "log these locally." Also use in --sync mode to regenerate the README after manually editing issue frontmatter (e.g., marking an issue complete). Prefer this over `/to-issues` whenever the user asks to write issues to a directory, track issues as files, or keep the issue index in the repo itself.
 ---
 
 # To Markdown Issues
@@ -41,8 +41,6 @@ If you have not already explored the codebase, do so to understand current state
 
 Break the plan into **tracer bullet** slices. Each slice is a thin vertical cut through all integration layers end-to-end, not a horizontal slice of one layer.
 
-Slices are `HITL` (Human In The Loop — needs a decision or review) or `AFK` (Away From Keyboard — implementable unattended). Prefer AFK. Mark as HITL only when a specific stakeholder decision, design review, or sign-off gates the work.
-
 <vertical-slice-rules>
 - Each slice delivers a narrow but COMPLETE path through every layer (schema, API, UI, tests — or, for prototypes, scaffold/state/components/visible result)
 - A completed slice is demoable or verifiable on its own
@@ -54,7 +52,6 @@ Slices are `HITL` (Human In The Loop — needs a decision or review) or `AFK` (A
 Present the proposed breakdown as a numbered table. For each slice, show:
 
 - **Title** — short descriptive name
-- **Type** — HITL / AFK (with one-line reason for HITL)
 - **Blocked by** — which slices (if any) must complete first
 - **User stories covered** — story numbers from the source plan (if any)
 
@@ -62,7 +59,6 @@ Ask:
 - Granularity — too coarse, too fine, or right?
 - Dependencies correct?
 - Any slices to merge or split?
-- HITL / AFK marks correct?
 
 Iterate until the user approves. Do not write files before approval.
 
@@ -79,18 +75,14 @@ Every issue file opens with YAML frontmatter. Fields:
 ```yaml
 id: 01                    # zero-padded string, matches filename
 title: "Human-readable title"
-type: AFK                 # or HITL
 status: pending           # pending | in-progress | blocked | complete
 blocked_by: [02, 03]      # list of issue ids; [] if none
 blocks: [04, 05]          # list of issue ids this unblocks; [] if nothing
 user_stories: [1, 5, 7]   # story numbers from the source plan; [] if source has none
-hitl_reasons:             # HITL issues only — omit for AFK
-  - One-sentence reason 1
-  - One-sentence reason 2
 created: 2026-04-20       # ISO date
 ```
 
-Both `blocked_by` and `blocks` are populated so the dependency graph is readable from either direction. Omit `hitl_reasons` entirely on AFK issues.
+Both `blocked_by` and `blocks` are populated so the dependency graph is readable from either direction.
 
 #### Issue body template
 
@@ -104,10 +96,6 @@ Both `blocked_by` and `blocks` are populated so the dependency graph is readable
 ## What to build
 
 Concise description of the slice. Describe end-to-end behavior, not layer-by-layer implementation.
-
-## Why HITL
-
-(HITL issues only — omit on AFK.) Bullet list of the specific decisions or reviews that gate this slice. Match the `hitl_reasons` frontmatter.
 
 ## Acceptance criteria
 
@@ -152,33 +140,31 @@ Both create mode (at end) and sync mode produce the same README. It is always a 
 Vertical slices breaking down [the PRD](<link to PRD if known, otherwise omit>). Each slice is a thin, demoable, end-to-end path.
 
 **Legend:**
-- **AFK** (Away From Keyboard) — implementable without human interaction
-- **HITL** (Human In The Loop) — needs a design decision or stakeholder review before completion
 - **Status:** ⬜ pending  🟡 in-progress  🟥 blocked  ✅ complete
 
 ## Dependency graph
 
 <ASCII tree showing the DAG, with status markers next to each node. Example:
 
-#01 ✅ App scaffold           (AFK)
- ├── #02 🟡 Landing page       (AFK)
- │    └── #04 ⬜ Results       (AFK)
- │         ├── #05 ⬜ Options  (HITL)
- │         │    └── #06 ⬜ Payment (AFK)
- │         │         └── #07 ⬜ Confirmation (HITL)
- │         └── #08 ⬜ Demo edge cases (AFK)
- ├── #03 ✅ Wizard primitives  (AFK)
+#01 ✅ App scaffold
+ ├── #02 🟡 Landing page
+ │    └── #04 ⬜ Results
+ │         ├── #05 ⬜ Options
+ │         │    └── #06 ⬜ Payment
+ │         │         └── #07 ⬜ Confirmation
+ │         └── #08 ⬜ Demo edge cases
+ ├── #03 ✅ Wizard primitives
  │    └── (feeds into #04)
- └── #09 ⬜ Order History      (AFK)
+ └── #09 ⬜ Order History
 >
 
 ## Slices
 
-| # | Title | Type | Status | Blocked by |
-|---|-------|------|--------|------------|
-| [01](./01-app-scaffold-...md) | App scaffold | AFK | ✅ complete | — |
-| [02](./02-landing-page.md) | Landing page | AFK | 🟡 in-progress | #01 |
-| ... | ... | ... | ... | ... |
+| # | Title | Status | Blocked by |
+|---|-------|--------|------------|
+| [01](./01-app-scaffold-...md) | App scaffold | ✅ complete | — |
+| [02](./02-landing-page.md) | Landing page | 🟡 in-progress | #01 |
+| ... | ... | ... | ... |
 
 ## Next up
 
