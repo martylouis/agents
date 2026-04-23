@@ -84,6 +84,8 @@ created: 2026-04-20       # ISO date
 
 Both `blocked_by` and `blocks` are populated so the dependency graph is readable from either direction.
 
+When **adding a new issue to an in-flight breakdown** (as opposed to the initial slice pass), only list *incomplete* prerequisites in `blocked_by`. Already-complete issues are historical context, not active blockers — listing them clutters the "Blocked by" column in the index and misrepresents the slice's readiness.
+
 #### Issue body template
 
 ```markdown
