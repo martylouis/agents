@@ -46,6 +46,18 @@ Run every check. Mark each ✅ / ⚠️ / ❌ with a brief reason.
 - [ ] Review/confirmation steps exist for destructive or user-visible actions
 - [ ] Failure modes are addressed (what to do if a step fails)
 
+## 6. Modularity (scope cohesion)
+
+Detects mega-skills that bundle multiple unrelated capabilities and should be split.
+
+- [ ] **Cohesion test**: do all workflows operate on the same primary domain object? (e.g. PDF extract+fill+merge = one domain ✅; research+writing+scheduling = three domains ❌)
+- [ ] Lint signals advisory only — auditor still decides:
+  - `modularity_workflow_h2s` ≥5 (warn) / ≥7 (fail) — non-meta H2s in SKILL.md
+  - `modularity_bundle_loc` >500 (warn) / >1000 (fail) — total .md lines across SKILL.md + linked files
+- [ ] **Override up (signals tripped, but ✅)**: skill is large but cohesive — single domain noun across all workflows.
+- [ ] **Override down (signals clean, but ❌)**: small skill whose description bundles unrelated domains (e.g. 80-line skill doing "research and scheduling").
+- [ ] If ❌: provide a concrete suggested split anchored to specific H2s, not invented names. Format: `split into <skill-a> (covers H2 "X") and <skill-b> (covers H2 "Y")`.
+
 ## Severity guide
 
 - ❌ **Fail**: missing required element, or content actively misleads (no description, broken frontmatter, dead links, time-sensitive claims)

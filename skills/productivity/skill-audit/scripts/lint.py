@@ -120,6 +120,28 @@ def check(skill_path: Path) -> dict:
     add("orphan_files", "pass" if not orphans else "warn",
         f"unreferenced .md: {orphans}" if orphans else "")
 
+    META_H2 = {"notes", "process", "report template", "what to check",
+               "quick start", "workflows", "advanced features",
+               "review checklist", "severity guide"}
+    body_no_code = re.sub(r"```.*?```", "", body, flags=re.S)
+    h2s = re.findall(r"^##\s+(.+?)\s*$", body_no_code, re.M)
+    workflow_h2s = [h for h in h2s if h.strip().lower().lstrip("0123456789. ") not in META_H2]
+    wf_count = len(workflow_h2s)
+    add("modularity_workflow_h2s",
+        "pass" if wf_count < 5 else ("warn" if wf_count < 7 else "fail"),
+        f"{wf_count} workflow H2s: {workflow_h2s}")
+
+    bundle_loc = line_count
+    for p in bundled:
+        if p.suffix == ".md":
+            try:
+                bundle_loc += p.read_text().count("\n") + 1
+            except Exception:
+                pass
+    add("modularity_bundle_loc",
+        "pass" if bundle_loc <= 500 else ("warn" if bundle_loc <= 1000 else "fail"),
+        f"{bundle_loc} total .md lines")
+
     return results
 
 def main():
