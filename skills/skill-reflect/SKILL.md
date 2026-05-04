@@ -17,16 +17,9 @@ Turn in-session feedback into durable skill improvements. The goal is **correct 
 
 ## Scope: which skills can reflect edit?
 
-- Global skills in `~/.claude/skills/`
-- Project-local skills in `<cwd>/.claude/skills/` (if that directory exists)
+Editable: `~/.claude/skills/` and `<cwd>/.claude/skills/`. Never edit `~/.claude/plugins/cache/` — overwritten on plugin update.
 
-**Never** edit skills under `~/.claude/plugins/cache/` — those come from upstream plugin marketplaces and get overwritten on update.
-
-Which skills are in-scope for a given run:
-
-1. If the user named a skill (`/skill-reflect wiki-ingest`), edit only that one.
-2. Otherwise, scan the transcript for `Skill` tool invocations and `/<skill-name>` slash-command calls. Only those skills are eligible.
-3. If the session used zero skills and the user didn't name one, report "nothing to reflect on" and exit.
+In-scope per run: a skill named in the invocation (`/skill-reflect wiki-ingest`) overrides everything; otherwise, only skills the transcript actually invoked (via `Skill` tool or `/<skill-name>`). Zero skills used and none named → report "nothing to reflect on" and exit.
 
 ## Split with auto-memory — don't cross the streams
 
@@ -43,14 +36,12 @@ Rule of thumb: if the signal is tied to one skill's *how-to*, reflect. If it app
 
 ### 1. Scan the conversation for signals
 
-Read the session transcript with these questions in mind:
+- **Corrections** — "no", "don't", "actually", "stop doing X". Capture what Claude did, what the user wanted, and *why*.
+- **Approvals** — "yes exactly", "keep doing that", or silent acceptance of a non-obvious choice. Equally important — skills that only learn from mistakes drift toward over-caution.
+- **Repeated patterns** — same multi-step thing done twice this session. Candidate for a skill-level shortcut.
+- **"I told you this before"** — earlier lesson didn't get captured.
 
-- **Corrections** — "no", "don't", "actually", "stop doing X", "that's wrong". What was Claude doing, what did the user want instead, and *why*?
-- **Approvals** — "yes exactly", "perfect, keep doing that", or silent acceptance of a non-obvious choice. These matter equally. Skills that only learn from mistakes drift toward over-caution.
-- **Repeated patterns** — did Claude do the same multi-step thing in two places this session? Candidate for a skill-level shortcut or helper.
-- **"I told you this before"** — loud signal that an earlier session's lesson didn't get durably captured.
-
-For each signal, identify which in-scope skill it belongs to. A note about how to format a wiki page goes to `wiki-ingest` or `wiki-search`, not to some generic skill.
+Route each signal to the specific in-scope skill it belongs to, not a generic one.
 
 ### 2. Classify by confidence
 
@@ -77,19 +68,11 @@ Each proposed edit specifies:
 
 ### 4. Review with the user
 
-Present proposals grouped by confidence tier. Low-confidence signals go in a separate observations list without drafted edits. Do NOT use `AskUserQuestion` here — the proposals are the content the user needs to read. Plain prose with "let me know which to apply" gives room for a natural response.
-
-The user may:
-- Accept all → apply everything
-- Accept some → apply the subset
-- Revise in natural language → redraft and re-show
-- Reject → note why, stop
+Present proposals grouped by confidence tier; low-confidence signals go in a separate observations list without drafted edits. Do NOT use `AskUserQuestion` — plain prose with "let me know which to apply" leaves room for accept-all, accept-some, revise, or reject.
 
 ### 5. Apply
 
-Use `Edit` to modify SKILL.md files. Prefer appending to an existing relevant section over creating new ones — skills bristling with parallel "important rules" sections rot fast. If no natural home exists, create or append to `## Learned conventions` near the bottom as short bullets.
-
-**No git.** Do not stage, commit, or push. The user handles version control.
+Use `Edit` on SKILL.md files. Prefer appending to an existing relevant section over creating new ones — skills bristling with parallel "important rules" sections rot fast. If no natural home exists, append to `## Learned conventions` near the bottom as short bullets. Do not stage, commit, or push.
 
 ### 6. Report
 
@@ -97,23 +80,11 @@ One short summary — what changed, what was declined.
 
 ## Writing style for the edits themselves
 
-These edits land in SKILL.md files. Match the tone guidance from skill-creator:
+Match skill-creator tone: imperative ("Use X when Y"), no ALL-CAPS shouting, always include the *why*, terse (one line beats a paragraph), generalized (encode the pattern, not the instance).
 
-- Imperative phrasing ("Use X when Y"), not ALL-CAPS shouting.
-- Always include the *why*. A rule without a reason is fragile.
-- Keep it terse. One line beats a paragraph.
-- Generalize. The user corrected one instance; encode the pattern.
+Good: `When ingesting meeting transcripts, strip MacWhisper speaker labels before summarizing — the labels are noisy and summaries read better without them.`
 
-Good:
-```markdown
-- When ingesting meeting transcripts, strip MacWhisper speaker labels before summarizing.
-  The labels are noisy; summaries read better without them.
-```
-
-Bad (overfit, no why, rigid):
-```markdown
-- NEVER include "Speaker 1" or "Speaker 2" in summaries. ALWAYS remove first.
-```
+Bad (overfit, no why, rigid): `NEVER include "Speaker 1" or "Speaker 2" in summaries. ALWAYS remove first.`
 
 ## What not to capture
 
