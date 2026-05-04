@@ -5,6 +5,8 @@ description: Create new agent skills with proper structure, progressive disclosu
 
 # Writing Skills
 
+> Forked from [mattpocock/skills `write-a-skill`](https://github.com/mattpocock/skills/blob/main/skills/productivity/write-a-skill/SKILL.md), renamed to `skill-write` for naming consistency.
+
 ## Process
 
 1. **Gather requirements** - ask user about:
