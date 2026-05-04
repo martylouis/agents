@@ -5,7 +5,7 @@
       "source": "martylouis/agents",
       "sourceType": "github",
       "skillPath": "skills/skill-audit/SKILL.md",
-      "computedHash": "582cf11984935cb58450cb50a1a589a568f028315f542e11e2cdefae5631824b"
+      "computedHash": "1d155e5b658e2eaf55bf6d480c1ff4d6cb66953a169cef6465803f150dea21f0"
     },
     "skill-write": {
       "source": "martylouis/agents",
