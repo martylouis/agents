@@ -4,13 +4,13 @@
     "skill-audit": {
       "source": "martylouis/agents",
       "sourceType": "github",
-      "skillPath": "skills/productivity/skill-audit/SKILL.md",
+      "skillPath": "skills/skill-audit/SKILL.md",
       "computedHash": "582cf11984935cb58450cb50a1a589a568f028315f542e11e2cdefae5631824b"
     },
     "skill-write": {
       "source": "martylouis/agents",
       "sourceType": "github",
-      "skillPath": "skills/productivity/skill-write/SKILL.md",
+      "skillPath": "skills/skill-write/SKILL.md",
       "computedHash": "eace3ab322c6d7e86e6b138a1c247d716077f7f6d48ccf6fe9271cebb99a2d83"
     }
   }
