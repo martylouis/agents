@@ -22,18 +22,51 @@ TIME_SENSITIVE_PATTERNS = [
 FIRST_PERSON = re.compile(r"\b(I|we|my|our)\b", re.IGNORECASE)
 
 def parse_frontmatter(text: str) -> tuple[dict, int]:
-    """Return (fields, body_start_line). Naive YAML — keys: scalar values only."""
+    """Return (fields, body_start_line). Supports scalar values and YAML folded (`>`) / literal (`|`) block scalars."""
     if not text.startswith("---\n"):
         return {}, 0
     end = text.find("\n---\n", 4)
     if end == -1:
         return {}, 0
     block = text[4:end]
-    fields = {}
-    for line in block.splitlines():
-        if ":" in line:
-            k, _, v = line.partition(":")
-            fields[k.strip()] = v.strip()
+    lines = block.splitlines()
+    fields: dict = {}
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if ":" not in line or line.lstrip() != line:
+            i += 1
+            continue
+        k, _, v = line.partition(":")
+        key = k.strip()
+        val = v.strip()
+        if val in (">", "|", ">-", "|-", ">+", "|+"):
+            folded = val.startswith(">")
+            i += 1
+            collected: list[str] = []
+            while i < len(lines) and (lines[i].startswith((" ", "\t")) or lines[i] == ""):
+                collected.append(lines[i].strip())
+                i += 1
+            if folded:
+                # Join non-empty runs with spaces; blank lines become newlines.
+                out_parts: list[str] = []
+                buf: list[str] = []
+                for piece in collected:
+                    if piece == "":
+                        if buf:
+                            out_parts.append(" ".join(buf))
+                            buf = []
+                        out_parts.append("")
+                    else:
+                        buf.append(piece)
+                if buf:
+                    out_parts.append(" ".join(buf))
+                fields[key] = "\n".join(out_parts).strip()
+            else:
+                fields[key] = "\n".join(collected).strip()
+            continue
+        fields[key] = val
+        i += 1
     body_start = text[: end + 5].count("\n")
     return fields, body_start
 
