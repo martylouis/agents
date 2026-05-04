@@ -9,3 +9,7 @@ Thumbs.db
 
 # Claude Code
 .claude/settings.local.json
+
+# Skill install artifacts
+.agents/
+.claude/skills/
