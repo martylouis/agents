@@ -134,5 +134,88 @@ These results are the reason for the review order, the exact-vocabulary rule, an
 
 ## Roadmap
 
-- **v0.2:** hi-fi from Paper and Figma (not only images); a feedback round with comments on elements in the running prototype.
-- **Later:** help with planning (lo-fi exploration of options); unattended runs with `claude -p`; specialist skills (for example Impeccable) attached to the review step.
+### Planned skills
+
+Each skill has a handoff document with its design decisions, open questions, and how a person uses it.
+
+| Skill | What it does | Handoff |
+| --- | --- | --- |
+| `/ux-orch:plan` | Turns an idea, a brief, design images, or Layers output into decided plans that `orchestrate` builds well. `--explore` writes lo-fi variants to compare. | [PLAN-SKILL.md](docs/handoffs/PLAN-SKILL.md) |
+| `/ux-orch:context` | Creates or refreshes `CONTEXT.md` (exact vocabulary, component patterns) and `DESIGN.md`. `--sync` checks prototype overrides against the real design system. | [CONTEXT-SKILL.md](docs/handoffs/CONTEXT-SKILL.md) |
+| `/ux-orch:review` | Reviews a running prototype in the browser without building. Discovers states when none exist. Writes a report and one feedback item per problem. | [REVIEW-SKILL.md](docs/handoffs/REVIEW-SKILL.md) |
+| `/ux-orch:feedback` | Turns feedback from any source into fix and change tasks, builds them with the run loop, closes every item, and tags the round. `--comment` lets you click an element in the running prototype and comment on it. | [FEEDBACK-SKILL.md](docs/handoffs/FEEDBACK-SKILL.md) |
+
+The skills form one loop:
+
+```
+Layers (optional) → plan → context → orchestrate → review → feedback ─┐
+                                          ▲                            │
+                                          └──────── run loop ◄─────────┘
+```
+
+**First decision before building any of them:** one shared location (proposal: `shared/` at the plugin root) for the files that several skills use: the review procedure, the judge questions, the run loop, the scripts, and the templates.
+
+### Layers integration
+
+[Layers](https://layers.jamiemill.com/) is a set of product-design skills that guide decisions through seven layers, from observed behaviour to the visible surface:
+
+| Zone | Layers skills |
+| --- | --- |
+| Problem space | `/layers-observed-behaviour`, `/layers-domain`, `/layers-user-needs` |
+| Solution space | `/layers-product-strategy`, `/layers-conceptual-model`, `/layers-interaction-flow`, `/layers-surface` |
+| Diagnosis | `/layers-orient` (finds the layer that needs work) |
+
+Install: `npx skills add jamiemill/layers-skills`
+
+Layers writes plain Markdown and Mermaid (job stories, strategy trees, object maps, breadboards, decision inventories). It answers *what to build and why*; UX Orchestrator answers *build it and prove it works*. Planned connection points:
+
+- **`plan` reads Layers output** when it exists. Job stories and user needs become the plan's goal and why; the conceptual model and object map become the screens and their data; interaction-flow breadboards become the flow and the screen list; surface decisions become layout and content.
+- **`plan` points to `/layers-orient`** when an idea is too early to plan (no clear user need or flow), instead of guessing.
+- **Decision records link back** to the Layers decision that a prototype tests, so a `learning` record ("the test showed …") can update the right layer.
+- **`review` and `feedback`** can tag findings with the layer they belong to (for example, a confusing flow is a Layer 06 problem, not a styling fix).
+
+### Impeccable integration
+
+[Impeccable](https://impeccable.style/) gives agents design vocabulary and design-quality commands. It respects an existing design system.
+
+Install (Claude Code): `/plugin marketplace add pbakaus/impeccable`, or `npx skills add pbakaus/impeccable` for other tools.
+
+`/impeccable init` writes two files that overlap with ours:
+
+| Impeccable file | Holds | UX Orchestrator use |
+| --- | --- | --- |
+| `DESIGN.md` | Colors, typography, components, visual rules | **The design summary.** When it exists, `context` reads it and does not write its own. `CONTEXT.md` keeps only what Impeccable does not: stack, commands, exact class names, component code patterns. |
+| `PRODUCT.md` | User context and product purpose | Input for the plan's **why**, in `plan` and in `orchestrate` intake. |
+
+Planned connection points by skill:
+
+| Skill | Impeccable commands | Use |
+| --- | --- | --- |
+| `context` | `init`, `extract`, `document` | Make or update `DESIGN.md`; pull components into the inventory; record design-system changes. |
+| `plan --explore` | `generate`, `adapt` | Lo-fi design variants to compare before a plan is decided. |
+| `orchestrate` (hi-fi) | `polish`, `typeset`, `layout`, `colorize` | An optional polish task after a screen passes review. |
+| `review` | `audit`, `clarify` | A design-quality pass on the screenshots, next to the functional checks. Findings become feedback items. |
+| `feedback` | `bolder`, `quieter`, `distill`, `delight` | Change tasks for feedback such as "too loud" or "too busy". |
+
+Impeccable stays optional: every skill works without it, and uses it when it is installed.
+
+### UI Skills integration
+
+[UI Skills](https://www.ui-skills.com/) is a catalog of design engineering skills (Impeccable is one of them), with a router skill (`ui-skills-root`), a CLI (`npx ui-skills`), and an MCP server that connects an agent to the catalog. Many of its skills are read-only audits that write an improvement plan for another agent to execute. UX Orchestrator is that executing agent: an audit's plan becomes feedback items or a plan, and the run loop builds and reviews it.
+
+Planned connection points (check each skill's current output before relying on it):
+
+| Skill | UI Skills | Use |
+| --- | --- | --- |
+| `review` | `improve-ui`, `improve-animations` | Audit pass next to the functional checks. Their findings become feedback items (source `skill`). |
+| `plan --explore` | `design-lab` | Interactive design exploration before a plan is decided. |
+| `orchestrate` (hi-fi) | `better-ui`, `interaction-design`, `12-principles-of-animation` | Optional polish tasks after a screen passes review; principles cited as `principle` evidence in decision records. |
+| `feedback` | any audit plan | Input: `/ux-orch:feedback <audit plan file>`. |
+| All | `ui-skills-root` | Finds the right UI skill for a finding by topic and stack, instead of a fixed list in each skill. |
+
+Like Impeccable, UI Skills stays optional.
+
+### Other items
+
+- **v0.2:** hi-fi from Paper and Figma (not only images).
+- **Later:** unattended runs with `claude -p`; harness-neutral wording so the skills also run in Cursor, Codex, or OpenCode.
