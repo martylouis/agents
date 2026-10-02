@@ -136,14 +136,12 @@ These results are the reason for the review order, the exact-vocabulary rule, an
 
 ### Planned skills
 
-Each skill has a handoff document with its design decisions, open questions, and how a person uses it.
-
-| Skill | What it does | Handoff |
-| --- | --- | --- |
-| `/ux-orch:plan` | Turns an idea, a brief, design images, or Layers output into decided plans that `orchestrate` builds well. `--explore` writes lo-fi variants to compare. | [PLAN-SKILL.md](docs/handoffs/PLAN-SKILL.md) |
-| `/ux-orch:context` | Creates or refreshes `CONTEXT.md` (exact vocabulary, component patterns) and `DESIGN.md`. `--sync` checks prototype overrides against the real design system. | [CONTEXT-SKILL.md](docs/handoffs/CONTEXT-SKILL.md) |
-| `/ux-orch:review` | Reviews a running prototype in the browser without building. Discovers states when none exist. Writes a report and one feedback item per problem. | [REVIEW-SKILL.md](docs/handoffs/REVIEW-SKILL.md) |
-| `/ux-orch:feedback` | Turns feedback from any source into fix and change tasks, builds them with the run loop, closes every item, and tags the round. `--comment` lets you click an element in the running prototype and comment on it. | [FEEDBACK-SKILL.md](docs/handoffs/FEEDBACK-SKILL.md) |
+| Skill | What it does |
+| --- | --- |
+| `/ux-orch:plan` | Turns an idea, a brief, design images, or Layers output into decided plans that `orchestrate` builds well. `--explore` writes lo-fi variants to compare. |
+| `/ux-orch:context` | Creates or refreshes `CONTEXT.md` (exact vocabulary, component patterns) and `DESIGN.md`. `--sync` checks prototype overrides against the real design system. |
+| `/ux-orch:review` | Reviews a running prototype in the browser without building. Discovers states when none exist. Writes a report and one feedback item per problem. |
+| `/ux-orch:feedback` | Turns feedback from any source into fix and change tasks, builds them with the run loop, closes every item, and tags the round. `--comment` lets you click an element in the running prototype and comment on it. |
 
 The skills form one loop:
 
