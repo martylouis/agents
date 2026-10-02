@@ -1,0 +1,15 @@
+{
+  "name": "martylouis",
+  "description": "Plugins by Marty Thierry.",
+  "owner": {
+    "name": "Marty Thierry",
+    "url": "https://martylouis.com"
+  },
+  "plugins": [
+    {
+      "name": "ux-orch",
+      "description": "UX Orchestrator: build UX prototypes from decided plans with builder sub-agents, browser review, and decision records.",
+      "source": "./"
+    }
+  ]
+}

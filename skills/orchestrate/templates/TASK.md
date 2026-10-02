@@ -1,0 +1,39 @@
+---
+plan: <plan file> (steps <n–m>)
+depends-on: [<task numbers>]
+model: <haiku | sonnet>
+fidelity: <lo-fi | hi-fi>
+round: 1
+screen: <screen name, or omit for non-screen tasks>
+design: <design image path, hi-fi only>
+---
+# <NN> — <title>
+
+## Goal
+<one sentence: what the user can do or see when this is done>
+
+## Reference
+<files to create or change; components to use; for each named component, a 3–8 line code pattern>
+
+## Layout
+<regions top to bottom / left to right, with exact text>
+
+## States
+| State | What the user sees |
+| --- | --- |
+| Default | |
+
+## Interactions
+<click, Enter, focus, navigation — one line each>
+
+## Content
+<exact copy, in quotes>
+
+## Out of scope
+<what to leave alone>
+
+## Builder checks
+- [ ] <check commands from CONTEXT.md> pass.
+
+## Reviewer checks (browser)
+- <one line per state and interaction; these become review states>
