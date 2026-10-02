@@ -6,6 +6,31 @@ You give it a folder of plans (and, if you have them, design images). It divides
 
 It works with any front-end stack: Vue, React, Angular, Svelte, plain HTML, Tailwind, Bootstrap, or a component library. It uses the stack that your project already has.
 
+## Contents
+
+- [How it works](#how-it-works)
+  - [Main ideas](#main-ideas)
+- [Fidelity](#fidelity)
+- [The judge (TypeSafe Jev)](#the-judge-typesafe-jev)
+  - [Where the orchestrator uses it](#where-the-orchestrator-uses-it)
+  - [Confidence rules](#confidence-rules)
+  - [Text only](#text-only)
+  - [Setup](#setup)
+  - [What it costs and records](#what-it-costs-and-records)
+- [Install](#install)
+  - [Requirements](#requirements)
+- [Usage](#usage)
+  - [What a good plan has](#what-a-good-plan-has)
+- [What it writes](#what-it-writes)
+- [Plugin contents](#plugin-contents)
+- [What the first test showed](#what-the-first-test-showed)
+- [Roadmap](#roadmap)
+  - [Planned skills](#planned-skills)
+  - [Layers integration](#layers-integration)
+  - [Impeccable integration](#impeccable-integration)
+  - [UI Skills integration](#ui-skills-integration)
+  - [Other items](#other-items)
+
 ## How it works
 
 ```
@@ -43,6 +68,56 @@ The design input decides the fidelity:
 | --- | --- | --- |
 | No designs | **lo-fi** | The flow and the states work. The project's framework is used with its default look. With no framework, it suggests plain Tailwind. |
 | Design images (PNG, JPG) | **hi-fi** | Each screen matches its design. The review compares text descriptions of the design and of the screenshot. |
+
+## The judge (TypeSafe Jev)
+
+During a run, the orchestrator makes many small decisions: which model gets a task, whether a builder's assumption is safe, whether a screen meets its acceptance items, whether a change is big enough for a full decision record. The **judge** answers these questions as typed values with a confidence, so the orchestrator can act on them without asking you.
+
+The judge is [TypeSafe](https://typesafe.ai)'s **Jev** model (`jev-latest`), called through `skills/orchestrate/scripts/judge.mjs`. Jev does not write text. It returns one of three answer types:
+
+| Type | Answer | Example question |
+| --- | --- | --- |
+| **Noul** | Probability of yes (0–1) | "Does this assumption break the vocabulary rules?" |
+| **Choice** | One option + confidence | "Should this task run on a fast or a strong model?" |
+| **Score** | Position on ordered levels + confidence | "How much risk does this assumption add?" (none → high) |
+
+### Where the orchestrator uses it
+
+| Question | When | What the answer decides |
+| --- | --- | --- |
+| **Routing** (Choice) | Step 3, one request for all tasks | `fast` → Haiku, `strong` → Sonnet |
+| **Assumption triage** (Noul + Score) | After each builder returns | Accept with a log line, or fix (a tweak when it is one line) |
+| **Acceptance** (Noul per item) | Hi-fi review | Pass, blocker, or "look closer" |
+| **Significance** (Score) | Each orchestrator decision | Full decision record, or one line in `decisions/LOG.md` |
+
+The exact questions and criteria are in [`skills/orchestrate/references/JUDGE.md`](skills/orchestrate/references/JUDGE.md).
+
+### Confidence rules
+
+| Confidence | Action |
+| --- | --- |
+| ≥ 0.9 | Act on the answer. |
+| 0.5 – 0.9 | Act, and confirm with the orchestrator's own review. |
+| < 0.5 | The orchestrator decides from the evidence and logs the disagreement. |
+
+The judge never replaces the step where the orchestrator looks at the screenshots.
+
+### Text only
+
+Jev reads text, not images. For visual checks, the review first turns each state into text: **code facts** (accessibility tree, URL, console errors) from `observe.mjs`, and, for hi-fi, a **neutral description** of the screenshot and of the design image from the `ux-describer` sub-agent. The judge then compares text with text. In the first test, the descriptions made the difference: with them, true passes scored 0.75–0.95 and failures 0.01–0.02; with code facts alone, every item was uncertain.
+
+### Setup
+
+1. Get an API key from [typesafe.ai](https://typesafe.ai).
+2. Put it in `TYPESAFE_API_KEY`, in your environment or in the prototype repo's `.env` (keep `.env` out of git). The script never prints the key.
+3. The orchestrator runs `node judge.mjs --check` at the start. It reports `judge: typesafe` or `judge: self`.
+
+**Without a key**, the orchestrator answers the same questions itself, in the same shapes, and marks them `judge: self` in the logs. The run works the same way; it costs more tokens of the session model.
+
+### What it costs and records
+
+- In the first test, each request took **360–550 ms** and used **800–5,200 input tokens** and **under 210 output tokens**. All independent questions over the same evidence go in one request.
+- Every request and response is saved in `docs/ux/judgments/` (`<NN>-<name>.request.json`, `.response.json`), and each decision that used the judge records its numbers, for example `auto (judge: violates 0.93, risk 2.17)`. These records let you check later how often the judge agreed with you, and tune the thresholds.
 
 ## Install
 
