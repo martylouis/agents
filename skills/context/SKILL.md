@@ -1,0 +1,45 @@
+---
+name: context
+description: Create or refresh docs/ux/CONTEXT.md (stack, commands, exact vocabulary, component patterns) and the design summary from the repo and the designs. --refresh after a library or design change; --sync after a design-system release.
+argument-hint: "[designs folder] [--refresh | --sync]"
+disable-model-invocation: true
+---
+
+# Context
+
+You prepare the vocabulary that every builder reads: `docs/ux/CONTEXT.md` and the design summary. `/ux-orch:orchestrate` runs the same procedure in its intake; the person runs this skill to prepare or check the vocabulary on its own, before the first run, after a library upgrade or a design-system release, or when builders keep making the same mistake (wrong class, wrong icon, look-alike component). That mistake is almost always a missing or vague name here.
+
+`<skill>` means this skill's base directory and `<plugin>` means the plugin root (`<skill>/../..`).
+
+## Arguments
+
+| Argument | Mode |
+| --- | --- |
+| none | **create** when `docs/ux/CONTEXT.md` does not exist; else **refresh** |
+| `<designs folder>` | Also read design images (hi-fi: tokens and components) |
+| `--refresh` | **refresh**: re-read the library and the designs, show what changed |
+| `--sync` | **sync**: check the prototype overrides against the real design system |
+
+## Steps
+
+1. Read `<plugin>/shared/CONTEXT-PROCEDURE.md` and run it in the mode above, with the prototype root as cwd. The templates are in `<plugin>/shared/templates/`.
+2. In **sync** mode, install the scripts first when needed (`<plugin>/shared/TOOLS.md`, step 1).
+3. Change no prototype code. This skill writes only `docs/ux/CONTEXT.md`, the design summary, `docs/ux/tokens/` (situation **none**), and decision records and log lines in **sync** mode.
+
+Done when the procedure's completion criterion holds: no `<placeholder>` left, and every name verified or listed under "Not verified".
+
+## Reply
+
+One short summary, then the paths of the files written:
+
+```
+Context — created
+- Stack: Nuxt · Nuxt UI · Tailwind · bun
+- Fidelity: lo-fi · design system: full (Nuxt UI)
+- Vocabulary: 14 colors and surfaces · 9 components · 9 patterns · icons i-lucide-*
+- Not verified: none
+- Files: docs/ux/CONTEXT.md · design summary: none (lo-fi)
+Read the Vocabulary section and correct any name before the first run.
+```
+
+For **refresh**, the change lines from procedure step 9. For **sync**, adopted overrides, conflicts, and open proposals (procedure step 10).
