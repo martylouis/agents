@@ -4,6 +4,7 @@ depends-on: [<task numbers>]
 model: <haiku | sonnet>
 fidelity: <lo-fi | hi-fi>
 round: 1
+feedback: [<FB-NNN items this task closes; omit for plan tasks>]
 screen: <screen name, or omit for non-screen tasks>
 design: <design image path, hi-fi only>
 ---
@@ -13,7 +14,7 @@ design: <design image path, hi-fi only>
 <one sentence: what the user can do or see when this is done>
 
 ## Reference
-<files to create or change; components to use; for each named component, a 3–8 line code pattern>
+<files to create or change; components to use; for each named component, point to `CONTEXT.md` → Component patterns, or give a 3–8 line code pattern when it is not there>
 
 ## Layout
 <regions top to bottom / left to right, with exact text>

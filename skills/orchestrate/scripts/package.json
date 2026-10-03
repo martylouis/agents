@@ -1,9 +1,0 @@
-{
-  "name": "ux-orch-scripts",
-  "private": true,
-  "type": "module",
-  "description": "Reviewer and judge scripts for the UX Orchestrator plugin.",
-  "dependencies": {
-    "playwright": "^1.63.0"
-  }
-}

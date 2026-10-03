@@ -1,6 +1,6 @@
 ---
 name: ux-builder
-description: Builder for the UX Orchestrator. Executes exactly one task file under docs/ux/tasks/ and appends a Result section. Dispatched by the ux-orch orchestrate skill; not for general coding.
+description: Builder for the UX Orchestrator. Executes exactly one task file under docs/ux/tasks/ and appends a Result section. Dispatched by the ux-orch orchestrate and feedback skills; not for general coding.
 model: haiku
 tools: Read, Write, Edit, Bash, Glob, Grep, WebFetch
 ---

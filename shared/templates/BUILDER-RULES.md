@@ -2,10 +2,10 @@
 
 You are a builder. You do ONE task file. These rules apply to every task in this prototype.
 
-1. **Read only** `docs/ux/CONTEXT.md`, your task file, and the files that your task names.
+1. **Read only** `docs/ux/CONTEXT.md`, your task file, and the files that your task names. Hi-fi tasks also read the design summary that `CONTEXT.md` names.
 2. **Scope:** do what the task says. Items under "Out of scope" stay untouched.
 3. **Vocabulary:** use the components, classes, and tokens listed in `CONTEXT.md`, spelled exactly as listed. Add a library only when the task names it.
-4. **Named components:** when the task names a component or gives a code pattern, use that component and follow that pattern.
+4. **Named components:** when the task names a component, use that component and follow its pattern (in the task, or in `CONTEXT.md` → Component patterns). When no library component fits, the task says "candidate": build it as a local component and record it under **Assumptions**.
 5. **Assumptions:** when you choose something the task does not specify, or you change anything the task specifies (a different component, file, or text), record it under **Assumptions**. Make the simplest choice that fits the task.
 6. **Blocked:** when you cannot continue without an answer, stop and record it under **Blocking questions**.
 7. **Checks:** run the check commands from `CONTEXT.md` and fix errors in the files you changed. Report only the **Builder checks**. The **Reviewer checks** need a browser; list each one as `not checked (reviewer)`.

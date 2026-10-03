@@ -1,6 +1,6 @@
 # Review
 
-Every task is reviewed before it moves to `done/`. A builder's Result is a claim, not evidence: builders have no browser, and in testing they reported "all pass" for a screen with no form on it. The review is where defects are found.
+Every task is reviewed before it moves to `done/`. The `review` skill uses the same procedure on a running prototype, without a builder (steps 4–6 only). A builder's Result is a claim, not evidence: builders have no browser, and in testing they reported "all pass" for a screen with no form on it. The review is where defects are found.
 
 ## Order
 
@@ -29,7 +29,7 @@ One file per plan: `docs/ux/states/<NN-plan-slug>.json`. Add states as tasks fin
 }
 ```
 
-Step types are listed at the top of `scripts/observe.mjs`. Rules for a complete states file:
+Step types are listed at the top of `<plugin>/shared/scripts/observe.mjs`. Rules for a complete states file:
 
 - One state per row of the task's **States** table.
 - One state per **interactive element**: click it, then capture. Interaction bugs only show when the interaction runs.
@@ -39,7 +39,7 @@ Step types are listed at the top of `scripts/observe.mjs`. Rules for a complete 
 Run, with the prototype root as cwd:
 
 ```bash
-node <skill>/scripts/observe.mjs docs/ux/states/<plan>.json docs/ux/evidence/<plan>-r<round> [state ...]
+node <plugin>/shared/scripts/observe.mjs docs/ux/states/<plan>.json docs/ux/evidence/<plan>-r<round> [state ...]
 ```
 
 Output: `<state>.png` and `<state>.md` per state, `FACTS.md` merged. Summary lines start with `ok` or `CHECK`.
@@ -47,7 +47,7 @@ Output: `<state>.png` and `<state>.md` per state, `FACTS.md` merged. Summary lin
 ## Verdict
 
 - **Pass:** every builder check and reviewer check holds, and the screenshots show nothing broken.
-- **Blocker:** broken flow, missing state, failed check, a step error, a console error, or (hi-fi) a design mismatch. → fix (see `SKILL.md` step 4).
+- **Blocker:** broken flow, missing state, failed check, a step error, a console error, or (hi-fi) a design mismatch. → fix (`RUN.md` → When a builder returns). The `review` skill builds nothing: it writes a feedback item instead.
 - **Polish:** anything else. → one line in `RUN-LOG.md` under "Polish", then pass.
 
 Write the verdict, and every blocker with its cause, to `RUN-LOG.md`.

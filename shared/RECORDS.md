@@ -1,6 +1,6 @@
 # Records
 
-Details go into files, never into chat. Four files carry the record of a run.
+Details go into files, never into chat. Four files carry the record of a run; feedback rounds add the feedback index and a round report.
 
 ## `docs/ux/RUN-LOG.md`
 
@@ -43,3 +43,20 @@ When a later task follows a full record, add the record ID to that task's frontm
 ## `docs/ux/REPORT.md`
 
 Written once, at the end (from `templates/REPORT.md`). It is the one place the person reviews the run.
+
+## `docs/ux/feedback/`
+
+One file per feedback item, `r<round>/FB-<NNN>.md` (from `templates/FEEDBACK-ITEM.md`). `NNN` counts across all rounds, so an ID is unique in the project. Crops and screenshots from comment mode go next to the item (`FB-<NNN>.png`).
+
+`INDEX.md` has one row per item. Update the row each time the item's status changes:
+
+```markdown
+| ID | Round | Source | Kind | Target | Status | Closed by |
+| --- | --- | --- | --- | --- | --- | --- |
+| [FB-004](r2/FB-004.md) | 2 | user-test | bug | checkout-phone | done | task 03/F2-01, commit abc1234 |
+| [FB-005](r2/FB-005.md) | 2 | stakeholder | idea | — | deferred | new idea; in DEFERRED.md |
+```
+
+An item is open (`open`, `triaged`, `building`) or closed (`done`, `rejected` with a reason, `deferred`). A round ends only when every item of the round is closed.
+
+`r<round>/ROUND.md` is the round report (from `templates/ROUND-REPORT.md`): the one place the person reviews a feedback round.

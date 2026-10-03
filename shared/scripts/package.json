@@ -1,0 +1,9 @@
+{
+  "name": "ux-orch-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Browser review, state discovery, comment overlay, token diff, and judge scripts for the UX Orchestrator plugin.",
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}
