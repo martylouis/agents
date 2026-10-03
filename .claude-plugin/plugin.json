@@ -1,10 +1,10 @@
 {
   "name": "ux-orch",
-  "version": "0.1.0",
-  "description": "UX Orchestrator: give it decided plans (and optional designs); it builds the prototype with cheap builder sub-agents, reviews every screen in a real browser, records decisions, and reports at the end.",
+  "version": "0.2.0",
+  "description": "UX Orchestrator: plan a prototype, prepare its vocabulary, build it with cheap builder sub-agents, review every screen in a real browser, and turn feedback into recorded fixes.",
   "author": {
     "name": "Marty Thierry",
     "url": "https://martylouis.com"
   },
-  "keywords": ["ux", "prototype", "orchestrator", "subagents", "design"]
+  "keywords": ["ux", "prototype", "orchestrator", "subagents", "design", "review", "feedback"]
 }
