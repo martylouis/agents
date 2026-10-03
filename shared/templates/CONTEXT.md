@@ -7,6 +7,7 @@ Stable facts for this prototype. Plans and tasks refer to this file and do not r
 - Prototype root: `<path>`
 - Plans (input, owned by the person): `<plans folder>`
 - Designs (input): `<designs folder or "none">`
+- Design summary: `<path to DESIGN.md, or "none" (lo-fi)>`
 - Orchestration files: `docs/ux/`
 
 ## Fidelity
@@ -43,10 +44,26 @@ Builders use ONLY these names, spelled exactly. List real class names and compon
 - Icons: `<installed icon set and prefix, e.g. i-lucide-*>`
 - Forbidden: `<palette shades, hex, rgb, manual dark: color variants>`
 
+Verified `<YYYY-MM-DD>` against `<library files read>`. Not verified: `<names, or "none">`.
+
+## Component patterns
+
+One pattern per library component this prototype uses. Tasks point here (`CONTEXT.md → Component patterns → UForm`) and do not repeat the pattern.
+
+### `<Component>`
+
+```<lang>
+<3–8 lines: the smallest correct use, with the props and slots this prototype uses>
+```
+
 ## Design system
 
 - Situation: `<full | design-only | partial | none>`
-- Overrides: `<file and section where prototype overrides live>`; each override needs a decision record.
+- Token format: `<the project's format, e.g. CSS variables in app.css, DTCG JSON>`
+- Base (the real design system, never changed): `<package or file>`
+- Prototype overrides: `<file>`; each override needs a decision record.
+- Screens use tokens only, never hard-coded values.
+- Candidate components (not in the library, local to the prototype): `<name — file, or "none">`
 
 ## Prototype defaults
 

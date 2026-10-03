@@ -4,9 +4,9 @@ The judge turns a text question into a typed answer with a confidence: Noul (yes
 
 ## Which judge
 
-Run `node <skill>/scripts/judge.mjs --check` with the prototype root as cwd.
+Run `node <plugin>/shared/scripts/judge.mjs --check` with the prototype root as cwd.
 
-- `judge: typesafe` → TypeSafe System One (`jev-latest`). Write the request JSON to `docs/ux/judgments/<NN>-<name>.request.json` and run `node <skill>/scripts/judge.mjs <request> <response>`.
+- `judge: typesafe` → TypeSafe System One (`jev-latest`). Write the request JSON to `docs/ux/judgments/<NN>-<name>.request.json` and run `node <plugin>/shared/scripts/judge.mjs <request> <response>`.
 - `judge: self` → you answer the same questions yourself, in the same shapes, and record them the same way. Mark them `judge: self` in the logs.
 
 Request shape:
@@ -48,3 +48,17 @@ The judge never replaces the **Look** step in `REVIEW.md`. Its errors in testing
 **Acceptance** (hi-fi review): `state.states.<name>` = `{ code_facts, visual_description, design_description }`. One Noul per reviewer check: "Using only the evidence in `state.states.<name>`, is this acceptance item met?"
 
 **Significance** (every orchestrator decision): Score ["Trivial: nobody notices", "Small: one screen, no pattern", "Pattern: sets how later screens behave", "Design system: changes a token, component, or rule"]. Score ≥ 2 → full decision record; else a line in `decisions/LOG.md`.
+
+**Plan readiness** (`orchestrate` intake, and `plan` before it writes the files; one request for all plans): `state.plans.<id>` = the plan text.
+- Noul `<id>_ready`: "Can a builder divide `state.plans.<id>` into exact tasks with no questions? It names every screen with its states and exact copy, says what is in scope and out of scope, and has a check list a person can follow in a browser."
+- `orchestrate`: ready < 0.5 → name the plan in the start confirmation with "loose: `/ux-orch:plan <file>` can tighten it". The run does not stop for it.
+- `plan`: ready < 0.9 → ask the next interview question about the missing part.
+
+**Feedback triage** (`feedback`, one request per round): `state.plans` = plan titles and goals; `state.screens` = known screens and states; `state.items.<id>` = one feedback item's text and target.
+- Choice `<id>_kind`: `bug` "Something does not work as the plan says"; `change` "Works as planned, but the person wants it different"; `idea` "Something new that no plan covers"; `question` "Asks for information, asks for no change"; `praise` "Says that something works well".
+- Noul `<id>_why` (kind `change` only): "Does this item change the plan's goal or why, not only what the screen does or says?" ≥ 0.5 → a new plan, not a change.
+- Score `<id>_severity`: ["Polish: nobody is stopped", "Minor: a user is slowed or confused", "Major: a user can finish only with help", "Blocker: a user cannot finish the flow"]. ≥ 2 → blocker; else polish.
+- Choice `<id>_target` (only when the item names no screen): the options are `state.screens`.
+- Noul `<a>_<b>_conflict` (one per pair of items on the same target): "Do items `<a>` and `<b>` ask for opposite changes?" ≥ 0.5 → the person decides in the confirmation. Never resolve a conflict automatically.
+
+**Tweak significance** (`feedback --tweak`): the significance Score above. ≥ 2 → the tweak becomes a round item, and the report says why.
