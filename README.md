@@ -1,37 +1,65 @@
 # UX Orchestrator
 
-A Claude Code plugin that builds UX prototypes from plans that you already decided.
+A Claude Code plugin that plans, builds, reviews, and improves UX prototypes.
 
-You give it a folder of plans (and, if you have them, design images). It divides the plans into small, exact tasks. Fresh, low-cost builder sub-agents do the tasks one at a time. The orchestrator reviews each result in a real browser, fixes what fails, and records each decision with its reason. You confirm one time at the start and review one report at the end.
+You decide what to build with `/ux-orch:plan`. You give the plans (and, if you have them, design images) to `/ux-orch:orchestrate`. It divides the plans into small, exact tasks. Fresh, low-cost builder sub-agents do the tasks one at a time. The orchestrator reviews each result in a real browser, fixes what fails, and records each decision with its reason. You confirm one time at the start and review one report at the end. After a demo or a user test, `/ux-orch:review` and `/ux-orch:feedback` find what is broken and turn every piece of feedback into a recorded fix.
 
 It works with any front-end stack: Vue, React, Angular, Svelte, plain HTML, Tailwind, Bootstrap, or a component library. It uses the stack that your project already has.
 
 ## Contents
 
+- [Skills](#skills)
 - [How it works](#how-it-works)
   - [Main ideas](#main-ideas)
 - [Fidelity](#fidelity)
 - [The judge (TypeSafe Jev)](#the-judge-typesafe-jev)
-  - [Where the orchestrator uses it](#where-the-orchestrator-uses-it)
+  - [Where the skills use it](#where-the-skills-use-it)
   - [Confidence rules](#confidence-rules)
   - [Text only](#text-only)
   - [Setup](#setup)
   - [What it costs and records](#what-it-costs-and-records)
 - [Install](#install)
+  - [Update](#update)
   - [Requirements](#requirements)
 - [Usage](#usage)
+  - [Plan](#plan)
+  - [Context](#context)
+  - [Orchestrate](#orchestrate)
+  - [Review](#review)
+  - [Feedback](#feedback)
   - [What a good plan has](#what-a-good-plan-has)
 - [What it writes](#what-it-writes)
 - [Plugin contents](#plugin-contents)
 - [What the first test showed](#what-the-first-test-showed)
 - [Roadmap](#roadmap)
-  - [Planned skills](#planned-skills)
   - [Layers integration](#layers-integration)
   - [Impeccable integration](#impeccable-integration)
   - [UI Skills integration](#ui-skills-integration)
   - [Other items](#other-items)
 
+## Skills
+
+| Skill | What it does | You |
+| --- | --- | --- |
+| `/ux-orch:plan` | Turns an idea, a brief, or design images into decided plans, with a short interview. `--explore` writes lo-fi variants to compare. | Answer one question at a time, then approve |
+| `/ux-orch:context` | Creates or refreshes `CONTEXT.md` (exact vocabulary, component patterns) and the design summary. `--sync` checks prototype overrides against the real design system. | Read and correct the vocabulary |
+| `/ux-orch:orchestrate` | Builds the prototype from the plans with builder sub-agents and browser review. | Confirm once, read one report |
+| `/ux-orch:review` | Reviews a running prototype in the browser without building. Discovers states when none exist. Writes a report and one feedback item per problem. | Read the report |
+| `/ux-orch:feedback` | Turns feedback from any source into fix and change tasks, builds them with the run loop, closes every item, and tags the round. `--comment` lets you click an element in the running prototype and comment on it. | Confirm once, read one report |
+
+The skills form one loop:
+
+```
+plan → context → orchestrate → review → feedback ─┐
+                      ▲                            │
+                      └──────── run loop ◄─────────┘
+```
+
+`orchestrate` runs the `context` procedure in its intake, so you need `/ux-orch:context` only to prepare or check the vocabulary on its own. All skills share one copy of the run loop, the review procedure, the judge questions, the templates, and the scripts, in `shared/`.
+
 ## How it works
+
+The build, `/ux-orch:orchestrate`:
 
 ```
 plans/ + designs/ (optional)
@@ -73,7 +101,7 @@ The design input decides the fidelity:
 
 During a run, the orchestrator makes many small decisions: which model gets a task, whether a builder's assumption is safe, whether a screen meets its acceptance items, whether a change is big enough for a full decision record. The **judge** answers these questions as typed values with a confidence, so the orchestrator can act on them without asking you.
 
-The judge is [TypeSafe](https://typesafe.ai)'s **Jev** model (`jev-latest`), called through `skills/orchestrate/scripts/judge.mjs`. Jev does not write text. It returns one of three answer types:
+The judge is [TypeSafe](https://typesafe.ai)'s **Jev** model (`jev-latest`), called through `shared/scripts/judge.mjs`. Jev does not write text. It returns one of three answer types:
 
 | Type | Answer | Example question |
 | --- | --- | --- |
@@ -81,16 +109,18 @@ The judge is [TypeSafe](https://typesafe.ai)'s **Jev** model (`jev-latest`), cal
 | **Choice** | One option + confidence | "Should this task run on a fast or a strong model?" |
 | **Score** | Position on ordered levels + confidence | "How much risk does this assumption add?" (none → high) |
 
-### Where the orchestrator uses it
+### Where the skills use it
 
 | Question | When | What the answer decides |
 | --- | --- | --- |
-| **Routing** (Choice) | Step 3, one request for all tasks | `fast` → Haiku, `strong` → Sonnet |
+| **Routing** (Choice) | Orchestrate step 3 and feedback tasks, one request for all tasks | `fast` → Haiku, `strong` → Sonnet |
 | **Assumption triage** (Noul + Score) | After each builder returns | Accept with a log line, or fix (a tweak when it is one line) |
 | **Acceptance** (Noul per item) | Hi-fi review | Pass, blocker, or "look closer" |
-| **Significance** (Score) | Each orchestrator decision | Full decision record, or one line in `decisions/LOG.md` |
+| **Significance** (Score) | Each orchestrator decision, and each `feedback --tweak` | Full decision record, or one line in `decisions/LOG.md`; a tweak that scores high becomes a round |
+| **Plan readiness** (Noul per plan) | `plan` before it writes, `orchestrate` intake | `plan` asks about the missing part; `orchestrate` names loose plans in the start confirmation |
+| **Feedback triage** (Choice, Noul, Score) | `feedback`, one request per round | Kind (bug, change, idea, question, praise), "why" change, severity, target, and conflicts between items |
 
-The exact questions and criteria are in [`skills/orchestrate/references/JUDGE.md`](skills/orchestrate/references/JUDGE.md).
+The exact questions and criteria are in [`shared/JUDGE.md`](shared/JUDGE.md).
 
 ### Confidence rules
 
@@ -121,12 +151,32 @@ Jev reads text, not images. For visual checks, the review first turns each state
 
 ## Install
 
+In a terminal:
+
 ```bash
-claude plugin marketplace add ~/code/martylouis/ux-orch
+claude plugin marketplace add martylouis/ux-orch
 claude plugin install ux-orch@martylouis
 ```
 
-Then run `/reload-plugins` in an open session, or start a new session.
+Or in an open Claude Code session:
+
+```
+/plugin marketplace add martylouis/ux-orch
+/plugin install ux-orch@martylouis
+```
+
+Then run `/reload-plugins`, or start a new session. The marketplace is named `martylouis` and the plugin `ux-orch`, so the skills are `/ux-orch:plan`, `/ux-orch:orchestrate`, and so on.
+
+To work on the plugin itself, add your local clone instead: `claude plugin marketplace add ~/code/martylouis/ux-orch`.
+
+### Update
+
+```bash
+claude plugin marketplace update martylouis
+claude plugin update ux-orch@martylouis
+```
+
+Restart the session after an update.
 
 ### Requirements
 
@@ -137,7 +187,33 @@ Then run `/reload-plugins` in an open session, or start a new session.
 
 ## Usage
 
-From the prototype's repo:
+Run every skill from the prototype's repo.
+
+### Plan
+
+```
+/ux-orch:plan "Let returning customers check out in one page"
+/ux-orch:plan briefs/order-history.md
+/ux-orch:plan designs/checkout/
+/ux-orch:plan --explore "Two ways to show shipping costs"
+```
+
+1. It reads the input and the repo, then asks one question at a time, each with a proposed answer, so "yes" moves on.
+2. It writes `docs/plans/NN-<slug>.md` files and `docs/plans/INDEX.md`, and shows one line per plan.
+3. When you approve, it ends with the command to build them.
+
+### Context
+
+```
+/ux-orch:context                  # create docs/ux/CONTEXT.md (and the design summary)
+/ux-orch:context designs/         # also read design images (hi-fi tokens and components)
+/ux-orch:context --refresh        # library or designs changed: update and show what changed
+/ux-orch:context --sync           # the real design system changed: check prototype overrides
+```
+
+Use it before the first run to check the vocabulary, after a library upgrade or a design-system release, or when builders keep making the same mistake (wrong class, wrong icon, look-alike component).
+
+### Orchestrate
 
 ```
 /ux-orch:orchestrate docs/plans
@@ -148,6 +224,37 @@ From the prototype's repo:
 2. It shows a checklist and updates it as tasks finish. It stops only for a contradiction in the plans, a destructive action, or a broken environment.
 3. At the end, it writes `docs/ux/REPORT.md` and gives you its path.
 
+### Review
+
+```
+/ux-orch:review                         # whole prototype, all known states
+/ux-orch:review 02-products-and-cart    # one plan's states and check list
+/ux-orch:review /checkout               # one route
+/ux-orch:review designs/                # hi-fi: compare with design images
+/ux-orch:review --audit                 # add a design-quality pass, when an audit skill is installed
+```
+
+It changes no prototype code. It shows one line per problem and writes `docs/ux/reviews/<date>-<scope>/REVIEW.md`, with one feedback item per finding. With no states yet, it discovers them from the routes and saves them for the next review.
+
+### Feedback
+
+```
+/ux-orch:feedback                                  # paste or type notes in chat
+/ux-orch:feedback notes/stakeholder-review.md      # meeting notes or test notes
+/ux-orch:feedback docs/ux/reviews/2026-10-03-all   # findings from /ux-orch:review
+/ux-orch:feedback --comment                        # click elements in the prototype and comment
+/ux-orch:feedback --tweak "Rename 'Use demo account' to 'Try the demo'"
+```
+
+1. It splits the feedback into items and sorts each one: bug, change, new idea, question, or praise.
+2. It sends one confirmation. The only per-item question is a conflict between two items.
+3. It builds the fixes and changes with the same run loop as `orchestrate`, then closes every item as done, rejected (with a reason), or deferred.
+4. It writes a round report and tags the round (`ux-round-N`), so you can compare, demo, or revert rounds.
+
+**Comment mode** opens the prototype in a visible browser with a small overlay. Click **Comment**, click an element, type, and save. Each comment records the route, the element, a cropped screenshot, and your text, so a builder knows exactly which button "this button" is. The overlay runs only in that browser window and never touches the prototype's code.
+
+A **tweak** is one small, direct change with no round. When the judge rates it as significant (it sets a pattern or changes the design system), it becomes a round.
+
 ### What a good plan has
 
 The plugin builds plans that are already decided. A plan works best when it has:
@@ -157,22 +264,37 @@ The plugin builds plans that are already decided. A plan works best when it has:
 - What is in scope and what is not.
 - A check list that a person could follow in a browser.
 
-Plans can be detailed (numbered steps, files) or short. The orchestrator asks only about real contradictions.
+Plans can be detailed (numbered steps, files) or short. The orchestrator asks only about real contradictions, and names loose plans in its start confirmation. `/ux-orch:plan` writes plans that have all four.
 
 ## What it writes
 
-Everything goes into `docs/ux/` in the prototype repo:
+Plans go into `docs/plans/` (only `/ux-orch:plan` writes there; after approval, the plans are yours). Everything else goes into `docs/ux/` in the prototype repo:
 
 ```
+docs/plans/
+├── INDEX.md              one row per plan
+└── NN-slug.md            the plans (owned by you)
+
 docs/ux/
-├── CONTEXT.md            stack, commands, exact vocabulary, defaults
+├── CONTEXT.md            stack, commands, exact vocabulary, component patterns, design system
+├── DESIGN.md             design summary (< 2 pages), when no DESIGN.md exists yet
 ├── PLANS.md              plan index, run settings, done rules
 ├── BUILDER-RULES.md      rules every builder follows (edit to tune builders)
 ├── RUN-LOG.md            one section per task: builder cost, review result, lessons
 ├── REPORT.md             the end-of-run review: checklist, blocked items, decisions
 ├── tasks/<plan>/         task files; finished tasks move to done/ with a Result section
-├── states/<plan>.json    browser states the review runs
+├── states/<plan>.json    browser states the review runs (discovered.json from review)
 ├── evidence/<plan>-rN/   screenshots, per-state code facts, FACTS.md
+├── reviews/<date>-<scope>/
+│   ├── REVIEW.md         review report: verdict per state, blockers, polish
+│   ├── evidence/         screenshots and code facts
+│   └── items/            one feedback item per finding
+├── feedback/
+│   ├── INDEX.md          one row per feedback item, with its status
+│   ├── DEFERRED.md       new ideas, kept for later plans
+│   ├── tweaks/           items handled as tweaks
+│   └── rN/               items of round N (FB-NNN.md, crops), ROUND.md report
+├── tokens/               prototype tokens (only when the project has no token format)
 ├── judgments/            judge requests and responses (TypeSafe)
 └── decisions/
     ├── INDEX.md          full decision records
@@ -187,12 +309,23 @@ ux-orch/
 ├── .claude-plugin/        plugin.json, marketplace.json
 ├── agents/
 │   ├── ux-builder.md      haiku · executes one task file
-│   └── ux-describer.md    haiku · neutral text descriptions of images (hi-fi)
-└── skills/orchestrate/
-    ├── SKILL.md           the orchestrator's steps
-    ├── references/        REVIEW.md, JUDGE.md, RECORDS.md
-    ├── templates/         CONTEXT, PLANS, BUILDER-RULES, TASK, DECISION, REPORT
-    └── scripts/           observe.mjs (Playwright review), judge.mjs (TypeSafe)
+│   └── ux-describer.md    haiku · neutral text descriptions of images (states, design inventory)
+├── skills/
+│   ├── plan/              /ux-orch:plan
+│   ├── context/           /ux-orch:context
+│   ├── orchestrate/       /ux-orch:orchestrate
+│   ├── review/            /ux-orch:review
+│   └── feedback/          /ux-orch:feedback
+└── shared/                one source for what several skills use
+    ├── TOOLS.md           script install, judge check, dev server
+    ├── CONTEXT-PROCEDURE.md
+    ├── RUN.md             the run loop (dispatch, review, fix rounds, blocked)
+    ├── REVIEW.md, JUDGE.md, RECORDS.md
+    ├── templates/         CONTEXT, DESIGN, PLAN, PLANS, TASK, DECISION, REPORT,
+    │                      REVIEW-REPORT, FEEDBACK-ITEM, ROUND-REPORT, BUILDER-RULES
+    └── scripts/           observe.mjs (browser states), discover.mjs (state discovery),
+                           comment.mjs (comment overlay), tokens.mjs (token diff),
+                           judge.mjs (TypeSafe)
 ```
 
 ## What the first test showed
@@ -209,25 +342,6 @@ These results are the reason for the review order, the exact-vocabulary rule, an
 
 ## Roadmap
 
-### Planned skills
-
-| Skill | What it does |
-| --- | --- |
-| `/ux-orch:plan` | Turns an idea, a brief, design images, or Layers output into decided plans that `orchestrate` builds well. `--explore` writes lo-fi variants to compare. |
-| `/ux-orch:context` | Creates or refreshes `CONTEXT.md` (exact vocabulary, component patterns) and `DESIGN.md`. `--sync` checks prototype overrides against the real design system. |
-| `/ux-orch:review` | Reviews a running prototype in the browser without building. Discovers states when none exist. Writes a report and one feedback item per problem. |
-| `/ux-orch:feedback` | Turns feedback from any source into fix and change tasks, builds them with the run loop, closes every item, and tags the round. `--comment` lets you click an element in the running prototype and comment on it. |
-
-The skills form one loop:
-
-```
-Layers (optional) → plan → context → orchestrate → review → feedback ─┐
-                                          ▲                            │
-                                          └──────── run loop ◄─────────┘
-```
-
-**First decision before building any of them:** one shared location (proposal: `shared/` at the plugin root) for the files that several skills use: the review procedure, the judge questions, the run loop, the scripts, and the templates.
-
 ### Layers integration
 
 [Layers](https://layers.jamiemill.com/) is a set of product-design skills that guide decisions through seven layers, from observed behaviour to the visible surface:
@@ -240,10 +354,11 @@ Layers (optional) → plan → context → orchestrate → review → feedback �
 
 Install: `npx skills add jamiemill/layers-skills`
 
-Layers writes plain Markdown and Mermaid (job stories, strategy trees, object maps, breadboards, decision inventories). It answers *what to build and why*; UX Orchestrator answers *build it and prove it works*. Planned connection points:
+Layers writes plain Markdown and Mermaid (job stories, strategy trees, object maps, breadboards, decision inventories). It answers *what to build and why*; UX Orchestrator answers *build it and prove it works*.
 
-- **`plan` reads Layers output** when it exists. Job stories and user needs become the plan's goal and why; the conceptual model and object map become the screens and their data; interaction-flow breadboards become the flow and the screen list; surface decisions become layout and content.
-- **`plan` points to `/layers-orient`** when an idea is too early to plan (no clear user need or flow), instead of guessing.
+In 0.2.0, `plan` reads Layers files when you name them, and points to a discovery step such as `/layers-orient` when an idea is too early. Planned connection points:
+
+- **`plan` finds Layers output by itself** (today it reads it when you name the files). Job stories and user needs become the plan's goal and why; the conceptual model and object map become the screens and their data; interaction-flow breadboards become the flow and the screen list; surface decisions become layout and content.
 - **Decision records link back** to the Layers decision that a prototype tests, so a `learning` record ("the test showed …") can update the right layer.
 - **`review` and `feedback`** can tag findings with the layer they belong to (for example, a confusing flow is a Layer 06 problem, not a styling fix).
 
@@ -270,6 +385,8 @@ Planned connection points by skill:
 | `review` | `audit`, `clarify` | A design-quality pass on the screenshots, next to the functional checks. Findings become feedback items. |
 | `feedback` | `bolder`, `quieter`, `distill`, `delight` | Change tasks for feedback such as "too loud" or "too busy". |
 
+In 0.2.0, `context` reads an existing `DESIGN.md` and does not write a second one, `plan` and `orchestrate` read `PRODUCT.md` for the why, and `review --audit` runs an installed audit skill. The other connection points are planned.
+
 Impeccable stays optional: every skill works without it, and uses it when it is installed.
 
 ### UI Skills integration
@@ -286,9 +403,11 @@ Planned connection points (check each skill's current output before relying on i
 | `feedback` | any audit plan | Input: `/ux-orch:feedback <audit plan file>`. |
 | All | `ui-skills-root` | Finds the right UI skill for a finding by topic and stack, instead of a fixed list in each skill. |
 
+In 0.2.0, `review --audit` can run an installed UI Skills audit, and `feedback` accepts an audit plan file as input. The other connection points are planned.
+
 Like Impeccable, UI Skills stays optional.
 
 ### Other items
 
-- **v0.2:** hi-fi from Paper and Figma (not only images).
+- **Next:** hi-fi from Paper and Figma (not only images); a test of the new skills on a real prototype.
 - **Later:** unattended runs with `claude -p`; harness-neutral wording so the skills also run in Cursor, Codex, or OpenCode.
