@@ -36,7 +36,7 @@ design: <design image path, hi-fi only>
 
 ## Builder checks
 - [ ] <check commands from CONTEXT.md> pass.
-- [ ] Smoke: `node <plugin>/shared/scripts/smoke.mjs <url> <route> "<role>:<name>" …` prints no `MISSING` or `ERROR` line. <screen tasks only: list the elements that must render, by role and name, e.g. "button:Pay now" "heading:Your cart">
+- [ ] Smoke: `node <plugin>/shared/scripts/smoke.mjs <url> <route> "<role>:<name>" …` prints no `MISSING` or `ERROR` line. <screen tasks only: list the elements that must render, by role and name, e.g. "button:Pay now" "heading:Your cart"; for a route behind a sign-in, add `--storage <key>=<value>` with the key and value the app itself writes when a user signs in>
 
 ## Reviewer checks (browser)
 - <one line per state and interaction; these become review states>

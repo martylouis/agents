@@ -42,7 +42,9 @@ A plan is ready when:
 - The **Check list** has items a person can follow in a browser (open, do, see). They become review states.
 - Steps are small enough that each is one screen, one piece of logic, or one setup step.
 
-Use the plan-readiness judgment (`<plugin>/shared/JUDGE.md`) to find what is missing. Ready < 0.9 → the next interview question is about the missing part.
+Use the plan-readiness judgment (`<plugin>/shared/JUDGE.md`) to find what is missing: the part Nouls (states, copy, layout, data) name the gap. Ready < 0.9 → the next interview question is about the lowest part.
+
+**Stop asking** after at most 2 questions driven by the judgment. When ready is still below 0.9, decide from your own review against the quality bar above: when each item holds, write the plan and note the judge numbers in its **Decisions** section; when one does not, name it in the approval step (step 4) instead of asking again.
 
 ## Steps
 

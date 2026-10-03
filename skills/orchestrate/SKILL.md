@@ -1,7 +1,7 @@
 ---
 name: orchestrate
 description: Build a UX prototype from decided plans (and optional designs) with builder sub-agents, browser review, and decision records. One confirmation at the start, live progress in the task list, one report at the end.
-argument-hint: <plans folder> [designs folder]
+argument-hint: "<plans folder | plan file> [designs folder]"
 disable-model-invocation: true
 ---
 
@@ -29,16 +29,16 @@ The run continues until every task is done or blocked. Stop and ask the person o
 
 ### 0. Tools
 
-Follow `<plugin>/shared/TOOLS.md`: tools, file names (rename old lowercase files), and scratch (cleanup, then create the run folder `docs/ux/.scratch/<date>-build-<scope>/`). This skill needs `observe.mjs`, `smoke.mjs`, and the judge.
+Follow `<plugin>/shared/TOOLS.md`: tools, file names (rename old lowercase files), builder rules (replace an old copy), old evidence (move it out of git), and scratch (cleanup, then create the run folder `docs/ux/.scratch/<date>-build-<scope>/`). This skill needs `observe.mjs`, `smoke.mjs`, and the judge.
 
 Done when observe, smoke, and judge are runnable and the run folder exists.
 
 ### 1. Intake
 
-Read every plan in the plans folder (`NN-*.md`; skip `INDEX.md` and other non-plan files), the repo (`package.json`, config, `src/`), and the designs folder if given.
+Read the plans to build: the one plan file when the argument is a file; otherwise every plan in the folder (`NN-*.md`; skip `INDEX.md` and other non-plan files). Skip a plan that `docs/ux/PLANS.md` marks `done`, and name the skipped plans in one line of the start confirmation; the person can say "rebuild 02". Also read the repo (`package.json`, config, `src/`), and the designs folder if given.
 
 - **Context:** follow `<plugin>/shared/CONTEXT-PROCEDURE.md` → Dispatch in **create** mode: for hi-fi, `ux-describer` writes the design inventory; then the `ux-context` agent (Sonnet) builds `CONTEXT.md`; then you review its result. When `docs/ux/CONTEXT.md` already exists (for example from `/ux-orch:context`), reuse it: dispatch **refresh** only if the library or the designs changed since its verify date.
-- Create the other files in `docs/ux/` from `<plugin>/shared/templates/`: `BUILDER-RULES.md` (copied), `PLANS.md` (filled), `decisions/INDEX.md`, `decisions/LOG.md`, `RUN-LOG.md`.
+- Create the other files in `docs/ux/` from `<plugin>/shared/templates/`: `PLANS.md` (filled), `decisions/INDEX.md`, `decisions/LOG.md`, `RUN-LOG.md`.
 - **Plan readiness:** ask the plan-readiness judgment (`<plugin>/shared/JUDGE.md`) for all plans in one request. A loose plan does not stop the run; name it in the start confirmation.
 - Infer a one-sentence **why** when the plans give none (also from `PRODUCT.md` when it exists).
 
@@ -50,7 +50,7 @@ Send ONE short message, then wait:
 
 ```
 UX Orchestrator — ready
-- Plans: 3 (01 Foundation and login, 02 Products and cart, 03 Checkout) → ~18 tasks
+- Plans: 1 to build (04 Order history) → ~6 tasks · skipped, already done: 01, 02, 03
 - Fidelity: lo-fi (no designs) · framework: Nuxt UI
 - Why (inferred): <one sentence>
 - Judge: typesafe
@@ -68,7 +68,7 @@ For each plan, in dependency order, write task files from `<plugin>/shared/templ
 
 - One task = one screen, or one piece of logic, or one setup step. A builder finishes it in one pass.
 - List every file the task may create or change in `files:`. Two tasks that share a file never run in parallel.
-- Screen tasks get a **Smoke** check: the route and the elements that must render, by role and name, with the absolute path of `smoke.mjs` filled in.
+- Screen tasks get a **Smoke** check: the route and the elements that must render, by role and name, with the absolute path of `smoke.mjs` filled in. For a route behind a sign-in, add `--storage <key>=<value>` with the key and value the app writes when the demo user signs in (read them from its auth code), so no builder touches auth to reach the screen.
 - Name every component, file, and text exactly. For each named component, point to its pattern in `CONTEXT.md` → Component patterns (add it there when it is missing); builders replace named components with look-alikes when they get only a name.
 - Split **Builder checks** (commands) from **Reviewer checks** (browser states). Builders report only the first.
 - Plans with **Variants** get one task set per variant, with the variant prefix (`A-`, `B-`).

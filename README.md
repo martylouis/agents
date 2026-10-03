@@ -178,6 +178,8 @@ claude plugin update ux-orch@martylouis
 
 Restart the session after an update.
 
+The installed copy is cached by version number, so an update picks up only a new version. When you change the plugin in a local clone, start Claude Code with `claude --plugin-dir ~/code/martylouis/ux-orch` to load the clone directly, or raise the version before you update.
+
 ### Requirements
 
 - Claude Code with plugin support
@@ -216,7 +218,8 @@ The library reading and name checks run in the `ux-context` agent (Sonnet), so t
 ### Orchestrate
 
 ```
-/ux-orch:orchestrate docs/plans
+/ux-orch:orchestrate docs/plans                       # every plan not yet done
+/ux-orch:orchestrate docs/plans/04-order-history.md   # one plan
 /ux-orch:orchestrate docs/plans designs/
 ```
 
@@ -284,7 +287,7 @@ docs/ux/
 ├── DESIGN.md             design summary (< 2 pages), when no DESIGN.md exists yet
 ├── DESIGN-INVENTORY.md   hi-fi: what the design images show, read by ux-context
 ├── PLANS.md              plan index, run settings, done rules
-├── BUILDER-RULES.md      rules every builder follows (edit to tune builders)
+├── BUILDER-RULES.md      rules every builder follows (from the plugin; replaced when it updates)
 ├── RUN-LOG.md            one section per task: builder cost, review result, lessons
 ├── REPORT.md             the latest run's report: checklist, blocked items, decisions
 ├── tasks/<plan>/         task files; finished tasks move to done/ with a Result section

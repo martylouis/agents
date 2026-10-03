@@ -6,7 +6,7 @@ The judge turns a text question into a typed answer with a confidence: Noul (yes
 
 Run `node <plugin>/shared/scripts/judge.mjs --check` with the prototype root as cwd.
 
-- `judge: typesafe` → TypeSafe System One (`jev-latest`). Write the request JSON to `<run folder>/judgments/<NN>-<name>.request.json` (scratch, never committed; the numbers that matter go into the log line or decision record that used them) and run `node <plugin>/shared/scripts/judge.mjs <request> <response>`.
+- `judge: typesafe` → TypeSafe System One (`jev-latest`). Write the request JSON to `<run folder>/judgments/<NN>-<name>.request.json` (scratch, never committed; the `plan` skill, which has no run, uses `docs/ux/.scratch/<YYYY-MM-DD>-plan-<slug>/judgments/`; the numbers that matter go into the log line or decision record that used them) and run `node <plugin>/shared/scripts/judge.mjs <request> <response>`.
 - `judge: self` → you answer the same questions yourself, in the same shapes, and record them the same way. Mark them `judge: self` in the logs.
 
 Request shape:
@@ -51,8 +51,13 @@ The judge never replaces the **Look** step in `REVIEW.md`. Its errors in testing
 
 **Plan readiness** (`orchestrate` intake, and `plan` before it writes the files; one request for all plans): `state.plans.<id>` = the plan text.
 - Noul `<id>_ready`: "Can a builder divide `state.plans.<id>` into exact tasks with no questions? It names every screen with its states and exact copy, says what is in scope and out of scope, and has a check list a person can follow in a browser."
-- `orchestrate`: ready < 0.5 → name the plan in the start confirmation with "loose: `/ux-orch:plan <file>` can tighten it". The run does not stop for it.
-- `plan`: ready < 0.9 → ask the next interview question about the missing part.
+- One Noul per part, so the gap has a name (in testing, `ready` stayed near 0.7 while only one part was missing):
+  - `<id>_states`: "Does every screen in `state.plans.<id>` list its states (default, empty, loading, error, success, as they apply)?"
+  - `<id>_copy`: "Does `state.plans.<id>` give the exact text for headings, buttons, labels, and messages?"
+  - `<id>_layout`: "Does `state.plans.<id>` say where each region of every screen goes?"
+  - `<id>_data`: "Does `state.plans.<id>` say what data each screen shows, where it comes from, and what fake data to use?"
+- `orchestrate`: ready < 0.5 → name the plan in the start confirmation with "loose: `/ux-orch:plan <file>` can tighten it", with the parts below 0.5. The run does not stop for it.
+- `plan`: ready < 0.9 → ask the next interview question about the lowest part. See the `plan` skill for when to stop asking.
 
 **Feedback triage** (`feedback`, one request per round): `state.plans` = plan titles and goals; `state.screens` = known screens and states; `state.items.<id>` = one feedback item's text and target.
 - Choice `<id>_kind`: `bug` "Something does not work as the plan says"; `change` "Works as planned, but the person wants it different"; `idea` "Something new that no plan covers"; `question` "Asks for information, asks for no change"; `praise` "Says that something works well".
