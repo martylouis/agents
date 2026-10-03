@@ -1,6 +1,6 @@
 ---
 name: ux-describer
-description: Describer for the UX Orchestrator. Turns screenshots or design images into neutral text records with a fixed template, so a text-only judge can compare them. Dispatched by the ux-orch skills (orchestrate, review, feedback, context).
+description: Describer for the UX Orchestrator. Turns screenshots or design images into neutral text records with a fixed template, so a text-only judge can compare them. Dispatched by the ux-orch skills (orchestrate, plan, review, feedback, context).
 model: haiku
 tools: Read, Write
 ---

@@ -1,8 +1,17 @@
 # Context procedure
 
-Creates or updates `docs/ux/CONTEXT.md` (stack, commands, exact vocabulary, component patterns, design system) and the design summary. The `context` skill runs it on its own; `orchestrate` runs it in step 1. Builders read `CONTEXT.md` on every task, so every name in it must be exact and every line must earn its tokens.
+Creates or updates `docs/ux/CONTEXT.md` (stack, commands, exact vocabulary, component patterns, design system) and the design summary. The `ux-context` agent (Sonnet) runs it, dispatched by the `context` skill or by `orchestrate` step 1, so the library reading stays out of the main session. Builders read `CONTEXT.md` on every task, so every name in it must be exact and every line must earn its tokens.
 
 Testing showed why: when `CONTEXT.md` said "semantic colors", a builder wrote `text-neutral-700 dark:text-neutral-200`; after it listed `text-muted` and `bg-elevated`, the next builders made no color errors. When a task gave only a component name, builders built look-alikes; a short code pattern fixed it.
+
+## Dispatch (the calling skill does this)
+
+1. **Hi-fi only:** dispatch `ux-describer` with the **Design inventory** template on the design images, output `docs/ux/DESIGN-INVENTORY.md`. Sub-agents cannot dispatch other agents, so this happens before step 2.
+2. Dispatch `ux-context`:
+   > Prototype root: `<path>`. Plugin root: `<plugin>`. Mode: `<create | refresh | sync>`. Designs: `<folder or none>`. Design inventory: `<docs/ux/DESIGN-INVENTORY.md or none>`.
+3. **Review its reply.** Read the Vocabulary and Component patterns sections of `docs/ux/CONTEXT.md`. For each name under "Not verified", and any name that is a category instead of an exact name, check it yourself in the library files and fix the file.
+
+The steps below are what `ux-context` does.
 
 ## Modes
 
@@ -50,7 +59,7 @@ Fill **Vocabulary** with exact names read from the installed library files, neve
 - **Icons:** the icon set that is installed (check `package.json` and `node_modules`), with its prefix. An icon set that is not installed is a defect, not a choice.
 - **Forbidden:** what builders must not write (palette shades, hex, `rgb(`, manual `dark:` color variants), so the review can grep for it.
 
-Hi-fi: also dispatch `ux-describer` with the **Design inventory** template on the design images, and map each color, type style, and component it lists to a library name. A design element with no library match becomes a candidate component (step 6) or a prototype override (step 3).
+Hi-fi: also read the design inventory (`docs/ux/DESIGN-INVENTORY.md`), which the dispatching skill gets from `ux-describer` (**Design inventory** template) before it dispatches `ux-context`. Map each color, type style, and component it lists to a library name. A design element with no library match becomes a candidate component (step 6) or a prototype override (step 3).
 
 ### 5. Component patterns
 

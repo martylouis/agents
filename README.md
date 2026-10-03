@@ -211,7 +211,7 @@ Run every skill from the prototype's repo.
 /ux-orch:context --sync           # the real design system changed: check prototype overrides
 ```
 
-Use it before the first run to check the vocabulary, after a library upgrade or a design-system release, or when builders keep making the same mistake (wrong class, wrong icon, look-alike component).
+The library reading and name checks run in the `ux-context` agent (Sonnet), so they stay out of your session's context; your session reviews the result. Use it before the first run to check the vocabulary, after a library upgrade or a design-system release, or when builders keep making the same mistake (wrong class, wrong icon, look-alike component).
 
 ### Orchestrate
 
@@ -278,6 +278,7 @@ docs/plans/
 docs/ux/
 ├── CONTEXT.md            stack, commands, exact vocabulary, component patterns, design system
 ├── DESIGN.md             design summary (< 2 pages), when no DESIGN.md exists yet
+├── DESIGN-INVENTORY.md   hi-fi: what the design images show, read by ux-context
 ├── PLANS.md              plan index, run settings, done rules
 ├── BUILDER-RULES.md      rules every builder follows (edit to tune builders)
 ├── RUN-LOG.md            one section per task: builder cost, review result, lessons
@@ -309,6 +310,7 @@ ux-orch/
 ├── .claude-plugin/        plugin.json, marketplace.json
 ├── agents/
 │   ├── ux-builder.md      haiku · executes one task file
+│   ├── ux-context.md      sonnet · builds and verifies CONTEXT.md from the installed library
 │   └── ux-describer.md    haiku · neutral text descriptions of images (states, design inventory)
 ├── skills/
 │   ├── plan/              /ux-orch:plan
