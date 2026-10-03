@@ -22,9 +22,12 @@ You prepare the vocabulary that every builder reads: `docs/ux/CONTEXT.md` and th
 
 ## Steps
 
-1. Read `<plugin>/shared/CONTEXT-PROCEDURE.md` and run it in the mode above, with the prototype root as cwd. The templates are in `<plugin>/shared/templates/`.
-2. In **sync** mode, install the scripts first when needed (`<plugin>/shared/TOOLS.md`, step 1).
-3. Change no prototype code. This skill writes only `docs/ux/CONTEXT.md`, the design summary, `docs/ux/tokens/` (situation **none**), and decision records and log lines in **sync** mode.
+The reading and checking run in the `ux-context` agent (Sonnet), so the library files stay out of this session. You review its result.
+
+1. In **sync** mode, install the scripts first when needed (`<plugin>/shared/TOOLS.md`, step 1).
+2. Follow `<plugin>/shared/CONTEXT-PROCEDURE.md` → Dispatch, in the mode above: the design inventory (hi-fi), then `ux-context`, then your review.
+
+This skill changes no prototype code. It writes only `docs/ux/CONTEXT.md`, the design summary, the design inventory, `docs/ux/tokens/` (situation **none**), and decision records and log lines in **sync** mode.
 
 Done when the procedure's completion criterion holds: no `<placeholder>` left, and every name verified or listed under "Not verified".
 

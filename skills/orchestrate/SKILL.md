@@ -37,7 +37,7 @@ Done when observe and judge are both runnable.
 
 Read every plan in the plans folder (`NN-*.md`; skip `INDEX.md` and other non-plan files), the repo (`package.json`, config, `src/`), and the designs folder if given.
 
-- **Context:** run `<plugin>/shared/CONTEXT-PROCEDURE.md` in **create** mode. When `docs/ux/CONTEXT.md` already exists (for example from `/ux-orch:context`), reuse it: run **refresh** only if the library or the designs changed since its verify date.
+- **Context:** follow `<plugin>/shared/CONTEXT-PROCEDURE.md` → Dispatch in **create** mode: for hi-fi, `ux-describer` writes the design inventory; then the `ux-context` agent (Sonnet) builds `CONTEXT.md`; then you review its result. When `docs/ux/CONTEXT.md` already exists (for example from `/ux-orch:context`), reuse it: dispatch **refresh** only if the library or the designs changed since its verify date.
 - Create the other files in `docs/ux/` from `<plugin>/shared/templates/`: `BUILDER-RULES.md` (copied), `PLANS.md` (filled), `decisions/INDEX.md`, `decisions/LOG.md`, `RUN-LOG.md`.
 - **Plan readiness:** ask the plan-readiness judgment (`<plugin>/shared/JUDGE.md`) for all plans in one request. A loose plan does not stop the run; name it in the start confirmation.
 - Infer a one-sentence **why** when the plans give none (also from `PRODUCT.md` when it exists).
