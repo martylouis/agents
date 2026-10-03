@@ -54,7 +54,7 @@ Use the project's token format. With none (situation **none**, hi-fi), write the
 
 Fill **Vocabulary** with exact names read from the installed library files, never from memory or docs alone:
 
-- **Colors and surfaces:** the library's CSS variables and utility classes (for example its `dist/**/*.css`). List classes (`text-muted`, `bg-elevated`), never categories ("semantic colors").
+- **Colors and surfaces:** the library's CSS variables and utility classes (for example its `dist/**/*.css`). List classes (`text-muted`, `bg-elevated`), never categories ("semantic colors"). With Tailwind 4, a utility class is not written out in the library files: `text-muted` exists when the library's theme defines `--text-color-muted` (or `--color-muted`), `bg-elevated` when it defines `--background-color-elevated` (or `--color-elevated`), and so on. Grep the library's `dist/` (CSS and JS) for those variables.
 - **Components:** the names the library exports, and the props and values the prototype uses.
 - **Icons:** the icon set that is installed (check `package.json` and `node_modules`), with its prefix, and the library's icon component (for example `UIcon`). An icon set that is not installed is a defect, not a choice. A bare `<i class="…">` renders nothing in most icon setups; say so under Forbidden.
 - **Forbidden:** what builders must not write (palette shades, hex, `rgb(`, manual `dark:` color variants), so the review can grep for it.
@@ -79,13 +79,13 @@ Look for an existing `DESIGN.md` (repo root, `docs/`, `docs/ux/`), for example o
 
 ### 8. Verify
 
-For every name in **Vocabulary** and **Component patterns**, including every prop and slot name, find it in the installed library files (grep the package's `dist/`, exports, or type definitions; for icons, the installed collection). Remove a name that is not found, or list it under "Not verified" with the reason. Write the verify date and the files read.
+For every name in **Vocabulary** and **Component patterns**, including every prop and slot name, find it in the installed library files (grep the package's `dist/`, exports, or type definitions; for icons, the installed collection; for Tailwind 4 utility classes, the theme variable from step 4). Remove a name that is not found, or list it under "Not verified" with the reason. Write the verify date and the files read.
 
 Done when `CONTEXT.md` has no `<placeholder>` left, and every name is verified or listed under "Not verified".
 
 ### 9. Refresh: show what changed
 
-Compare the new values with the file before the refresh. Keep lines the person added by hand when they still verify. Show one line per change:
+Write the refreshed file in the current layout of `<plugin>/shared/templates/CONTEXT.md`, not the old file's layout: its sections in order, one `###` heading per component pattern, and all builder check commands (lint, build or type check, the scoped formatter) in the single "Checks (builders run these)" row, because builders run exactly that row. Compare the new values with the file before the refresh. Keep lines the person added by hand when they still verify, moved to the section where they belong. Show one line per change:
 
 ```
 Context refresh

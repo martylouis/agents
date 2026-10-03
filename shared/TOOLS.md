@@ -21,13 +21,33 @@ Most skills need the prototype running.
 
 ## File names
 
-All doc files use UPPERCASE names (`CONTEXT.md`, `PLANS.md`, `INDEX.md`, `LOG.md`, …). When `docs/ux/` holds an older lowercase file (`context.md`, `plans.md`, `log.md`, `_index.md`), rename it in two steps, because a case-only rename fails on case-insensitive file systems (macOS):
+All doc files use UPPERCASE names (`CONTEXT.md`, `PLANS.md`, `INDEX.md`, `LOG.md`, …). Find older lowercase files with git, not with `ls`: on case-insensitive file systems (macOS) `ls` can show `CONTEXT.md` while git still tracks `context.md`, and the next commit then goes to the lowercase path.
+
+```bash
+git ls-files docs/ux | grep -E '/[a-z_][a-z0-9_-]*\.md$'
+```
+
+Rename each one by its git path, in two steps, because a case-only rename fails on those file systems:
 
 ```bash
 git mv docs/ux/context.md docs/ux/context.tmp.md && git mv docs/ux/context.tmp.md docs/ux/CONTEXT.md
 ```
 
-`_index.md` becomes `INDEX.md`. Use plain `mv` for files git does not track. Say what was renamed in one line, then continue. Never write a lowercase doc file name.
+`_index.md` becomes `INDEX.md`. For files git does not track, check with `ls` and use plain `mv` in the same two steps. Say what was renamed in one line, then continue. Never write a lowercase doc file name.
+
+## Old evidence
+
+Before 0.2.0, screenshots, judge files, and reports were committed under `docs/ux/` (folders such as `evidence/`, `judgments/`, `reviews/`, and report files next to them). When `git ls-files docs/ux` lists any of them, and commits are approved (`commit: per-task` in `docs/ux/PLANS.md` → Run settings, or a "go" on a confirmation that names this move):
+
+1. Move them into `docs/ux/.scratch/<YYYY-MM-DD>-legacy/` (create the `.gitignore` line first, see Scratch), keeping their folder names.
+2. `git rm -r --cached` the old paths, and commit: `chore(ux): move old evidence to scratch`. Git history keeps every file.
+3. Say in one line how many files and MB moved.
+
+The legacy folder counts as one scratch run for cleanup. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
+
+## Builder rules
+
+`docs/ux/BUILDER-RULES.md` belongs to the plugin, not to the person: builders follow it, and it changes when the plugin changes. Its first line names the version (`<!-- ux-orch builder-rules 0.2.0 -->`). When the file is missing, or its first line differs from the one in `<plugin>/shared/templates/BUILDER-RULES.md`, copy the template over it and say so in one line. Rules the person wants for this prototype go into `CONTEXT.md`, never into this file.
 
 ## Scratch
 

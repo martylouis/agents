@@ -10,8 +10,8 @@
 //   "fullPage": true       screenshot the whole page (default: the viewport only)
 //   "capture": "#drawer"   screenshot only the first element matching this CSS selector
 //                          (not found: step error, viewport screenshot instead)
-//   "offline": true        sets the browser offline after the first goto, so later
-//                          navigation and requests fail like on a plane
+//   "offline": true        sets the browser offline after the LAST goto, so the screen
+//                          is loaded and later requests fail like on a plane
 // Steps (one key each):
 //   { "goto": "/path" }                         open a route
 //   { "storage": { "key": "k", "value": "v" } } set localStorage (value null removes)
@@ -22,8 +22,12 @@
 //   { "press": { "key": "Enter" } }
 //   { "tab": 3 }                                press Tab 3 times
 //   { "wait": { "ms": 500 } }
+//   { "offline": true }                         go offline (or back online with false) at this step
 // fill, click, clickText and hover fail when more than one element matches;
 // add "nth": 0 (zero-based) to pick one, e.g. { "click": { "role": "button", "name": "Save", "nth": 0 } }.
+//
+// A submit that the browser's own form validation blocks (a native pop-up instead of the
+// app's error text) is recorded under "Native validation" and makes the state CHECK.
 //
 // Output per state: <name>.png, and its section in FACTS.md (sections of states that ran are replaced).
 import { chromium } from 'playwright'
@@ -87,17 +91,25 @@ for (const state of states) {
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
   page.on('pageerror', (e) => errors.push(e.message))
 
+  // The browser fires "invalid" when its own validation blocks a submit.
+  await context.addInitScript(() => {
+    window.__uxInvalid = []
+    document.addEventListener('invalid', (e) => {
+      const el = e.target
+      const label = el.labels?.[0]?.innerText || el.getAttribute('aria-label') || el.name || el.id || el.tagName.toLowerCase()
+      window.__uxInvalid.push(`${label.replace(/\s+/g, ' ').trim().slice(0, 60)}: ${el.validationMessage}`)
+    }, true)
+  })
+
   const stepErrors = []
-  let wentOffline = false
+  const lastGoto = state.steps.map((s) => s.goto !== undefined).lastIndexOf(true)
   try {
-    for (const s of state.steps) {
+    for (const [i, s] of state.steps.entries()) {
       if (s.goto !== undefined) {
         await page.goto(spec.baseUrl + s.goto, { waitUntil: 'networkidle' })
-        if (state.offline && !wentOffline) {
-          await context.setOffline(true)
-          wentOffline = true
-        }
-      } else if (s.storage) {
+        if (state.offline && i === lastGoto) await context.setOffline(true)
+      } else if (s.offline !== undefined) await context.setOffline(!!s.offline)
+      else if (s.storage) {
         await page.evaluate(({ key, value }) => {
           if (value === null) localStorage.removeItem(key)
           else localStorage.setItem(key, value)
@@ -137,6 +149,7 @@ for (const state of states) {
   const aria = await page.locator('body').ariaSnapshot().catch((e) => `(aria error: ${e.message})`)
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
   const focus = await page.evaluate(focused).catch(() => 'none')
+  const invalid = [...new Set(await page.evaluate(() => window.__uxInvalid ?? []).catch(() => []))]
 
   const shot = state.capture && !captureMissing ? `, element ${state.capture}` : state.fullPage ? ', full page' : ''
   sections.set(
@@ -145,10 +158,11 @@ for (const state of states) {
       `## State: ${state.name}`,
       ``,
       `- URL: ${page.url().replace(spec.baseUrl, '') || '/'}`,
-      `- Viewport: ${viewport.width}×${viewport.height}, ${scheme}${state.offline ? ', offline' : ''}`,
+      `- Viewport: ${viewport.width}×${viewport.height}, ${scheme}${state.offline || state.steps.some((s) => s.offline) ? ', offline' : ''}`,
       `- Screenshot: ${state.name}.png${shot}`,
       `- Horizontal overflow: ${overflow ? 'YES' : 'no'}`,
       `- Focused: ${focus}`,
+      `- Native validation: ${invalid.length ? invalid.map((v) => '`' + v + '`').join('; ') : 'none'}`,
       `- Step error: ${stepErrors.length ? stepErrors.join('; ') : 'none'}`,
       `- Console errors: ${errors.length ? errors.map((e) => '`' + e.slice(0, 160) + '`').join('; ') : 'none'}`,
       ``,
@@ -163,6 +177,7 @@ for (const state of states) {
     captureMissing && 'capture not found',
     errors.length && 'console errors',
     overflow && 'overflow',
+    invalid.length && 'native validation blocked a submit',
   ].filter(Boolean)
   summary.push(`${flags.length ? 'CHECK' : 'ok   '} ${state.name}${flags.length ? ' — ' + flags.join(', ') : ''}`)
   await context.close()

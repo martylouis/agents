@@ -36,7 +36,7 @@ The same as `orchestrate`: one confirmation at the start, live progress in the h
 
 ### 0. Tools and context
 
-Follow `<plugin>/shared/TOOLS.md` (tools, file names, scratch cleanup). When `docs/ux/CONTEXT.md` does not exist (the prototype was not built by `orchestrate`), follow `<plugin>/shared/CONTEXT-PROCEDURE.md` → Dispatch in **create** mode and copy `BUILDER-RULES.md` from `<plugin>/shared/templates/`, so builders have their rules and vocabulary.
+Follow `<plugin>/shared/TOOLS.md` (tools, file names, builder rules, old evidence, scratch cleanup). When `docs/ux/CONTEXT.md` does not exist (the prototype was not built by `orchestrate`), follow `<plugin>/shared/CONTEXT-PROCEDURE.md` → Dispatch in **create** mode, so builders have their vocabulary.
 
 **Round number:** one more than the highest `docs/ux/feedback/r<N>/`. The items go into `docs/ux/feedback/r<N>/` (committed). Everything else of the round (crops, screenshots, facts, judge files, `ROUND.md`) goes into the run folder `docs/ux/.scratch/<date>-feedback-r<N>/`.
 
@@ -60,6 +60,8 @@ Done when every piece of the input is in exactly one item.
 
 Ask the feedback-triage judgment (`<plugin>/shared/JUDGE.md`) for all items in one request: kind, "why" change, severity, target (only when the item names none), and conflicts between items on the same target. Known screens come from `docs/ux/states/`, the plans, and the routes. Record the numbers in each item's **Triage** section and set `status: triaged`.
 
+**Reproduce every bug first.** Write a state that shows it (`docs/ux/states/`, then `observe.mjs` into the run folder) and look at the screenshot. When it shows the bug, the state becomes the task's reviewer check. When it does not, do not guess a fix: list the item under "Needs you" in the confirmation ("FB-007 did not reproduce in state `login-errors`: close it as not reproduced, or tell me the steps"). With "go", it closes `rejected` with the reason "not reproduced: <state>".
+
 Route each item:
 
 | Kind | Route |
@@ -81,11 +83,12 @@ Send ONE message, then wait:
 Feedback round 2 — 9 items
 - 5 fixes · 2 changes (plan 03 updated) · 1 new idea (deferred) · 1 praise (logged)
 - Needs you: items FB-014 and FB-017 conflict ("bigger button" vs "too loud") — pick one
+- Needs you: FB-019 did not reproduce in state `cart-empty` — close it, or tell me the steps
 - Commits: one per task on ux/feedback-r2, tag ux-round-2 at the end — OK?
 Reply "go", or change any line.
 ```
 
-This is the only question of the round. After the answer, close the conflict items the person did not pick as `rejected` (reason: "conflict: the person chose FB-<NNN>"). When commits are approved, create the branch.
+This is the only question of the round. After the answer, close bugs that did not reproduce as `rejected` (unless the person gave steps: then reproduce again), and close the conflict items the person did not pick as `rejected` (reason: "conflict: the person chose FB-<NNN>"). When commits are approved, create the branch.
 
 ### 5. Tasks
 
