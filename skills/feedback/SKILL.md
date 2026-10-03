@@ -13,7 +13,7 @@ You take feedback on a prototype from any source, turn it into tasks, build them
 
 ## Voice
 
-The same as `orchestrate`: one confirmation at the start, a checklist while it runs, one report at the end. No checkpoints during the round. Details go into files.
+The same as `orchestrate`: one confirmation at the start, live progress in the harness's task list while it runs (`<plugin>/shared/RUN.md` → Progress), one report at the end. No checkpoints during the round. Details go into files.
 
 ## Two speeds
 
@@ -28,7 +28,7 @@ The same as `orchestrate`: one confirmation at the start, a checklist while it r
 | --- | --- | --- |
 | none | Text the person pastes or types in chat | `person` (or `stakeholder` / `user-test` when the text says so) |
 | `<notes file>` | Meeting notes, test notes | `stakeholder` or `user-test`, from the file |
-| `<review folder>` | `docs/ux/reviews/<folder>/items/*.md` from `/ux-orch:review` | `reviewer` |
+| `<review folder>` | `docs/ux/.scratch/<date>-review-<scope>/items/*.md` from `/ux-orch:review` | `reviewer` |
 | `<audit plan file>` | An improvement plan written by a design-audit skill | `skill` (`from:` the skill name) |
 | `--comment` | Comments on elements in the running prototype | `person` |
 
@@ -36,23 +36,23 @@ The same as `orchestrate`: one confirmation at the start, a checklist while it r
 
 ### 0. Tools and context
 
-Follow `<plugin>/shared/TOOLS.md`. When `docs/ux/CONTEXT.md` does not exist (the prototype was not built by `orchestrate`), run `<plugin>/shared/CONTEXT-PROCEDURE.md` in **create** mode and copy `BUILDER-RULES.md` from `<plugin>/shared/templates/`, so builders have their rules and vocabulary.
+Follow `<plugin>/shared/TOOLS.md` (tools, file names, scratch cleanup). When `docs/ux/CONTEXT.md` does not exist (the prototype was not built by `orchestrate`), follow `<plugin>/shared/CONTEXT-PROCEDURE.md` → Dispatch in **create** mode and copy `BUILDER-RULES.md` from `<plugin>/shared/templates/`, so builders have their rules and vocabulary.
 
-**Round number:** one more than the highest `docs/ux/feedback/r<N>/`. The round folder is `docs/ux/feedback/r<N>/`.
+**Round number:** one more than the highest `docs/ux/feedback/r<N>/`. The items go into `docs/ux/feedback/r<N>/` (committed). Everything else of the round (crops, screenshots, facts, judge files, `ROUND.md`) goes into the run folder `docs/ux/.scratch/<date>-feedback-r<N>/`.
 
 ### 1. Collect
 
 - **Comment mode** (`--comment`): start the dev server, then run
   ```bash
-  node <plugin>/shared/scripts/comment.mjs <url> docs/ux/feedback/r<N>
+  node <plugin>/shared/scripts/comment.mjs <url> docs/ux/feedback/r<N> --crops <run folder>/crops
   ```
-  Tell the person, in one line, to click **Comment**, click an element, type, and **Save**; and to close the window when done. Each comment becomes `FB-<NNN>.md` and a cropped `FB-<NNN>.png` with the route and the element. The overlay runs only in that browser window; it never touches prototype code.
+  Tell the person, in one line, to click **Comment**, click an element, type, and **Save**; and to close the window when done. Each comment becomes `FB-<NNN>.md` with the route and the element, and a cropped `FB-<NNN>.png` in the run folder. The overlay runs only in that browser window; it never touches prototype code.
 - **Review folder:** read every item in `items/`.
 - **Text, notes, audit plans:** read them in full.
 
 ### 2. Normalize
 
-Split the input into items: one item per distinct request, problem, question, or praise. Copy each item's text exactly (quote it). Write one file per item, `docs/ux/feedback/r<N>/FB-<NNN>.md`, from `<plugin>/shared/templates/FEEDBACK-ITEM.md`, with `status: open`. `NNN` continues from the highest ID in `docs/ux/feedback/`. Items from a review keep their evidence paths; set `from:` to the review folder. Add a row per item to `docs/ux/feedback/INDEX.md` (`<plugin>/shared/RECORDS.md`).
+Split the input into items: one item per distinct request, problem, question, or praise. Copy each item's text exactly (quote it). Write one file per item, `docs/ux/feedback/r<N>/FB-<NNN>.md`, from `<plugin>/shared/templates/FEEDBACK-ITEM.md`, with `status: open`. `NNN` continues from the highest ID in `docs/ux/feedback/`. Items from a review keep their evidence description; set `from:` to the review folder. Read review items before the scratch cleanup can remove their folder. Add a row per item to `docs/ux/feedback/INDEX.md` (`<plugin>/shared/RECORDS.md`).
 
 Done when every piece of the input is in exactly one item.
 
@@ -65,7 +65,7 @@ Route each item:
 | Kind | Route |
 | --- | --- |
 | **bug** | Fix task |
-| **change** ("what") | Plan update + change task + decision record |
+| **change** ("what") | Plan update + change task + a decision record or a log line, by significance |
 | **change** ("why") | New plan: write a draft (`status: draft`, `supersedes:`) and close the item `deferred` to it; the person decides it with `/ux-orch:plan` |
 | **idea** | `docs/ux/feedback/DEFERRED.md` (one row: ID, text, why deferred); close `deferred` |
 | **question** | Answer it from the plans, decisions, and code; close `done` with the answer. When only the person can answer, list it under "Needs you". |
@@ -91,22 +91,22 @@ This is the only question of the round. After the answer, close the conflict ite
 
 For each fix and change item, write a task from `<plugin>/shared/templates/TASK.md` into `docs/ux/tasks/<NN-plan-slug>/F<N>-<NN>-<slug>.md` (no plan → `docs/ux/tasks/feedback-r<N>/`), with `round: <N>` and `feedback: [FB-<NNN>]`. Items on the same screen may share one task. Give each task the target route, state, and element, the evidence (crop or screenshot), and the exact change. Route models with the routing judgment.
 
-For each "what" change: update the plan file (the person approved it in the confirmation) and write a decision record (`type: design-change`, `round: <N>`, the item IDs in Context). Set the items to `building`.
+For each "what" change: update the plan file (the person approved it in the confirmation) and ask the significance judgment (`<plugin>/shared/JUDGE.md`). Score ≥ 2 (it sets a pattern or changes the design system) → a full decision record (`type: design-change`, `round: <N>`, the item IDs in Context). Below 2 → one line in `docs/ux/decisions/LOG.md` with the item ID and the plan edit. Set the items to `building`.
 
 ### 6. Run
 
 Run the tasks with `<plugin>/shared/RUN.md`:
 
 - Commit message: `fix(ux): <task title>` for bug tasks, `feat(ux): <task title>` for change tasks; body: task path, item IDs, decision IDs.
-- Checklist header: `Feedback round <N>`.
+- Run folder: `docs/ux/.scratch/<date>-feedback-r<N>/`.
 
 The review of each task must include the states of the items it closes (add a state for each item's target element when none exists).
 
 ### 7. Close and report
 
 - Close every item: `done` (`closed-by`: task path and commit), `rejected` (with the reason), or `deferred` (where it went). A blocked task's items close as `deferred` with "blocked: <reason>". Update `INDEX.md`.
-- Write `docs/ux/feedback/r<N>/ROUND.md` from `<plugin>/shared/templates/ROUND-REPORT.md`.
-- When commits are approved, commit the records (`docs(ux): feedback round <N> report`) and tag the branch head `ux-round-<N>`, so rounds can be compared, demoed, or reverted.
+- Write `<run folder>/ROUND.md` from `<plugin>/shared/templates/ROUND-REPORT.md`.
+- When commits are approved, commit the text records: items, `INDEX.md`, decisions, plan edits (`docs(ux): feedback round <N> records`). Scratch is never committed. Then tag the branch head `ux-round-<N>`, so rounds can be compared, demoed, or reverted, and any state rebuilt.
 
 Done when every item of the round is closed, `ROUND.md` is written, and the tag exists (when commits are approved).
 

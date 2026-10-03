@@ -6,7 +6,7 @@ The judge turns a text question into a typed answer with a confidence: Noul (yes
 
 Run `node <plugin>/shared/scripts/judge.mjs --check` with the prototype root as cwd.
 
-- `judge: typesafe` → TypeSafe System One (`jev-latest`). Write the request JSON to `docs/ux/judgments/<NN>-<name>.request.json` and run `node <plugin>/shared/scripts/judge.mjs <request> <response>`.
+- `judge: typesafe` → TypeSafe System One (`jev-latest`). Write the request JSON to `<run folder>/judgments/<NN>-<name>.request.json` (scratch, never committed; the numbers that matter go into the log line or decision record that used them) and run `node <plugin>/shared/scripts/judge.mjs <request> <response>`.
 - `judge: self` → you answer the same questions yourself, in the same shapes, and record them the same way. Mark them `judge: self` in the logs.
 
 Request shape:

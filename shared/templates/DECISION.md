@@ -29,8 +29,10 @@ design-system: [<tokens, components, or patterns affected>]
 | <reason> | <preference | principle | observed | tested> |
 
 ## Evidence
-- Before: <evidence path>
-- After: <evidence path>
+<what was seen, in words; screenshots are not committed>
+- Before: <state name, visible at tag `ux-round-<n>` or commit>
+- After: <state name, visible at tag or commit>
+- Image: <design-system records only: `<NNN>.png`, the one committed "after" image; else omit>
 
 ## Consequences
 - **Design system:** <proposed change, or none>

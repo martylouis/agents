@@ -2,6 +2,8 @@
 
 Details go into files, never into chat. Four files carry the record of a run; feedback rounds add the feedback index and a round report.
 
+**Committed:** `CONTEXT.md`, `PLANS.md`, `RUN-LOG.md`, `REPORT.md` (the latest run; each run overwrites it), `decisions/`, `tasks/`, `states/`, and `feedback/` (item text and indexes). **Scratch, never committed** (`TOOLS.md` → Scratch): screenshots, code facts, judge requests and responses, review reports, and round reports. A prototype is throwaway: the lasting record is the text, and any old state can be rebuilt from its tag.
+
 ## `docs/ux/RUN-LOG.md`
 
 Append-only, one section per task, written when the task changes state:
@@ -46,7 +48,7 @@ Written once, at the end (from `templates/REPORT.md`). It is the one place the p
 
 ## `docs/ux/feedback/`
 
-One file per feedback item, `r<round>/FB-<NNN>.md` (from `templates/FEEDBACK-ITEM.md`). `NNN` counts across all rounds, so an ID is unique in the project. Crops and screenshots from comment mode go next to the item (`FB-<NNN>.png`).
+One file per feedback item, `r<round>/FB-<NNN>.md` (from `templates/FEEDBACK-ITEM.md`). `NNN` counts across all rounds, so an ID is unique in the project. Crops and screenshots from comment mode go into the round's scratch folder (`crops/FB-<NNN>.png`), and the item describes what they show in words.
 
 `INDEX.md` has one row per item. Update the row each time the item's status changes:
 
@@ -59,4 +61,4 @@ One file per feedback item, `r<round>/FB-<NNN>.md` (from `templates/FEEDBACK-ITE
 
 An item is open (`open`, `triaged`, `building`) or closed (`done`, `rejected` with a reason, `deferred`). A round ends only when every item of the round is closed.
 
-`r<round>/ROUND.md` is the round report (from `templates/ROUND-REPORT.md`): the one place the person reviews a feedback round.
+The round report, `ROUND.md` (from `templates/ROUND-REPORT.md`), goes into the round's scratch folder: the one place the person reviews a feedback round. The lasting record of the round is the items, `INDEX.md`, the decisions, and the tag.

@@ -21,7 +21,7 @@ closed-by: <task path and commit, decision record, answer, or reason>
 
 ## Evidence
 
-- <screenshot or crop path, review report path, or none>
+- <what was seen, in words; crop or screenshot path in `docs/ux/.scratch/` while the round is open, or none>
 
 ## Triage
 

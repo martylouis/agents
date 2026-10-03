@@ -25,7 +25,7 @@ The steps below are what `ux-context` does.
 
 ### 1. Stack and commands
 
-Read `package.json`, the lockfile, framework and build config, the router config, and the styling setup. Fill **Stack** and **Commands** in `CONTEXT.md` (from `<plugin>/shared/templates/CONTEXT.md`). Commands are the ones the repo already has: dev (with its URL), lint, and type check or build.
+Read `package.json`, the lockfile, framework and build config, the router config, and the styling setup. Fill **Stack** and **Commands** in `CONTEXT.md` (from `<plugin>/shared/templates/CONTEXT.md`). Commands are the ones the repo already has: dev (with its URL), lint, and type check or build. Scope every formatter or fixer to the prototype's source paths (for example `npx prettier --write src README.md` instead of `bun run format`), so a builder never rewrites `docs/`.
 
 ### 2. Fidelity
 
@@ -56,14 +56,14 @@ Fill **Vocabulary** with exact names read from the installed library files, neve
 
 - **Colors and surfaces:** the library's CSS variables and utility classes (for example its `dist/**/*.css`). List classes (`text-muted`, `bg-elevated`), never categories ("semantic colors").
 - **Components:** the names the library exports, and the props and values the prototype uses.
-- **Icons:** the icon set that is installed (check `package.json` and `node_modules`), with its prefix. An icon set that is not installed is a defect, not a choice.
+- **Icons:** the icon set that is installed (check `package.json` and `node_modules`), with its prefix, and the library's icon component (for example `UIcon`). An icon set that is not installed is a defect, not a choice. A bare `<i class="…">` renders nothing in most icon setups; say so under Forbidden.
 - **Forbidden:** what builders must not write (palette shades, hex, `rgb(`, manual `dark:` color variants), so the review can grep for it.
 
 Hi-fi: also read the design inventory (`docs/ux/DESIGN-INVENTORY.md`), which the dispatching skill gets from `ux-describer` (**Design inventory** template) before it dispatches `ux-context`. Map each color, type style, and component it lists to a library name. A design element with no library match becomes a candidate component (step 6) or a prototype override (step 3).
 
 ### 5. Component patterns
 
-For each library component the plans or the existing screens use, add one pattern to **Component patterns**: 3–8 lines, the smallest correct use, with the props and slots this prototype needs. Read the props from the component's type definitions or source in `node_modules`. Tasks point to these patterns and do not repeat them.
+For each library component the plans or the existing screens use, add one pattern to **Component patterns**: the props this prototype uses, **every slot name** the component has, and 3–8 lines of the smallest correct use. Read props and slots from the component's type definitions or source in `node_modules` (for Vue, the `slots` type or `defineSlots`; for React, the children and render props). Slots caused the most defects in testing: a builder used `#body` on a card that has no such slot, and content in a default slot on an alert that did not render it. Both passed lint and build and rendered blank. Add an **Icons** pattern with the library's icon component. Tasks point to these patterns and do not repeat them.
 
 ### 6. Candidate components
 
@@ -79,7 +79,7 @@ Look for an existing `DESIGN.md` (repo root, `docs/`, `docs/ux/`), for example o
 
 ### 8. Verify
 
-For every name in **Vocabulary** and **Component patterns**, find it in the installed library files (grep the package's `dist/` or exports; for icons, the installed collection). Remove a name that is not found, or list it under "Not verified" with the reason. Write the verify date and the files read.
+For every name in **Vocabulary** and **Component patterns**, including every prop and slot name, find it in the installed library files (grep the package's `dist/`, exports, or type definitions; for icons, the installed collection). Remove a name that is not found, or list it under "Not verified" with the reason. Write the verify date and the files read.
 
 Done when `CONTEXT.md` has no `<placeholder>` left, and every name is verified or listed under "Not verified".
 

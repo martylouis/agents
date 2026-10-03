@@ -9,6 +9,7 @@ fidelity: <lo-fi | hi-fi>
 designs: <folder or none>
 commit: <per-task | none>
 judge: <typesafe | self>
+scratch: <keep-last-3 | keep-all>   # screenshots and reports in docs/ux/.scratch/; never committed
 ```
 
 ## Why

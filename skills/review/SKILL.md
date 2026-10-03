@@ -31,7 +31,9 @@ You review a running prototype in a real browser and report what is broken. You 
 
 ### 1. Tools and server
 
-Follow `<plugin>/shared/TOOLS.md` (scripts, judge for hi-fi, and Dev server). Note the prototype's commit (`git rev-parse --short HEAD`).
+Follow `<plugin>/shared/TOOLS.md` (scripts, judge for hi-fi, file names, scratch cleanup, and Dev server). Record the prototype's commit (`git rev-parse --short HEAD`) and the working tree (`git status --porcelain`): `clean`, or `dirty` with the changed files. A finding in a file with uncommitted changes may come from an unfinished edit, not from the committed code; the report says so.
+
+Create one task-list item per step below (states, observe, look, verdict), so progress shows in place.
 
 ### 2. States
 
@@ -44,10 +46,10 @@ Follow `<plugin>/shared/TOOLS.md` (scripts, judge for hi-fi, and Dev server). No
 
 ### 3. Observe
 
-Create the review folder `docs/ux/reviews/<YYYY-MM-DD>-<scope>/` (scope: `all`, the plan, or the route as a slug). Run, with the prototype root as cwd:
+Create the run folder `docs/ux/.scratch/<YYYY-MM-DD>-review-<scope>/` (scope: `all`, the plan, or the route as a slug). It is never committed. Run, with the prototype root as cwd:
 
 ```bash
-node <plugin>/shared/scripts/observe.mjs <states file> docs/ux/reviews/<folder>/evidence [state ...]
+node <plugin>/shared/scripts/observe.mjs <states file> <run folder>/evidence [state ...]
 ```
 
 Read the summary lines (`ok` or `CHECK`) and `evidence/FACTS.md`.
@@ -68,9 +70,9 @@ When a design-quality skill is installed (for example Impeccable's `audit` or `c
 
 Use the verdicts in `<plugin>/shared/REVIEW.md`: **ok**, **blocker** (broken flow, missing state, step error, console error, design mismatch), or **polish**. For each blocker, find the cause in the code (file and line) when you can, without changing it.
 
-Write one feedback item per finding to `docs/ux/reviews/<folder>/items/<NN>-<slug>.md` from `<plugin>/shared/templates/FEEDBACK-ITEM.md`, with `id: <NN>` (the review-local number; `feedback` gives the project ID), `source: reviewer`, `from: review <folder>`, `round: —`, `kind: bug` (or `change` for a design mismatch that works), the severity, the target state and element, `status: open`, and the evidence paths.
+Write one feedback item per finding to `<run folder>/items/<NN>-<slug>.md` from `<plugin>/shared/templates/FEEDBACK-ITEM.md`, with `id: <NN>` (the review-local number; `feedback` gives the project ID), `source: reviewer`, `from: review <run folder name>`, `round: —`, `kind: bug` (or `change` for a design mismatch that works), the severity, the target state and element, `status: open`, and what the evidence shows, in words, with its path.
 
-Write `docs/ux/reviews/<folder>/REVIEW.md` from `<plugin>/shared/templates/REVIEW-REPORT.md`.
+Write `<run folder>/REVIEW.md` from `<plugin>/shared/templates/REVIEW-REPORT.md`.
 
 ### 8. End
 
@@ -87,6 +89,7 @@ Review — 31 states · 2 blockers · 4 polish
 [!] cart-drawer-empty — "Checkout" button enabled with an empty cart
 [!] checkout-phone — summary card overflows at 375 px
 [~] login-dark — focus ring hard to see
-Report: docs/ux/reviews/2026-10-03-all/REVIEW.md
-Next: /ux-orch:feedback docs/ux/reviews/2026-10-03-all   (turns findings into fixes)
+Tree: clean at a1b2c3d
+Report: docs/ux/.scratch/2026-10-03-review-all/REVIEW.md
+Next: /ux-orch:feedback docs/ux/.scratch/2026-10-03-review-all   (turns findings into fixes)
 ```

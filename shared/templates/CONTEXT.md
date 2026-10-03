@@ -31,7 +31,7 @@ Stable facts for this prototype. Plans and tasks refer to this file and do not r
 | Purpose | Command |
 | --- | --- |
 | Dev server | `<command>` → `<url>` |
-| Checks (builders run these) | `<lint>`, `<build or type check>` |
+| Checks (builders run these) | `<lint>`, `<build or type check>`; a formatter or fixer only on source paths, e.g. `npx prettier --write src README.md`, never on `docs/` |
 
 ## Vocabulary
 
@@ -52,8 +52,17 @@ One pattern per library component this prototype uses. Tasks point here (`CONTEX
 
 ### `<Component>`
 
+- Props: `<the props this prototype uses, with allowed values>`
+- Slots: `<every slot name from the type definitions, e.g. header, default, footer; or "none">`
+
 ```<lang>
 <3–8 lines: the smallest correct use, with the props and slots this prototype uses>
+```
+
+### Icons
+
+```<lang>
+<the library's icon component with the installed prefix, e.g. <UIcon name="i-lucide-shopping-cart" />; never a bare <i class="…">>
 ```
 
 ## Design system
