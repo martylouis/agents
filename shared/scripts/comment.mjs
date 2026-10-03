@@ -2,8 +2,9 @@
 // clicks "Comment", clicks an element, and types a comment. Each comment becomes a feedback
 // item with the route, the element, a cropped screenshot, and the text.
 //
-// Usage: node comment.mjs <url> <round dir> [--round N]
-//   <round dir>   for example docs/ux/feedback/r3; items are written as FB-<NNN>.md + FB-<NNN>.png
+// Usage: node comment.mjs <url> <round dir> [--round N] [--crops <dir>]
+//   <round dir>   for example docs/ux/feedback/r3; items are written as FB-<NNN>.md
+//   --crops <dir> where the cropped screenshots go (default: <round dir>); use the round's scratch folder
 //   --round N     the round number written into each item (default: the number in <round dir>)
 //
 // IDs continue from the highest FB-<NNN> found under the parent of <round dir>.
@@ -19,9 +20,10 @@ const flag = (name) => {
   return i < 0 ? undefined : args.splice(i, 2)[1]
 }
 const roundArg = flag('--round')
+const cropArg = flag('--crops')
 const [url, roundDir] = args
 if (!url || !roundDir) {
-  console.error('Usage: node comment.mjs <url> <round dir> [--round N]')
+  console.error('Usage: node comment.mjs <url> <round dir> [--round N] [--crops <dir>]')
   process.exit(1)
 }
 const round = Number(roundArg ?? basename(roundDir).replace(/\D/g, '')) || 1
@@ -39,6 +41,8 @@ function highestId(dir) {
 }
 let next = highestId(dirname(roundDir)) + 1
 mkdirSync(roundDir, { recursive: true })
+const cropDir = cropArg ?? roundDir
+mkdirSync(cropDir, { recursive: true })
 
 // Runs in the page. Shadow DOM keeps the overlay's styles away from the prototype's.
 const overlay = () => {
@@ -151,7 +155,8 @@ await context.exposeBinding('uxCommentSave', async ({ page }, item) => {
   const x = Math.max(0, item.rect.x - pad)
   const y = Math.max(0, item.rect.y - pad)
   const clip = { x, y, width: Math.max(1, Math.min(vp.width - x, item.rect.width + 2 * pad)), height: Math.max(1, Math.min(vp.height - y, item.rect.height + 2 * pad)) }
-  await page.screenshot({ path: join(roundDir, `${id}.png`), clip }).catch(() => page.screenshot({ path: join(roundDir, `${id}.png`) }))
+  const crop = join(cropDir, `${id}.png`)
+  await page.screenshot({ path: crop, clip }).catch(() => page.screenshot({ path: crop }))
   const q = (s) => JSON.stringify(s)
   writeFileSync(
     join(roundDir, `${id}.md`),
@@ -179,7 +184,7 @@ await context.exposeBinding('uxCommentSave', async ({ page }, item) => {
       '',
       '## Evidence',
       '',
-      `- Crop: \`${id}.png\` (viewport ${vp.width}×${vp.height})`,
+      `- Crop: \`${crop}\` (viewport ${vp.width}×${vp.height}; scratch, not committed)`,
       `- Route: \`${item.route}\``,
       `- Element: ${item.role} "${item.name}", selector \`${item.selector}\``,
       '',
