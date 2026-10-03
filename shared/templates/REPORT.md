@@ -25,5 +25,5 @@
 
 ## Evidence
 
-- Screenshots and code facts: `evidence/`
+- Screenshots and code facts: `docs/ux/.scratch/<run folder>/` (local only, never committed; rebuild any state from the branch or tag)
 - Run log: `RUN-LOG.md`

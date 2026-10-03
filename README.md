@@ -85,7 +85,7 @@ plans/ + designs/ (optional)
 - **The plan is the contract.** The orchestrator does not choose where the prototype lives or what it is built with. Your plans and your repo decide that.
 - **Strong model plans, small model builds.** The orchestrator (your session model) writes exact tasks. Builders run on Haiku by default and on Sonnet for library setup or research. Each builder starts with a fresh context and reads only `CONTEXT.md`, its task, and the files that the task names.
 - **Exact vocabulary.** `CONTEXT.md` lists the real class names, component names, and icon prefixes. Small models follow exact names well and drift from categories.
-- **Evidence, not claims.** Builders have no browser, so their reports are claims. The orchestrator runs each state in Chromium, records the accessibility tree and console errors, and looks at the screenshots.
+- **Evidence, not claims.** Builders run only a smoke check (do the named elements render?), so their reports are claims. The orchestrator runs each state in Chromium, records the accessibility tree and console errors, and looks at the screenshots.
 - **Decisions are recorded, not asked.** The orchestrator decides during the run and writes each decision to a log, or to a full decision record when it sets a pattern. You review all decisions in one report.
 
 ## Fidelity
@@ -147,7 +147,7 @@ Jev reads text, not images. For visual checks, the review first turns each state
 ### What it costs and records
 
 - In the first test, each request took **360–550 ms** and used **800–5,200 input tokens** and **under 210 output tokens**. All independent questions over the same evidence go in one request.
-- Every request and response is saved in `docs/ux/judgments/` (`<NN>-<name>.request.json`, `.response.json`), and each decision that used the judge records its numbers, for example `auto (judge: violates 0.93, risk 2.17)`. These records let you check later how often the judge agreed with you, and tune the thresholds.
+- Every request and response is saved in the run's scratch folder (`judgments/<NN>-<name>.request.json`, `.response.json`; not committed), and each decision that used the judge records its numbers, for example `auto (judge: violates 0.93, risk 2.17)`. These records let you check later how often the judge agreed with you, and tune the thresholds.
 
 ## Install
 
@@ -221,7 +221,7 @@ The library reading and name checks run in the `ux-context` agent (Sonnet), so t
 ```
 
 1. It reads everything and sends one start confirmation. Reply `go`, or change a line.
-2. It shows a checklist and updates it as tasks finish. It stops only for a contradiction in the plans, a destructive action, or a broken environment.
+2. Progress shows in Claude Code's task list, one item per task, updated in place. Chat gets one line only when a task is blocked. It stops only for a contradiction in the plans, a destructive action, or a broken environment.
 3. At the end, it writes `docs/ux/REPORT.md` and gives you its path.
 
 ### Review
@@ -234,14 +234,14 @@ The library reading and name checks run in the `ux-context` agent (Sonnet), so t
 /ux-orch:review --audit                 # add a design-quality pass, when an audit skill is installed
 ```
 
-It changes no prototype code. It shows one line per problem and writes `docs/ux/reviews/<date>-<scope>/REVIEW.md`, with one feedback item per finding. With no states yet, it discovers them from the routes and saves them for the next review.
+It changes no prototype code. It shows one line per problem and writes `docs/ux/.scratch/<date>-review-<scope>/REVIEW.md`, with one feedback item per finding. The report header records the commit and whether the working tree had uncommitted changes. With no states yet, it discovers them from the routes and saves them for the next review.
 
 ### Feedback
 
 ```
 /ux-orch:feedback                                  # paste or type notes in chat
 /ux-orch:feedback notes/stakeholder-review.md      # meeting notes or test notes
-/ux-orch:feedback docs/ux/reviews/2026-10-03-all   # findings from /ux-orch:review
+/ux-orch:feedback docs/ux/.scratch/2026-10-03-review-all   # findings from /ux-orch:review
 /ux-orch:feedback --comment                        # click elements in the prototype and comment
 /ux-orch:feedback --tweak "Rename 'Use demo account' to 'Try the demo'"
 ```
@@ -268,7 +268,11 @@ Plans can be detailed (numbered steps, files) or short. The orchestrator asks on
 
 ## What it writes
 
-Plans go into `docs/plans/` (only `/ux-orch:plan` writes there; after approval, the plans are yours). Everything else goes into `docs/ux/` in the prototype repo:
+Plans go into `docs/plans/` (only `/ux-orch:plan` writes there; after approval, the plans are yours). Everything else goes into `docs/ux/` in the prototype repo.
+
+A prototype is throwaway, so only text is committed: the decisions and their reasons, the feedback, the tasks, and the latest report. Screenshots, code facts, judge files, and review and round reports go into `docs/ux/.scratch/`, which git ignores. Each skill keeps the last 3 scratch folders (`scratch:` in `PLANS.md` → Run settings) and deletes older ones, except a feedback round that is still open. Any earlier state can be rebuilt: check out its tag (`ux-round-N`) and run `/ux-orch:review`.
+
+All doc files have UPPERCASE names. A skill that finds an older lowercase file (`context.md`, `plans.md`) renames it.
 
 ```
 docs/plans/
@@ -282,25 +286,24 @@ docs/ux/
 ├── PLANS.md              plan index, run settings, done rules
 ├── BUILDER-RULES.md      rules every builder follows (edit to tune builders)
 ├── RUN-LOG.md            one section per task: builder cost, review result, lessons
-├── REPORT.md             the end-of-run review: checklist, blocked items, decisions
+├── REPORT.md             the latest run's report: checklist, blocked items, decisions
 ├── tasks/<plan>/         task files; finished tasks move to done/ with a Result section
 ├── states/<plan>.json    browser states the review runs (discovered.json from review)
-├── evidence/<plan>-rN/   screenshots, per-state code facts, FACTS.md
-├── reviews/<date>-<scope>/
-│   ├── REVIEW.md         review report: verdict per state, blockers, polish
-│   ├── evidence/         screenshots and code facts
-│   └── items/            one feedback item per finding
 ├── feedback/
 │   ├── INDEX.md          one row per feedback item, with its status
 │   ├── DEFERRED.md       new ideas, kept for later plans
 │   ├── tweaks/           items handled as tweaks
-│   └── rN/               items of round N (FB-NNN.md, crops), ROUND.md report
+│   └── rN/               items of round N (FB-NNN.md)
 ├── tokens/               prototype tokens (only when the project has no token format)
-├── judgments/            judge requests and responses (TypeSafe)
-└── decisions/
-    ├── INDEX.md          full decision records
-    ├── LOG.md            small decisions and accepted assumptions
-    └── NNN-slug.md       full decision records
+├── decisions/
+│   ├── INDEX.md          full decision records
+│   ├── LOG.md            small decisions and accepted assumptions
+│   └── NNN-slug.md       full decision records (a design-system record may add NNN.png)
+├── .gitignore            contains .scratch/
+└── .scratch/             NOT committed; one folder per run, last 3 kept
+    ├── 2026-10-03-build-all/         evidence/<plan>-rN/ (PNG + FACTS.md), judgments/
+    ├── 2026-10-03-review-all/        REVIEW.md, items/, evidence/
+    └── 2026-10-04-feedback-r2/       ROUND.md, crops/, evidence/, judgments/
 ```
 
 ## Plugin contents
@@ -309,7 +312,7 @@ docs/ux/
 ux-orch/
 ├── .claude-plugin/        plugin.json, marketplace.json
 ├── agents/
-│   ├── ux-builder.md      haiku · executes one task file
+│   ├── ux-builder.md      haiku · executes one task file, runs its smoke check
 │   ├── ux-context.md      sonnet · builds and verifies CONTEXT.md from the installed library
 │   └── ux-describer.md    haiku · neutral text descriptions of images (states, design inventory)
 ├── skills/
@@ -325,7 +328,8 @@ ux-orch/
     ├── REVIEW.md, JUDGE.md, RECORDS.md
     ├── templates/         CONTEXT, DESIGN, PLAN, PLANS, TASK, DECISION, REPORT,
     │                      REVIEW-REPORT, FEEDBACK-ITEM, ROUND-REPORT, BUILDER-RULES
-    └── scripts/           observe.mjs (browser states), discover.mjs (state discovery),
+    └── scripts/           observe.mjs (browser states), smoke.mjs (builder smoke check),
+                           discover.mjs (state discovery),
                            comment.mjs (comment overlay), tokens.mjs (token diff),
                            judge.mjs (TypeSafe)
 ```

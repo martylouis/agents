@@ -1,6 +1,7 @@
 ---
 plan: <plan file> (steps <n–m>)
 depends-on: [<task numbers>]
+files: [<every file this task may create or change>]
 model: <haiku | sonnet>
 fidelity: <lo-fi | hi-fi>
 round: 1
@@ -35,6 +36,7 @@ design: <design image path, hi-fi only>
 
 ## Builder checks
 - [ ] <check commands from CONTEXT.md> pass.
+- [ ] Smoke: `node <plugin>/shared/scripts/smoke.mjs <url> <route> "<role>:<name>" …` prints no `MISSING` or `ERROR` line. <screen tasks only: list the elements that must render, by role and name, e.g. "button:Pay now" "heading:Your cart">
 
 ## Reviewer checks (browser)
 - <one line per state and interaction; these become review states>

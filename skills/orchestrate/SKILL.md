@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Build a UX prototype from decided plans (and optional designs) with builder sub-agents, browser review, and decision records. One confirmation at the start, a checklist while it runs, one report at the end.
+description: Build a UX prototype from decided plans (and optional designs) with builder sub-agents, browser review, and decision records. One confirmation at the start, live progress in the task list, one report at the end.
 argument-hint: <plans folder> [designs folder]
 disable-model-invocation: true
 ---
@@ -13,10 +13,10 @@ You are the **orchestrator**. You turn the person's plans into small, exact task
 
 ## Voice
 
-Chat carries only three things:
+Progress shows in the harness's task list (in Claude Code, the live checklist with a spinner), one item per task, updated in place (`<plugin>/shared/RUN.md` → Progress). Chat carries only:
 
 1. The **start confirmation** (step 2).
-2. The **checklist** (`<plugin>/shared/RUN.md` → Checklist), with the plan as the header line, re-posted each time a task changes state.
+2. One line per **blocked** task.
 3. The **final summary**: one paragraph and the path to `REPORT.md`.
 
 Everything else (findings, causes, judge numbers, reasons) goes into the files in `docs/ux/`.
@@ -29,9 +29,9 @@ The run continues until every task is done or blocked. Stop and ask the person o
 
 ### 0. Tools
 
-Follow `<plugin>/shared/TOOLS.md`. This skill needs `observe.mjs` and the judge.
+Follow `<plugin>/shared/TOOLS.md`: tools, file names (rename old lowercase files), and scratch (cleanup, then create the run folder `docs/ux/.scratch/<date>-build-<scope>/`). This skill needs `observe.mjs`, `smoke.mjs`, and the judge.
 
-Done when observe and judge are both runnable.
+Done when observe, smoke, and judge are runnable and the run folder exists.
 
 ### 1. Intake
 
@@ -54,6 +54,7 @@ UX Orchestrator — ready
 - Fidelity: lo-fi (no designs) · framework: Nuxt UI
 - Why (inferred): <one sentence>
 - Judge: typesafe
+- Scratch: keep last 3 runs (41 MB now) · committed: text records only, no screenshots
 - Loose plans: 02 (no states for the cart drawer) — `/ux-orch:plan docs/plans/02-products-and-cart.md` can tighten it, or I fill the gaps and log each one
 - Commits: one per task on branch `ux/<name>` — OK?
 Reply "go", or change any line.
@@ -66,6 +67,8 @@ This is the only question of the run. Record the answers in `PLANS.md` → Run s
 For each plan, in dependency order, write task files from `<plugin>/shared/templates/TASK.md` into `docs/ux/tasks/<NN-plan-slug>/<NN>-<slug>.md`:
 
 - One task = one screen, or one piece of logic, or one setup step. A builder finishes it in one pass.
+- List every file the task may create or change in `files:`. Two tasks that share a file never run in parallel.
+- Screen tasks get a **Smoke** check: the route and the elements that must render, by role and name, with the absolute path of `smoke.mjs` filled in.
 - Name every component, file, and text exactly. For each named component, point to its pattern in `CONTEXT.md` → Component patterns (add it there when it is missing); builders replace named components with look-alikes when they get only a name.
 - Split **Builder checks** (commands) from **Reviewer checks** (browser states). Builders report only the first.
 - Plans with **Variants** get one task set per variant, with the variant prefix (`A-`, `B-`).
@@ -79,7 +82,7 @@ Run the tasks with `<plugin>/shared/RUN.md`:
 
 - Tasks: every task file in `docs/ux/tasks/`, in dependency order.
 - Commit message: `feat(ux): <task title>`.
-- Checklist header: the plan's number and title.
+- Run folder: the one from step 0.
 
 When a plan's last task passes, run the plan's own check list (if it has one) as reviewer states. Then mark the plan done in `PLANS.md`.
 
@@ -87,6 +90,6 @@ Done when every task is in `done/` or blocked.
 
 ### 5. Report
 
-Write `docs/ux/REPORT.md` from `<plugin>/shared/templates/REPORT.md`: the checklist, blocked items with what is needed, decisions to review ranked by significance, polish not done. Add `## Lessons` to `RUN-LOG.md`. Stop the dev server if it still runs and this skill started it.
+Write `docs/ux/REPORT.md` from `<plugin>/shared/templates/REPORT.md` (it replaces the previous run's report): the checklist, blocked items with what is needed, decisions to review ranked by significance, polish not done. Add `## Lessons` to `RUN-LOG.md`. Stop the dev server if it still runs and this skill started it.
 
 Reply with the final summary: tasks done and blocked, the branch, and the path to `REPORT.md`. End with the next step: `/ux-orch:review` before a demo, or `/ux-orch:feedback` with the notes from one.

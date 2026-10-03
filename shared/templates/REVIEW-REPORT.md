@@ -4,7 +4,7 @@
 
 <N> states · <B> blockers · <P> polish · fidelity <lo-fi | hi-fi> · judge <typesafe | self | not used>
 
-- Prototype: <url>, commit <short hash>
+- Prototype: <url>, commit <short hash>, working tree <clean | dirty (N files): list them>
 - States: <states files used; "discovered" when this review discovered them>
 
 ## States
@@ -19,8 +19,8 @@
 
 - Seen: <what the screenshot and the code facts show>
 - Expected: <from the plan, the states file, or the design>
-- Cause: <file and line when known, or "not found">
-- Evidence: `<state>.png`, `<state>.md`
+- Cause: <file and line when known, or "not found">; <"file has uncommitted changes" when the tree is dirty and the file is one of them>
+- Evidence: `evidence/<state>.png`, `evidence/FACTS.md` → `## State: <state>`
 - Feedback item: `items/<NN>-<slug>.md`
 
 ## Polish
