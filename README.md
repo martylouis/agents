@@ -35,7 +35,7 @@ Each plugin has its own [semver](https://semver.org) version. It lives in one pl
 - **Minor** (`0.2.1` → `0.3.0`): new skills, agents, or options that keep old behavior.
 - **Major** (`0.x` → `1.0.0`): changes that break how people use the plugin.
 
-Installed copies are cached by version, so raise the version in any commit that changes a plugin. Commits that touch only the README or other repo files need no bump.
+Installed copies are cached by version, so raise the version in any commit that changes a plugin, and add its lines to the plugin's `CHANGELOG.md` under that version. Commits that touch only the README or other repo files need no bump.
 
 ## License
 

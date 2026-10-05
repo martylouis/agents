@@ -3,15 +3,15 @@
 // item with the route, the element, a cropped screenshot, and the text.
 //
 // Usage: node comment.mjs <url> <round dir> [--round N] [--crops <dir>]
-//   <round dir>   for example docs/ux/feedback/r3; items are written as FB-<NNN>.md
+//   <round dir>   for example docs/ux/.scratch/2026-10-04-feedback-r3/items; items are written as FB-<NNN>.md
 //   --crops <dir> where the cropped screenshots go (default: <round dir>); use the round's scratch folder
 //   --round N     the round number written into each item (default: the number in <round dir>)
 //
-// IDs continue from the highest FB-<NNN> found under the parent of <round dir>.
+// IDs continue from the highest FB-<NNN> found in docs/ux/HISTORY.md (cwd = prototype root) or under the parent of <round dir>.
 // The overlay lives only in this browser window. It never changes the prototype's code.
 // The script ends when the person closes the window; it prints one line per item.
 import { chromium } from 'playwright'
-import { writeFileSync, mkdirSync, readdirSync, existsSync, statSync } from 'node:fs'
+import { writeFileSync, mkdirSync, readdirSync, readFileSync, existsSync, statSync } from 'node:fs'
 import { join, dirname, basename } from 'node:path'
 
 const args = process.argv.slice(2)
@@ -39,7 +39,13 @@ function highestId(dir) {
   }
   return max
 }
-let next = highestId(dirname(roundDir)) + 1
+function historyId() {
+  const file = join('docs', 'ux', 'HISTORY.md')
+  if (!existsSync(file)) return 0
+  const ids = [...readFileSync(file, 'utf8').matchAll(/FB-(\d+)/g)].map((m) => Number(m[1]))
+  return Math.max(0, ...ids)
+}
+let next = Math.max(highestId(dirname(roundDir)), historyId()) + 1
 mkdirSync(roundDir, { recursive: true })
 const cropDir = cropArg ?? roundDir
 mkdirSync(cropDir, { recursive: true })

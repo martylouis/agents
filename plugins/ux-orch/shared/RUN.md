@@ -2,7 +2,7 @@
 
 The loop that builds task files with `ux-builder` sub-agents and reviews each result. `orchestrate` (step 4) and `feedback` both use it. The calling skill gives three inputs:
 
-- **Tasks:** the task files to run, with `depends-on` and `model` in their frontmatter.
+- **Tasks:** the task files to run (in `<run folder>/tasks/`), with `depends-on` and `model` in their frontmatter.
 - **Commit message:** the calling skill's format (for example `feat(ux): <task title>`).
 - **Run folder:** the scratch folder for this run (`TOOLS.md` → Scratch).
 

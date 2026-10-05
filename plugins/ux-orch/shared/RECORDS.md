@@ -1,10 +1,17 @@
 # Records
 
-Details go into files, never into chat. Four files carry the record of a run; feedback rounds add the feedback index and a round report.
+Details go into files, never into chat. A prototype is throwaway: git keeps the few records that explain a decision, and the run folder keeps the rest. Any old state can be rebuilt from its tag (`ux-round-N`).
 
-**Committed:** `CONTEXT.md`, `PLANS.md`, `RUN-LOG.md`, `REPORT.md` (the latest run; each run overwrites it), `decisions/`, `tasks/`, `states/`, and `feedback/` (item text and indexes). **Scratch, never committed** (`TOOLS.md` → Scratch): screenshots, code facts, judge requests and responses, review reports, and round reports. A prototype is throwaway: the lasting record is the text, and any old state can be rebuilt from its tag.
+| Group | Where |
+| --- | --- |
+| `CONTEXT.md`, `BUILDER-RULES.md`, `PLANS.md`, `docs/plans/`, `states/*.json` | Committed |
+| `HISTORY.md` (one row per feedback item) and `decisions/LOG.md` (one line per small decision) | Committed |
+| Full decision records of type `design-system`, and `decisions/INDEX.md` | Committed |
+| Item files, task files, `RUN-LOG.md`, `REPORT.md`, `ROUND.md`, `REVIEW.md`, other full decision records, screenshots, code facts, judge files | Run folder: `docs/ux/.scratch/<run>/` (`TOOLS.md` → Scratch). Never committed. |
 
-## `docs/ux/RUN-LOG.md`
+Records in a run folder link to each other and to committed records. A committed record never links into `.scratch/`.
+
+## `<run folder>/RUN-LOG.md`
 
 Append-only, one section per task, written when the task changes state:
 
@@ -20,7 +27,7 @@ Close the log with a `## Lessons` section: what the next run should do different
 
 ## `docs/ux/decisions/LOG.md`
 
-One table row per small decision and accepted assumption:
+Committed. One table row per small decision and accepted assumption:
 
 ```markdown
 | Date | Round | Plan/task | Decided by | Decision |
@@ -30,35 +37,44 @@ One table row per small decision and accepted assumption:
 
 ## Full decision records
 
-A decision gets a full record (from `templates/DECISION.md`) when its significance score is ≥ 2: it sets a pattern later screens follow, or it changes the design system. File: `docs/ux/decisions/<NNN>-<slug>.md`, status `proposed`, `decided-by: auto (…)`. Give every reason an evidence level: `preference`, `principle`, `observed`, or `tested`.
+A decision gets a full record (from `templates/DECISION.md`) when its significance score is ≥ 2: it sets a pattern later screens follow, or it changes the design system. Status `proposed`, `decided-by: auto (…)`. Give every reason an evidence level: `preference`, `principle`, `observed`, or `tested`.
 
-Index every full record in `docs/ux/decisions/INDEX.md`:
+- Type `design-system`: write `docs/ux/decisions/<NNN>-<slug>.md` (committed), because the record goes to the real design system.
+- Any other type: write `<run folder>/decisions/<NNN>-<slug>.md`. The `LOG.md` line for it carries the summary.
+
+`NNN` counts across all records. Index every full record in `docs/ux/decisions/INDEX.md` (committed; the next `NNN` is the highest ID there plus one). Link only the committed records:
 
 ```markdown
 | ID | Type | Summary | Status |
 | --- | --- | --- | --- |
-| [001](001-validate-on-submit-then-live.md) | design-change | Form errors after the first submit, then live. | proposed |
+| [001](001-button-radius.md) | design-system | Buttons use `rounded-md`. | proposed |
+| 002 | design-change | Form errors after the first submit, then live. | proposed |
 ```
 
 When a later task follows a full record, add the record ID to that task's frontmatter and to the commit body, so the person can see how far a decision spread.
 
-## `docs/ux/REPORT.md`
+## `<run folder>/REPORT.md`
 
 Written once, at the end (from `templates/REPORT.md`). It is the one place the person reviews the run.
 
-## `docs/ux/feedback/`
+## `docs/ux/HISTORY.md`
 
-One file per feedback item, `r<round>/FB-<NNN>.md` (from `templates/FEEDBACK-ITEM.md`). `NNN` counts across all rounds, so an ID is unique in the project. Crops and screenshots from comment mode go into the round's scratch folder (`crops/FB-<NNN>.png`), and the item describes what they show in words.
-
-`INDEX.md` has one row per item. Update the row each time the item's status changes:
+Committed. One row per feedback item, the only committed record of feedback. It replaces `feedback/INDEX.md`; no other index of items exists. Update the row each time the item's status changes. `Text` is the item's text, quoted, on one line.
 
 ```markdown
-| ID | Round | Source | Kind | Target | Status | Closed by |
-| --- | --- | --- | --- | --- | --- | --- |
-| [FB-004](r2/FB-004.md) | 2 | user-test | bug | checkout-phone | done | task 03/F2-01, commit abc1234 |
-| [FB-005](r2/FB-005.md) | 2 | stakeholder | idea | — | deferred | new idea; in DEFERRED.md |
+| ID | Round | Text | Status | Closed by |
+| --- | --- | --- | --- | --- |
+| FB-004 | 2 | "Checkout button is hidden on phones" | done | commit abc1234 |
+| FB-005 | 2 | "Add a dark mode" | deferred | idea; no plan yet |
+| FB-006 | tweak | "Rename 'Use demo account' to 'Try the demo'" | done | commit def5678 |
 ```
 
-An item is open (`open`, `triaged`, `building`) or closed (`done`, `rejected` with a reason, `deferred`). A round ends only when every item of the round is closed.
+Round is a number, or `tweak`. `NNN` counts across all rows, so an ID is unique in the project. A status is open (`open`, `triaged`, `building`) or closed (`done`, `rejected` with a reason, `deferred`). A round ends only when every item of the round is closed. `scratch-clean.mjs` keeps the folder of a round that has open rows.
 
-The round report, `ROUND.md` (from `templates/ROUND-REPORT.md`), goes into the round's scratch folder: the one place the person reviews a feedback round. The lasting record of the round is the items, `INDEX.md`, the decisions, and the tag.
+## `<run folder>/items/`
+
+One file per item of a round, `FB-<NNN>.md` (from `templates/FEEDBACK-ITEM.md`), with the evidence and the triage numbers. Tweaks write no item file. Crops and screenshots from comment mode go into `<run folder>/crops/FB-<NNN>.png`; the item describes what they show in words.
+
+## `<run folder>/ROUND.md`
+
+The round report (from `templates/ROUND-REPORT.md`): the one place the person reviews a feedback round. The lasting record of the round is its `HISTORY.md` rows, the `LOG.md` lines, the design-system records, and the tag.
