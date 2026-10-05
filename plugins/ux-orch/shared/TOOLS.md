@@ -50,7 +50,7 @@ Cleanup keeps every `-legacy` folder and does not count it in the newest N, beca
 Before 0.4.0, small decisions went to `docs/ux/decisions/LOG.md` and full records to `docs/ux/decisions/INDEX.md`. When `docs/ux/decisions/LOG.md` exists, do this once, before the skill writes any decision row (no confirmation needed; it is a rename):
 
 1. `git mv docs/ux/decisions/LOG.md docs/ux/DECISIONS.md`, and put the template's headings around the table (`<plugin>/shared/templates/DECISIONS.md`).
-2. Add the `ID` column (`—` for a small decision), and one row for each record that `decisions/INDEX.md` lists. Add each committed `design-system` record to the design-system list.
+2. Add the `ID` column (`—` for a small decision), and one row for each record that `decisions/INDEX.md` lists. Add a row to the design-system list only for a record file in `decisions/` (type `design-system`); an ID with no such file stays in the log table only.
 3. Remove `decisions/INDEX.md` (`git rm`). Leave the `decisions/` folder only when it holds `<NNN>-<slug>.md` records.
 
 Done when `docs/ux/DECISIONS.md` exists and `decisions/LOG.md` and `decisions/INDEX.md` do not. Commit it with the skill's next records.
