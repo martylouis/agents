@@ -6,7 +6,7 @@ Every task is reviewed before it moves to `done/`. The `review` skill uses the s
 
 Run the cheapest check that can decide, then the next:
 
-1. **Builder Result.** Read it. Every assumption goes to triage (`JUDGE.md` → assumption triage). A blocking question is a blocker. A `MISSING` or `ERROR` line in the smoke output is a blocker. Every reviewer check must read `not checked (reviewer)`; any other wording there ("pass", "Acceptance: pass") is a broken rule: log it in `RUN-LOG.md` under the task, and do not count it as evidence.
+1. **Builder Result.** Read it. Every assumption goes to triage (`JUDGE.md` → assumption triage). A blocking question is a blocker. A `MISSING` or `ERROR` line in the smoke output is a blocker. Every reviewer check must read `not checked (reviewer)`; any other wording there ("pass", "Acceptance: pass") is a broken rule: log it in `<run folder>/RUN-LOG.md` under the task, and do not count it as evidence.
 2. **Code read.** Read the changed files (`git diff` against the commit before the task), and compare them with the task's `files:` list. A file outside it needs an assumption that explains it; a change to auth, route guards, or stores outside the list is a blocker, even with an assumption, because builders must never change the app to make a check pass. Look for: components the task named but the code does not use, names outside the `CONTEXT.md` vocabulary (grep for palette shades, hex, `rgb(`, `dark:` color variants), icons from a set that is not installed or written as a bare `<i class="…">` instead of the library's icon component, slots or events or props that the component does not have (check them against `CONTEXT.md` → Component patterns).
 3. **Checks.** Run the check commands from `CONTEXT.md` yourself.
 4. **Browser** (screen tasks and routing tasks). Write the states file, run `observe.mjs`, read the summary lines.
@@ -61,6 +61,6 @@ A step error is first a question about the states file, then about the app. Look
 
 - **Pass:** every builder check and reviewer check holds, and the screenshots show nothing broken.
 - **Blocker:** broken flow, missing state, failed check, a step error that is the app's (see Step errors), a console error, native validation blocking a form, or (hi-fi) a design mismatch. → fix (`RUN.md` → When a builder returns). The `review` skill builds nothing: it writes a feedback item instead.
-- **Polish:** anything else. → one line in `RUN-LOG.md` under "Polish", then pass.
+- **Polish:** anything else. → one line in `<run folder>/RUN-LOG.md` under "Polish", then pass.
 
-Write the verdict, and every blocker with its cause, to `RUN-LOG.md`.
+Write the verdict, and every blocker with its cause, to `<run folder>/RUN-LOG.md`.

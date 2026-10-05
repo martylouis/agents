@@ -77,7 +77,7 @@ plans/ + designs/ (optional)
         │                 ▼
         │              done/ + run log + decision log + commit
         ▼
- 5. Report ─────────── docs/ux/REPORT.md                                       ◄── you
+ 5. Report ─────────── <run folder>/REPORT.md                                  ◄── you
 ```
 
 ### Main ideas
@@ -225,7 +225,7 @@ The library reading and name checks run in the `ux-context` agent (Sonnet), so t
 
 1. It reads everything and sends one start confirmation. Reply `go`, or change a line.
 2. Progress shows in Claude Code's task list, one item per task, updated in place. Chat gets one line only when a task is blocked. It stops only for a contradiction in the plans, a destructive action, or a broken environment.
-3. At the end, it writes `docs/ux/REPORT.md` and gives you its path.
+3. At the end, it writes `REPORT.md` into the run folder in `docs/ux/.scratch/` and gives you its path.
 
 ### Review
 
@@ -273,7 +273,7 @@ Plans can be detailed (numbered steps, files) or short. The orchestrator asks on
 
 Plans go into `docs/plans/` (only `/ux-orch:plan` writes there; after approval, the plans are yours). Everything else goes into `docs/ux/` in the prototype repo.
 
-A prototype is throwaway, so only text is committed: the decisions and their reasons, the feedback, the tasks, and the latest report. Screenshots, code facts, judge files, and review and round reports go into `docs/ux/.scratch/`, which git ignores. Each skill keeps the last 3 scratch folders (`scratch:` in `PLANS.md` → Run settings) and deletes older ones, except a feedback round that is still open. Any earlier state can be rebuilt: check out its tag (`ux-round-N`) and run `/ux-orch:review`.
+A prototype is throwaway, so git keeps only what explains the prototype: context, plans, states, `HISTORY.md` (one row per feedback item), the decision log, and design-system decision records. Item files, tasks, run logs, reports, screenshots, code facts, and judge files go into `docs/ux/.scratch/`, which git ignores. Each skill keeps the last 3 scratch folders (`scratch:` in `PLANS.md` → Run settings) and deletes older ones, except a feedback round that is still open. Any earlier state can be rebuilt: check out its tag (`ux-round-N`) and run `/ux-orch:review`.
 
 All doc files have UPPERCASE names. A skill that finds an older lowercase file (`context.md`, `plans.md`) renames it.
 
@@ -288,25 +288,18 @@ docs/ux/
 ├── DESIGN-INVENTORY.md   hi-fi: what the design images show, read by ux-context
 ├── PLANS.md              plan index, run settings, done rules
 ├── BUILDER-RULES.md      rules every builder follows (from the plugin; replaced when it updates)
-├── RUN-LOG.md            one section per task: builder cost, review result, lessons
-├── REPORT.md             the latest run's report: checklist, blocked items, decisions
-├── tasks/<plan>/         task files; finished tasks move to done/ with a Result section
 ├── states/<plan>.json    browser states the review runs (discovered.json from review)
-├── feedback/
-│   ├── INDEX.md          one row per feedback item, with its status
-│   ├── DEFERRED.md       new ideas, kept for later plans
-│   ├── tweaks/           items handled as tweaks
-│   └── rN/               items of round N (FB-NNN.md)
+├── HISTORY.md            one row per feedback item: text, status, commit or reason
 ├── tokens/               prototype tokens (only when the project has no token format)
 ├── decisions/
-│   ├── INDEX.md          full decision records
+│   ├── INDEX.md          every full decision record (links the committed ones)
 │   ├── LOG.md            small decisions and accepted assumptions
-│   └── NNN-slug.md       full decision records (a design-system record may add NNN.png)
+│   └── NNN-slug.md       design-system records only (may add NNN.png)
 ├── .gitignore            contains .scratch/
 └── .scratch/             NOT committed; one folder per run, last 3 kept
-    ├── 2026-10-03-build-all/         evidence/<plan>-rN/ (PNG + FACTS.md), judgments/
+    ├── 2026-10-03-build-all/         REPORT.md, RUN-LOG.md, tasks/, decisions/, evidence/, judgments/
     ├── 2026-10-03-review-all/        REVIEW.md, items/, evidence/
-    └── 2026-10-04-feedback-r2/       ROUND.md, crops/, evidence/, judgments/
+    └── 2026-10-04-feedback-r2/       ROUND.md, items/, tasks/, crops/, evidence/, judgments/
 ```
 
 ## Plugin contents

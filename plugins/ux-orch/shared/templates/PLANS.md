@@ -9,7 +9,7 @@ fidelity: <lo-fi | hi-fi>
 designs: <folder or none>
 commit: <per-task | none>
 judge: <typesafe | self>
-scratch: <keep-last-3 | keep-all>   # screenshots and reports in docs/ux/.scratch/; never committed
+scratch: <keep-last-3 | keep-all>   # run folders in docs/ux/.scratch/; never committed
 ```
 
 ## Why
@@ -18,9 +18,9 @@ scratch: <keep-last-3 | keep-all>   # screenshots and reports in docs/ux/.scratc
 
 ## Plans
 
-| # | Plan | Status | Depends on | Tasks |
+| # | Plan | Status | Depends on | Run folder |
 | --- | --- | --- | --- | --- |
-| 01 | [<title>](<path>) | <waiting | tasks ready | building | done | blocked> | — | `tasks/<NN-slug>/` |
+| 01 | [<title>](<path>) | <waiting | tasks ready | building | done | blocked> | — | `<date>-build-<scope>` |
 
 ## Done rules
 

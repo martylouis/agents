@@ -13,7 +13,7 @@
 
 | ID | Summary | Decided by | Used by later plans? |
 | --- | --- | --- | --- |
-| [001](decisions/001-<slug>.md) | | | |
+| <NNN> (`<path>`) | | | |
 
 ## Blocked items
 
@@ -25,5 +25,5 @@
 
 ## Evidence
 
-- Screenshots and code facts: `docs/ux/.scratch/<run folder>/` (local only, never committed; rebuild any state from the branch or tag)
-- Run log: `RUN-LOG.md`
+- This run folder holds the screenshots, code facts, tasks, and records (local only, never committed; rebuild any state from the branch or tag)
+- Run log: `RUN-LOG.md` (same folder)

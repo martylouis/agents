@@ -1,6 +1,6 @@
 # Feedback round <n> — <date>
 
-Local report in `docs/ux/.scratch/`; the items themselves are committed in `docs/ux/feedback/r<n>/`.
+Local report in this run folder. Committed: the round's rows in `docs/ux/HISTORY.md`.
 
 ## Result
 
@@ -16,7 +16,7 @@ Local report in `docs/ux/.scratch/`; the items themselves are committed in `docs
 
 ## Deferred
 
-- FB-<NNN> <one line> — <where it went: DEFERRED.md, or new plan file>
+- FB-<NNN> <one line> — <where it went: HISTORY.md row (idea), or new plan file>
 
 ## Answers and praise
 
@@ -26,7 +26,7 @@ Local report in `docs/ux/.scratch/`; the items themselves are committed in `docs
 
 | ID | Summary | Decided by |
 | --- | --- | --- |
-| <NNN> (`docs/ux/decisions/<NNN>-<slug>.md`) | | |
+| <NNN> (`<path>`) | | |
 
 ## Blocked tasks
 

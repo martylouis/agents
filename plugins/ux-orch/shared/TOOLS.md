@@ -43,7 +43,7 @@ Before 0.2.0, screenshots, judge files, and reports were committed under `docs/u
 2. `git rm -r --cached` the old paths, and commit: `chore(ux): move old evidence to scratch`. Git history keeps every file.
 3. Say in one line how many files and MB moved.
 
-The legacy folder counts as one scratch run for cleanup. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
+The legacy folder counts as one scratch run for cleanup. Old `feedback/`, `tasks/`, `RUN-LOG.md`, and `REPORT.md` move the same way. An old `feedback/INDEX.md` becomes `HISTORY.md`: `git mv` it, then change its columns to `ID | Round | Text | Status | Closed by` (`RECORDS.md`), taking `Text` from each item file before the move. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
 
 ## Builder rules
 
@@ -51,9 +51,9 @@ The legacy folder counts as one scratch run for cleanup. Otherwise name the fold
 
 ## Scratch
 
-Screenshots, code facts, judge requests, review and round reports are working material: they prove a finding and a fix while a round is open, and any old state can be rebuilt from its git tag. They are never committed.
+Item files, task files, run logs, reports, screenshots, code facts, and judge requests are working material: they prove a finding and a fix while a round is open, and any old state can be rebuilt from its git tag. They are never committed (`RECORDS.md` lists what is committed).
 
-- Each run writes into its own folder, `docs/ux/.scratch/<YYYY-MM-DD>-<kind>-<scope>/`, where kind is `build`, `review`, or `feedback-r<N>`, and scope is `all`, a plan, or a route slug. Add `-2`, `-3` when the folder exists.
+- Each run writes into its own folder, `docs/ux/.scratch/<YYYY-MM-DD>-<kind>-<scope>/`, where kind is `build`, `review`, `tweak`, or `feedback-r<N>`, and scope is `all`, a plan, or a route slug. Add `-2`, `-3` when the folder exists.
 - Before the first write, make sure `docs/ux/.gitignore` contains the line `.scratch/` (create the file when needed).
-- **Cleanup**, at the start of every skill: read `scratch:` in `docs/ux/PLANS.md` → Run settings (default `keep-last-3`; `keep-all` keeps everything). Delete the oldest scratch folders beyond that number. Never delete a `feedback-r<N>` folder while `docs/ux/feedback/INDEX.md` has open items in round N.
-- Committed records never link into `.scratch/`. A decision record describes its evidence in words and names the tag where it can be seen (for example "visible at tag `ux-round-2`, state `checkout-phone`"). The one exception: a `design-system` decision record may commit one "after" image as `docs/ux/decisions/<NNN>.png`, because that record goes to the real design system.
+- **Cleanup**, at the start of every skill: read `scratch:` in `docs/ux/PLANS.md` → Run settings (default `keep-last-3`; `keep-all` keeps everything). Delete the oldest scratch folders beyond that number. Never delete a `feedback-r<N>` folder while `docs/ux/HISTORY.md` has open items in round N.
+- Records in a run folder may link to each other. A committed record never links into `.scratch/`: it describes its evidence in words. A decision record describes its evidence in words and names the tag where it can be seen (for example "visible at tag `ux-round-2`, state `checkout-phone`"). The one exception: a `design-system` decision record may commit one "after" image as `docs/ux/decisions/<NNN>.png`, because that record goes to the real design system.
