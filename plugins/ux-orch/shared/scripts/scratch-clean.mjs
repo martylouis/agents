@@ -5,7 +5,8 @@
 // Reads `scratch:` from docs/ux/PLANS.md → Run settings: keep-last-<N> (default keep-last-3)
 // or keep-all. Folders sort by the date in the name, then the -2/-3 suffix, then the
 // modified time. A feedback-r<N> folder stays while docs/ux/HISTORY.md has an open,
-// triaged, or building row in round N. Prints each folder with keep or delete and the reason.
+// triaged, or building row in round N. A folder whose name ends in -legacy is always kept
+// and is not counted in the newest N. Prints each folder with keep or delete and the reason.
 // Deletes with `trash`; it never falls back to rm.
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
@@ -56,10 +57,16 @@ function sortKey(name) {
 }
 
 const mode = setting()
-const folders = readdirSync(scratch, { withFileTypes: true })
-  .filter((d) => d.isDirectory())
+const dirs = readdirSync(scratch, { withFileTypes: true }).filter((d) => d.isDirectory())
+const legacy = dirs.filter((d) => d.name.endsWith('-legacy')).map((d) => d.name)
+const folders = dirs
+  .filter((d) => !d.name.endsWith('-legacy'))
   .map((d) => sortKey(d.name))
   .sort((a, b) => b.date.localeCompare(a.date) || b.suffix - a.suffix || b.mtime - a.mtime)
+
+for (const name of legacy) {
+  console.log(`${'keep'.padEnd(6)} ${name} (${mb(size(join(scratch, name)))}) — legacy records`)
+}
 
 if (mode === 'keep-all') {
   console.log(`scratch: keep-all. ${folders.length} folders, ${mb(folders.reduce((s, f) => s + size(join(scratch, f.name)), 0))}. Nothing deleted.`)

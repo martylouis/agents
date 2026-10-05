@@ -2,6 +2,11 @@
 
 All notable changes to the `ux-orch` plugin, newest first. The version number lives in `.claude-plugin/plugin.json`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## 0.4.0 — 2026-10-05
+
+### Fixed
+- `scratch-clean.mjs` never deletes a folder whose name ends in `-legacy`, and does not count it in the newest N. It prints `keep` with the reason "legacy records". The owner may delete a legacy folder by hand (`TOOLS.md` → Old evidence).
+
 ## 0.3.2 — 2026-10-05
 
 ### Added

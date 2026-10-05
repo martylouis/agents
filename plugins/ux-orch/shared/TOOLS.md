@@ -43,7 +43,7 @@ Before 0.2.0, screenshots, judge files, and reports were committed under `docs/u
 2. `git rm -r --cached` the old paths, and commit: `chore(ux): move old evidence to scratch`. Git history keeps every file.
 3. Say in one line how many files and MB moved.
 
-The legacy folder counts as one scratch run for cleanup. Old `feedback/`, `tasks/`, `RUN-LOG.md`, and `REPORT.md` move the same way. An old `feedback/INDEX.md` becomes `HISTORY.md`: `git mv` it, then change its columns to `ID | Round | Text | Status | Closed by` (`RECORDS.md`), taking `Text` from each item file before the move. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
+Cleanup keeps every `-legacy` folder and does not count it in the newest N, because it holds the old records. The owner may delete a legacy folder by hand. Old `feedback/`, `tasks/`, `RUN-LOG.md`, and `REPORT.md` move the same way. An old `feedback/INDEX.md` becomes `HISTORY.md`: `git mv` it, then change its columns to `ID | Round | Text | Status | Closed by` (`RECORDS.md`), taking `Text` from each item file before the move. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
 
 ## Builder rules
 
