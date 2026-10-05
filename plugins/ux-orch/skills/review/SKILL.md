@@ -40,9 +40,9 @@ Create one task-list item per step below (states, observe, look, verdict), so pr
 - **States exist** (`docs/ux/states/*.json`): use the ones in scope. For a plan, also add one state per **Check list** item of the plan that no state covers yet, in the plan's states file.
 - **No states:** discover them. Read the routes from the router config (or the pages folder; for a static site, the HTML files). Then run:
   ```bash
-  node <plugin>/shared/scripts/discover.mjs <url> docs/ux/states/discovered.json [--crawl] <route> [route ...]
+  node <plugin>/shared/scripts/discover.mjs <url> <run folder>/discovered.json [--crawl] <route> [route ...]
   ```
-  It writes one default, phone (375 × 812), and dark state per route, and one click state per visible interactive element. Use `--crawl` when the router config lists dynamic routes (`/products/:id`), so real links are followed. The next review reuses `discovered.json`; run discovery again only when routes changed. Text fields get no state: form submissions need data that only the plan knows.
+  It writes one default, phone (375 × 812), and dark state per route, and one click state per visible interactive element. Use `--crawl` when the router config lists dynamic routes (`/products/:id`), so real links are followed. After the review, merge each discovered state into the state file of the plan that owns its route (`REVIEW.md` → States file). A state that no plan owns stays in the run folder. Done when every discovered state is in a plan's state file or in the run folder. The next review reuses the plan state files; run discovery again only when routes changed. Text fields get no state: form submissions need data that only the plan knows.
 
 ### 3. Observe
 

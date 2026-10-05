@@ -1,3 +1,4 @@
+<!-- ux-orch design-summary -->
 # Design
 
 Design summary for this prototype. Builders read it on every hi-fi task, so keep it under two pages and link to the source files for detail.

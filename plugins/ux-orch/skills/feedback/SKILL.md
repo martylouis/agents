@@ -38,7 +38,7 @@ The same as `orchestrate`: one confirmation at the start, live progress in the h
 
 Follow `<plugin>/shared/TOOLS.md` (tools, file names, builder rules, old evidence, scratch cleanup). When `docs/ux/CONTEXT.md` does not exist (the prototype was not built by `orchestrate`), follow `<plugin>/shared/CONTEXT-DISPATCH.md` in **create** mode, so builders have their vocabulary.
 
-**Round number:** one more than the highest numeric Round in `docs/ux/HISTORY.md`. Everything the round writes except `HISTORY.md` rows, plan edits, `LOG.md` lines, and design-system records (items, tasks, crops, screenshots, facts, judge files, `ROUND.md`) goes into the run folder `docs/ux/.scratch/<date>-feedback-r<N>/` (`<plugin>/shared/RECORDS.md`).
+**Round number:** one more than the highest numeric Round in `docs/ux/HISTORY.md`. Everything the round writes except `HISTORY.md` rows, plan edits, `DECISIONS.md` rows, and design-system records (items, tasks, crops, screenshots, facts, judge files, `ROUND.md`) goes into the run folder `docs/ux/.scratch/<date>-feedback-r<N>/` (`<plugin>/shared/RECORDS.md`).
 
 ### 1. Collect
 
@@ -60,7 +60,7 @@ Done when every piece of the input is in exactly one item.
 
 Ask the feedback-triage judgment (`<plugin>/shared/JUDGE.md` → Question bank) for all items in one request: kind, "why" change, severity, target (only when the item names none), and conflicts between items on the same target. Known screens come from `docs/ux/states/`, the plans, and the routes. Record the numbers in each item's **Triage** section and set `status: triaged` (item file and `HISTORY.md` row).
 
-**Reproduce every bug first.** Write a state that shows it (`docs/ux/states/`, then `observe.mjs` into the run folder) and look at the screenshot. When it shows the bug, the state becomes the task's reviewer check. When it does not, do not guess a fix: list the item under "Needs you" in the confirmation ("FB-007 did not reproduce in state `login-errors`: close it as not reproduced, or tell me the steps"). With "go", it closes `rejected` with the reason "not reproduced: <state>".
+**Reproduce every bug first.** Add a state that shows it to the plan's state file (`REVIEW.md` → States file; the plan whose screen the item targets), then run `observe.mjs` into the run folder and look at the screenshot. When it shows the bug, the state becomes the task's reviewer check. When it does not, do not guess a fix: list the item under "Needs you" in the confirmation ("FB-007 did not reproduce in state `login-errors`: close it as not reproduced, or tell me the steps"). With "go", it closes `rejected` with the reason "not reproduced: <state>".
 
 Route each item:
 
@@ -94,7 +94,7 @@ This is the only question of the round. After the answer, close bugs that did no
 
 For each fix and change item, write a task from `<plugin>/shared/templates/TASK.md` into `<run folder>/tasks/<NN-plan-slug>/F<N>-<NN>-<slug>.md` (no plan → `<run folder>/tasks/feedback-r<N>/`), with `round: <N>` and `feedback: [FB-<NNN>]`. Items on the same screen may share one task. Give each task the target route, state, and element, the evidence (crop or screenshot), and the exact change. Route models with the routing judgment.
 
-For each "what" change: update the plan file (the person approved it in the confirmation) and ask the significance judgment (`<plugin>/shared/JUDGE.md` → Question bank). Score ≥ 2 (it sets a pattern or changes the design system) → a full decision record (`RECORDS.md` → Full decision records; `round: <N>`, the item IDs in Context). Below 2 → one line in `docs/ux/decisions/LOG.md` with the item ID and the plan edit. Set the items to `building` in `HISTORY.md`.
+For each "what" change: update the plan file (the person approved it in the confirmation) and ask the significance judgment (`<plugin>/shared/JUDGE.md` → Question bank). Score ≥ 2 (it sets a pattern or changes the design system) → a full decision record (`RECORDS.md` → Full decision records; `round: <N>`, the item IDs in Context). Below 2 → one row in `docs/ux/DECISIONS.md` with the item ID and the plan edit. Set the items to `building` in `HISTORY.md`.
 
 ### 6. Run
 
@@ -109,7 +109,7 @@ The review of each task must include the states of the items it closes (add a st
 
 - Close every item: `done` (`closed-by`: task path and commit), `rejected` (with the reason), or `deferred` (where it went). A blocked task's items close as `deferred` with "blocked: <reason>". Update the item files and the `HISTORY.md` rows.
 - Write `<run folder>/ROUND.md` from `<plugin>/shared/templates/ROUND-REPORT.md`.
-- When commits are approved, commit the lasting records: `HISTORY.md` rows, `LOG.md` lines, plan edits, and design-system decision records (`docs(ux): feedback round <N> records`). Then tag the branch head `ux-round-<N>`, so rounds can be compared, demoed, or reverted, and any state rebuilt.
+- When commits are approved, commit the lasting records: `HISTORY.md` rows, `DECISIONS.md` rows, plan edits, and design-system decision records (`docs(ux): feedback round <N> records`). Then tag the branch head `ux-round-<N>`, so rounds can be compared, demoed, or reverted, and any state rebuilt.
 
 Done when every item of the round is closed, `ROUND.md` is written, and the tag exists (when commits are approved).
 
@@ -121,7 +121,7 @@ Reply with one paragraph: items done, rejected, and deferred; the branch and tag
 
 1. Add one row to `docs/ux/HISTORY.md` (round `tweak`, status `open`, the text quoted; `NNN` continues from the highest ID). A tweak writes no item file. Its run folder is `docs/ux/.scratch/<date>-tweak-<slug>/`.
 2. Ask the significance judgment (`<plugin>/shared/JUDGE.md` → Question bank). Score ≥ 2 (it sets a pattern or changes the design system) → it is not a tweak: say so in one line and continue as a round with this one item, from step 3.
-3. Otherwise make the change yourself, re-run the states that show it (`observe.mjs`), look at the screenshots, and add one line to `docs/ux/decisions/LOG.md` (round `tweak`). Screenshots go into the tweak's run folder. Commit (`fix(ux): <text>`) only when `docs/ux/PLANS.md` → Run settings has `commit: per-task`.
+3. Otherwise make the change yourself, re-run the states that show it (`observe.mjs`; a new state goes to the plan's state file, `REVIEW.md` → States file), look at the screenshots, and add one row to `docs/ux/DECISIONS.md` (round `tweak`). Screenshots go into the tweak's run folder. Commit (`fix(ux): <text>`) only when `docs/ux/PLANS.md` → Run settings has `commit: per-task`.
 4. Close the `HISTORY.md` row `done`, with the commit or "not committed".
 
 Reply in one line: what changed, the file, and the commit or "not committed".
