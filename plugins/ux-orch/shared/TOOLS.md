@@ -21,7 +21,7 @@ Most skills need the prototype running.
 
 ## File names
 
-All doc files use UPPERCASE names (`CONTEXT.md`, `PLANS.md`, `INDEX.md`, `LOG.md`, …). Find older lowercase files with git, not with `ls`: on case-insensitive file systems (macOS) `ls` can show `CONTEXT.md` while git still tracks `context.md`, and the next commit then goes to the lowercase path.
+All doc files use UPPERCASE names (`CONTEXT.md`, `PLANS.md`, `DECISIONS.md`, `HISTORY.md`, …). Find older lowercase files with git, not with `ls`: on case-insensitive file systems (macOS) `ls` can show `CONTEXT.md` while git still tracks `context.md`, and the next commit then goes to the lowercase path.
 
 ```bash
 git ls-files docs/ux | grep -E '/[a-z_][a-z0-9_-]*\.md$'
@@ -43,7 +43,17 @@ Before 0.2.0, screenshots, judge files, and reports were committed under `docs/u
 2. `git rm -r --cached` the old paths, and commit: `chore(ux): move old evidence to scratch`. Git history keeps every file.
 3. Say in one line how many files and MB moved.
 
-The legacy folder counts as one scratch run for cleanup. Old `feedback/`, `tasks/`, `RUN-LOG.md`, and `REPORT.md` move the same way. An old `feedback/INDEX.md` becomes `HISTORY.md`: `git mv` it, then change its columns to `ID | Round | Text | Status | Closed by` (`RECORDS.md`), taking `Text` from each item file before the move. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
+Cleanup keeps every `-legacy` folder and does not count it in the newest N, because it holds the old records. The owner may delete a legacy folder by hand. Old `feedback/`, `tasks/`, `RUN-LOG.md`, and `REPORT.md` move the same way. An old `feedback/INDEX.md` becomes `HISTORY.md`: `git mv` it, then change its columns to `ID | Round | Text | Status | Closed by` (`RECORDS.md`), taking `Text` from each item file before the move. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
+
+## Old decisions
+
+Before 0.4.0, small decisions went to `docs/ux/decisions/LOG.md` and full records to `docs/ux/decisions/INDEX.md`. When `docs/ux/decisions/LOG.md` exists, do this once, before the skill writes any decision row (no confirmation needed; it is a rename):
+
+1. `git mv docs/ux/decisions/LOG.md docs/ux/DECISIONS.md`, and put the template's headings around the table (`<plugin>/shared/templates/DECISIONS.md`).
+2. Add the `ID` column (`—` for a small decision), and one row for each record that `decisions/INDEX.md` lists. Add a row to the design-system list only for a record file in `decisions/` (type `design-system`); an ID with no such file stays in the log table only.
+3. Remove `decisions/INDEX.md` (`git rm`). Leave the `decisions/` folder only when it holds `<NNN>-<slug>.md` records.
+
+Done when `docs/ux/DECISIONS.md` exists and `decisions/LOG.md` and `decisions/INDEX.md` do not. Commit it with the skill's next records.
 
 ## Builder rules
 
