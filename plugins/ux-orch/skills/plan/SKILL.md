@@ -28,7 +28,7 @@ Also read, when they exist: `PRODUCT.md` (user context and product purpose; a so
 
 1. **One plan = one thing the person reviews as a unit** (a flow or a feature). A project is several plans and an index.
 2. **The person owns the plan files.** After approval, tools add data in `docs/ux/PLANS.md`, never inside the plans. `/ux-orch:feedback` edits a plan only for an approved "what" change, and records it (rule 3).
-3. **"What" changes** → update the plan, plus a decision record or a log line in `docs/ux/decisions/LOG.md`, by significance (`<plugin>/shared/JUDGE.md` → Question bank). **"Why" changes** → a new plan with `supersedes:`.
+3. **"What" changes** → update the plan, plus a decision record or a row in `docs/ux/DECISIONS.md`, by significance (`<plugin>/shared/JUDGE.md` → Question bank). **"Why" changes** → a new plan with `supersedes:`.
 4. **Variants live in ONE plan** (a Variants section, each with a hypothesis; task prefixes `A-`, `B-`). A decision record selects the winner.
 5. **Fidelity comes from the designs,** not from a field: no designs → lo-fi; designs → hi-fi. There is no mid-fi.
 6. **`why` is optional.** The orchestrator infers one when it is missing.

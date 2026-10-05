@@ -5,8 +5,8 @@ Details go into files, never into chat. A prototype is throwaway: git keeps the 
 | Group | Where |
 | --- | --- |
 | `CONTEXT.md`, `BUILDER-RULES.md`, `PLANS.md`, `docs/plans/`, `states/<plan>.json` | Committed |
-| `HISTORY.md` (one row per feedback item) and `decisions/LOG.md` (one line per small decision) | Committed |
-| Full decision records of type `design-system`, and `decisions/INDEX.md` | Committed |
+| `HISTORY.md` (one row per feedback item) and `DECISIONS.md` (the log table and the design-system list) | Committed |
+| Full decision records of type `design-system` (`decisions/`) | Committed |
 | Item files, task files, `RUN-LOG.md`, `REPORT.md`, `ROUND.md`, `REVIEW.md`, other full decision records, screenshots, code facts, judge files | Run folder: `docs/ux/.scratch/<run>/` (`TOOLS.md` → Scratch). Never committed. |
 
 Records in a run folder link to each other and to committed records. A committed record never links into `.scratch/`.
@@ -27,31 +27,34 @@ Append-only, one section per task, written when the task changes state:
 
 Close the log with a `## Lessons` section: what the next run should do differently (missing vocabulary, a component that needed a code pattern, a state the review missed).
 
-## `docs/ux/decisions/LOG.md`
+## `docs/ux/DECISIONS.md`
 
-Committed. One table row per small decision and accepted assumption:
+Committed. The one decisions file, from `templates/DECISIONS.md`. It has two parts.
+
+**Log table.** One row per small decision, accepted assumption, and full record. `ID` is `—` for a small decision and `NNN` for a full record, whether the record is committed or in a run folder. The next `NNN` is the highest `ID` in the table plus one.
 
 ```markdown
-| Date | Round | Plan/task | Decided by | Decision |
-| --- | --- | --- | --- | --- |
-| 2026-10-02 | 1 | 01/03 | auto (judge: violates 0.93, risk 2.17) → tweak | Email text: `text-neutral-700` → `text-muted`. |
+| ID | Date | Round | Plan/task | Decided by | Decision |
+| --- | --- | --- | --- | --- | --- |
+| — | 2026-10-02 | 1 | 01/03 | auto (judge: violates 0.93, risk 2.17) → tweak | Email text: `text-neutral-700` → `text-muted`. |
+| 002 | 2026-10-03 | 2 | 03/02 | auto (orchestrator) | Form errors after the first submit, then live. |
+```
+
+**Design-system records.** A short list of the committed records, one row each, linked:
+
+```markdown
+| ID | Summary | Status |
+| --- | --- | --- |
+| [001](decisions/001-button-radius.md) | Buttons use `rounded-md`. | proposed |
 ```
 
 ## Full decision records
 
 A decision gets a full record (from `templates/DECISION.md`) when its significance score is ≥ 2: it sets a pattern later screens follow, or it changes the design system. Status `proposed`, `decided-by: auto (…)`. Give every reason an evidence level: `preference`, `principle`, `observed`, or `tested`.
 
-- Type `design-system`: write `docs/ux/decisions/<NNN>-<slug>.md` (committed), because the record goes to the real design system.
-- Any other type: write `<run folder>/decisions/<NNN>-<slug>.md`. The `LOG.md` line for it carries the summary.
-
-`NNN` counts across all records. Index every full record in `docs/ux/decisions/INDEX.md` (committed; the next `NNN` is the highest ID there plus one). Link only the committed records:
-
-```markdown
-| ID | Type | Summary | Status |
-| --- | --- | --- | --- |
-| [001](001-button-radius.md) | design-system | Buttons use `rounded-md`. | proposed |
-| 002 | design-change | Form errors after the first submit, then live. | proposed |
-```
+- Type `design-system`: write `docs/ux/decisions/<NNN>-<slug>.md` (committed), because the record goes to the real design system. Create the `decisions/` folder with the first such record, and add the record to the design-system list in `DECISIONS.md`.
+- Any other type: write `<run folder>/decisions/<NNN>-<slug>.md`.
+- Every full record also gets a row in the log table, with its `NNN` and its summary.
 
 When a later task follows a full record, add the record ID to that task's frontmatter and to the commit body, so the person can see how far a decision spread.
 
@@ -79,4 +82,4 @@ One file per item of a round, `FB-<NNN>.md` (from `templates/FEEDBACK-ITEM.md`),
 
 ## `<run folder>/ROUND.md`
 
-The round report (from `templates/ROUND-REPORT.md`): the one place the person reviews a feedback round. The lasting record of the round is its `HISTORY.md` rows, the `LOG.md` lines, the design-system records, and the tag.
+The round report (from `templates/ROUND-REPORT.md`): the one place the person reviews a feedback round. The lasting record of the round is its `HISTORY.md` rows, the `DECISIONS.md` rows, the design-system records, and the tag.

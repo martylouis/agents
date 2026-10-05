@@ -116,7 +116,7 @@ The judge is [TypeSafe](https://typesafe.ai)'s **Jev** model (`jev-latest`), cal
 | **Routing** (Choice) | Orchestrate step 3 and feedback tasks, one request for all tasks | `fast` → Haiku, `strong` → Sonnet |
 | **Assumption triage** (Noul + Score) | After each builder returns | Accept with a log line, or fix (a tweak when it is one line) |
 | **Acceptance** (Noul per item) | Hi-fi review | Pass, blocker, or "look closer" |
-| **Significance** (Score) | Each orchestrator decision, and each `feedback --tweak` | Full decision record, or one line in `decisions/LOG.md`; a tweak that scores high becomes a round |
+| **Significance** (Score) | Each orchestrator decision, and each `feedback --tweak` | Full decision record, or one row in `DECISIONS.md`; a tweak that scores high becomes a round |
 | **Plan readiness** (Noul per plan) | `plan` before it writes, `orchestrate` intake | `plan` asks about the missing part; `orchestrate` names loose plans in the start confirmation |
 | **Feedback triage** (Choice, Noul, Score) | `feedback`, one request per round | Kind (bug, change, idea, question, praise), "why" change, severity, target, and conflicts between items |
 
@@ -291,9 +291,8 @@ docs/ux/
 ├── states/<plan>.json    browser states the review runs, one file per plan
 ├── HISTORY.md            one row per feedback item: text, status, commit or reason
 ├── tokens/               prototype tokens (only when the project has no token format)
-├── decisions/
-│   ├── INDEX.md          every full decision record (links the committed ones)
-│   ├── LOG.md            small decisions and accepted assumptions
+├── DECISIONS.md          log table (every decision, every record ID) and the design-system list
+├── decisions/            only when a design-system record exists
 │   └── NNN-slug.md       design-system records only (may add NNN.png)
 ├── .gitignore            contains .scratch/
 └── .scratch/             NOT committed; one folder per run, last 3 kept

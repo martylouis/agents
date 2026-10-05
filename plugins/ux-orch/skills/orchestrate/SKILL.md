@@ -38,7 +38,7 @@ Done when observe, smoke, and judge are runnable and the run folder exists. `<ru
 Read the plans to build: the one plan file when the argument is a file; otherwise every plan in the folder (`NN-*.md`; skip `INDEX.md` and other non-plan files). Skip a plan that `docs/ux/PLANS.md` marks `done`, and name the skipped plans in one line of the start confirmation; the person can say "rebuild 02". Also read the repo (`package.json`, config, `src/`), and the designs folder if given.
 
 - **Context:** follow `<plugin>/shared/CONTEXT-DISPATCH.md` in **create** mode: for hi-fi, `ux-describer` writes the design inventory; then the `ux-context` agent (Sonnet) builds `CONTEXT.md`; then you review its result. When `docs/ux/CONTEXT.md` already exists (for example from `/ux-orch:context`), reuse it: dispatch **refresh** only if the library or the designs changed since its verify date.
-- Create the other files from `<plugin>/shared/templates/`: `docs/ux/PLANS.md` (filled), `docs/ux/decisions/INDEX.md`, `docs/ux/decisions/LOG.md`, and `<run folder>/RUN-LOG.md`.
+- Create the other files from `<plugin>/shared/templates/`: `docs/ux/PLANS.md` (filled), `docs/ux/DECISIONS.md`, and `<run folder>/RUN-LOG.md`.
 - **Plan readiness:** ask the plan-readiness judgment (`<plugin>/shared/JUDGE.md` → Question bank) for all plans in one request. A loose plan does not stop the run; name it in the start confirmation.
 - Infer a one-sentence **why** when the plans give none (also from `PRODUCT.md` when it exists).
 

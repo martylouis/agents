@@ -96,7 +96,7 @@ For each override, it prints the base value and one status:
 
 | Status | Action |
 | --- | --- |
-| `same` | The base adopted the override. Remove the override, set its decision record to `accepted`, add a line to `decisions/LOG.md`. |
+| `same` | The base adopted the override. Remove the override, set its decision record to `accepted`, add a row to `DECISIONS.md`. |
 | `differs` | The override stays. Compare the base value with the base value in the override's decision record. Changed → **conflict**: report it, change nothing. Unchanged → still a proposal; no action. |
 | `not-in-base` | The token is new in the prototype (a proposal), or the base removed or renamed it. Check the decision record; a removed or renamed token is a **conflict**. |
 

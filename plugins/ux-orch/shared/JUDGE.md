@@ -43,11 +43,11 @@ The judge never replaces the **Look** step in `REVIEW.md`. Its errors in testing
 **Assumption triage** (every builder assumption): `state.rules` = the vocabulary and builder rules; `state.assumptions.<id>` = one assumption.
 - Noul `<id>_violates`: "Does the assumption break `state.rules`?"
 - Score `<id>_risk`: ["None", "Low: nobody notices", "Medium: visible inconsistency or a pattern others copy", "High: breaks the design system, a flow, or readability"].
-- violates ≥ 0.5 or risk ≥ 2 → fix (tweak when it is a one-line change). Else accept with a line in `decisions/LOG.md`.
+- violates ≥ 0.5 or risk ≥ 2 → fix (tweak when it is a one-line change). Else accept with a row in `DECISIONS.md`.
 
 **Acceptance** (hi-fi review): `state.states.<name>` = `{ code_facts, visual_description, design_description }`. One Noul per reviewer check: "Using only the evidence in `state.states.<name>`, is this acceptance item met?"
 
-**Significance** (every orchestrator decision): Score ["Trivial: nobody notices", "Small: one screen, no pattern", "Pattern: sets how later screens behave", "Design system: changes a token, component, or rule"]. Score ≥ 2 → full decision record; else a line in `decisions/LOG.md`.
+**Significance** (every orchestrator decision): Score ["Trivial: nobody notices", "Small: one screen, no pattern", "Pattern: sets how later screens behave", "Design system: changes a token, component, or rule"]. Score ≥ 2 → full decision record; else a row in `DECISIONS.md`.
 
 **Plan readiness** (`orchestrate` intake, and `plan` before it writes the files; one request for all plans): `state.plans.<id>` = the plan text.
 - Noul `<id>_ready`: "Can a builder divide `state.plans.<id>` into exact tasks with no questions? It names every screen with its states and exact copy, says what is in scope and out of scope, and has a check list a person can follow in a browser."

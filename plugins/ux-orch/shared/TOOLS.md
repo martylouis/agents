@@ -21,7 +21,7 @@ Most skills need the prototype running.
 
 ## File names
 
-All doc files use UPPERCASE names (`CONTEXT.md`, `PLANS.md`, `INDEX.md`, `LOG.md`, …). Find older lowercase files with git, not with `ls`: on case-insensitive file systems (macOS) `ls` can show `CONTEXT.md` while git still tracks `context.md`, and the next commit then goes to the lowercase path.
+All doc files use UPPERCASE names (`CONTEXT.md`, `PLANS.md`, `DECISIONS.md`, `HISTORY.md`, …). Find older lowercase files with git, not with `ls`: on case-insensitive file systems (macOS) `ls` can show `CONTEXT.md` while git still tracks `context.md`, and the next commit then goes to the lowercase path.
 
 ```bash
 git ls-files docs/ux | grep -E '/[a-z_][a-z0-9_-]*\.md$'
@@ -43,7 +43,7 @@ Before 0.2.0, screenshots, judge files, and reports were committed under `docs/u
 2. `git rm -r --cached` the old paths, and commit: `chore(ux): move old evidence to scratch`. Git history keeps every file.
 3. Say in one line how many files and MB moved.
 
-Cleanup keeps every `-legacy` folder and does not count it in the newest N, because it holds the old records. The owner may delete a legacy folder by hand. Old `feedback/`, `tasks/`, `RUN-LOG.md`, and `REPORT.md` move the same way. An old `feedback/INDEX.md` becomes `HISTORY.md`: `git mv` it, then change its columns to `ID | Round | Text | Status | Closed by` (`RECORDS.md`), taking `Text` from each item file before the move. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
+Cleanup keeps every `-legacy` folder and does not count it in the newest N, because it holds the old records. The owner may delete a legacy folder by hand. Old `feedback/`, `tasks/`, `RUN-LOG.md`, and `REPORT.md` move the same way. An old `feedback/INDEX.md` becomes `HISTORY.md`: `git mv` it, then change its columns to `ID | Round | Text | Status | Closed by` (`RECORDS.md`), taking `Text` from each item file before the move. An old `decisions/LOG.md` becomes the log table in `DECISIONS.md` (`RECORDS.md`): `git mv` it, add the `ID` column (`—` for a small decision), and add one row for each record that `decisions/INDEX.md` lists, then remove `decisions/INDEX.md`. Otherwise name the folders and their size in one line of the skill's confirmation ("Old evidence: 18 MB committed, move it to scratch?"), and move them after "go".
 
 ## Builder rules
 
