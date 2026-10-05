@@ -288,7 +288,7 @@ docs/ux/
 ├── DESIGN-INVENTORY.md   hi-fi: what the design images show, read by ux-context
 ├── PLANS.md              plan index, run settings, done rules
 ├── BUILDER-RULES.md      rules every builder follows (from the plugin; replaced when it updates)
-├── states/<plan>.json    browser states the review runs (discovered.json from review)
+├── states/<plan>.json    browser states the review runs, one file per plan
 ├── HISTORY.md            one row per feedback item: text, status, commit or reason
 ├── tokens/               prototype tokens (only when the project has no token format)
 ├── decisions/

@@ -15,7 +15,7 @@ Run the cheapest check that can decide, then the next:
 
 ## States file
 
-One file per plan: `docs/ux/states/<NN-plan-slug>.json`. Add states as tasks finish; keep earlier states so every review re-checks the whole plan.
+One state file per plan: `docs/ux/states/<NN-plan-slug>.json`. Add a state to the file of the plan whose screen it shows. When no plan names the screen, use the plan that owns the route. Add states as tasks finish; keep earlier states so every review re-checks the whole plan. When two states in one file have the same name, keep the newer one and remove the older one.
 
 ```json
 {

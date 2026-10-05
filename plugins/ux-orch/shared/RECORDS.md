@@ -4,12 +4,14 @@ Details go into files, never into chat. A prototype is throwaway: git keeps the 
 
 | Group | Where |
 | --- | --- |
-| `CONTEXT.md`, `BUILDER-RULES.md`, `PLANS.md`, `docs/plans/`, `states/*.json` | Committed |
+| `CONTEXT.md`, `BUILDER-RULES.md`, `PLANS.md`, `docs/plans/`, `states/<plan>.json` | Committed |
 | `HISTORY.md` (one row per feedback item) and `decisions/LOG.md` (one line per small decision) | Committed |
 | Full decision records of type `design-system`, and `decisions/INDEX.md` | Committed |
 | Item files, task files, `RUN-LOG.md`, `REPORT.md`, `ROUND.md`, `REVIEW.md`, other full decision records, screenshots, code facts, judge files | Run folder: `docs/ux/.scratch/<run>/` (`TOOLS.md` → Scratch). Never committed. |
 
 Records in a run folder link to each other and to committed records. A committed record never links into `.scratch/`.
+
+A state file (`states/<plan>.json`) holds saved routes to one screen in one condition each (route, stored data, clicks). `observe.mjs` runs them, and builders, `review`, and `feedback` reuse them as the test script of the app. The results go to the run folder.
 
 ## `<run folder>/RUN-LOG.md`
 

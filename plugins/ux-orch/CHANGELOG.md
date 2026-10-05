@@ -5,6 +5,7 @@ All notable changes to the `ux-orch` plugin, newest first. The version number li
 ## 0.4.0 — 2026-10-05
 
 ### Fixed
+- States are stored by plan: `feedback` adds a state to `states/<NN-plan-slug>.json`, never to a file named for a round. `review` writes `discover.mjs` output to the run folder, then merges each state into its plan's state file. `RECORDS.md` says what a state file is and why skills reuse it.
 - `scratch-clean.mjs` never deletes a folder whose name ends in `-legacy`, and does not count it in the newest N. It prints `keep` with the reason "legacy records". The owner may delete a legacy folder by hand (`TOOLS.md` → Old evidence).
 
 ## 0.3.2 — 2026-10-05
