@@ -46,7 +46,7 @@ Fill **Vocabulary** with exact names read from the installed library files, neve
 - **Icons:** the icon set that is installed (check `package.json` and `node_modules`), with its prefix, and the library's icon component (for example `UIcon`). An icon set that is not installed is a defect, not a choice. A bare `<i class="…">` renders nothing in most icon setups; say so under Forbidden.
 - **Forbidden:** what builders must not write (palette shades, hex, `rgb(`, manual `dark:` color variants), so the review can grep for it.
 
-Hi-fi: also read the design inventory (`docs/ux/DESIGN-INVENTORY.md`), which the dispatching skill gets from `ux-describer` (**Design inventory** template) before it dispatches `ux-context`. Map each color, type style, and component it lists to a library name. A design element with no library match becomes a candidate component (step 6) or a prototype override (step 3).
+Hi-fi: also read the design inventory (the path in your prompt; a scratch file), which the dispatching skill gets from `ux-describer` (**Design inventory** template) before it dispatches `ux-context`. Map each color, type style, and component it lists to a library name. A design element with no library match becomes a candidate component (step 6) or a prototype override (step 3).
 
 ### 5. Component patterns
 
@@ -60,8 +60,8 @@ A component the library does not have becomes a **candidate**: a local component
 
 Look for an existing `DESIGN.md` (repo root, `docs/`, `docs/ux/`), for example one written by Impeccable's `init`.
 
-- **It exists:** read it, record its path in `CONTEXT.md` → Location → Design summary, and do not write a second one. `CONTEXT.md` keeps only what it does not hold: stack, commands, exact class names, component patterns.
-- **It does not exist,** and the fidelity is hi-fi or the situation is not **none:** write `docs/ux/DESIGN.md` from `<plugin>/shared/templates/DESIGN.md`. Keep it under two pages; link to the source files for detail. Its sections follow the common order (colors, typography, components, visual rules) so another tool can take it over later.
+- **It exists:** read it and record its path in `CONTEXT.md` → Location → Design summary. Write no second one. When its first line is `<!-- ux-orch design-summary -->`, `ux-orch` owns it: in **refresh** mode, rewrite it from the design inventory and the library. Without that line it is external: change nothing, and list each difference from the inventory under "Not verified". `CONTEXT.md` keeps only what it does not hold: stack, commands, exact class names, component patterns.
+- **It does not exist,** and the fidelity is hi-fi or the situation is not **none:** write `docs/ux/DESIGN.md` from `<plugin>/shared/templates/DESIGN.md` and the design inventory (hi-fi), keeping the template's first line. Keep it under two pages; link to the source files for detail. Its sections follow the common order (colors, typography, components, visual rules) so another tool can take it over later.
 - Lo-fi with situation **none:** no design summary. Write "none".
 
 ### 8. Verify

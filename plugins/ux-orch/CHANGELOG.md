@@ -2,6 +2,13 @@
 
 All notable changes to the `ux-orch` plugin, newest first. The version number lives in `.claude-plugin/plugin.json`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## 0.4.1 — 2026-10-05
+
+### Changed
+- The design inventory is a scratch file, `<run folder>/DESIGN-INVENTORY.md`, not `docs/ux/DESIGN-INVENTORY.md`. `ux-context` reads it for the vocabulary and, when no `DESIGN.md` exists, writes `DESIGN.md` from it, so one committed file holds the design summary and nothing can drift from a second copy.
+- A `DESIGN.md` written by `ux-orch` starts with `<!-- ux-orch design-summary -->`. **refresh** rewrites only such a file. An external `DESIGN.md` (for example from Impeccable) is never changed; differences go under "Not verified".
+- Scratch kind `context` for the `context` skill's run folder.
+
 ## 0.4.0 — 2026-10-05
 
 ### Changed

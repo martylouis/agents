@@ -284,7 +284,6 @@ docs/plans/
 docs/ux/
 ├── CONTEXT.md            stack, commands, exact vocabulary, component patterns, design system
 ├── DESIGN.md             design summary (< 2 pages), when no DESIGN.md exists yet
-├── DESIGN-INVENTORY.md   hi-fi: what the design images show, read by ux-context
 ├── PLANS.md              plan index, run settings, done rules
 ├── BUILDER-RULES.md      rules every builder follows (from the plugin; replaced when it updates)
 ├── states/<plan>.json    browser states the review runs, one file per plan
