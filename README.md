@@ -1,6 +1,6 @@
 # agents
 
-Claude Code plugins by Marty Thierry. This repo is a plugin marketplace named `martylouis`.
+Agent plugins by Marty Thierry. The `.claude-plugin/marketplace.json` file makes this repo a Claude Code marketplace named `martylouis`.
 
 ## Plugins
 
