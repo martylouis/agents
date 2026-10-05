@@ -2,8 +2,6 @@
 
 All notable changes to the `ux-orch` plugin, newest first. The version number lives in `.claude-plugin/plugin.json`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
 
-## Unreleased
-
 ## 0.3.2 — 2026-10-05
 
 ### Added
