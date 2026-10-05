@@ -9,7 +9,7 @@
     {
       "name": "ux-orch",
       "description": "UX Orchestrator: plan, build, review, and iterate UX prototypes with builder sub-agents, browser review, feedback rounds, and decision records.",
-      "source": "./",
+      "source": "./plugins/ux-orch",
       "version": "0.2.0"
     }
   ]
