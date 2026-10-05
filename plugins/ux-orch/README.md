@@ -201,7 +201,7 @@ Run every skill from the prototype's repo.
 ```
 
 1. It reads the input and the repo, then asks one question at a time, each with a proposed answer, so "yes" moves on.
-2. It writes `docs/plans/NN-<slug>.md` files and `docs/plans/INDEX.md`, and shows one line per plan.
+2. It writes `docs/plans/NN-<slug>.md` files and shows one line per plan.
 3. When you approve, it ends with the command to build them.
 
 ### Context
@@ -279,7 +279,6 @@ All doc files have UPPERCASE names. A skill that finds an older lowercase file (
 
 ```
 docs/plans/
-├── INDEX.md              one row per plan
 └── NN-slug.md            the plans (owned by you)
 
 docs/ux/

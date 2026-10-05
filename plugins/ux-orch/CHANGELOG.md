@@ -7,6 +7,9 @@ All notable changes to the `ux-orch` plugin, newest first. The version number li
 ### Changed
 - One `docs/ux/DECISIONS.md` replaces `decisions/LOG.md` and `decisions/INDEX.md`: the log table (with an `ID` column) and the list of committed design-system records. The log table holds every ID, committed or not, so the next `NNN` is its highest `ID` plus one. `decisions/` exists only after the first design-system record. `TOOLS.md` → Old evidence says how to convert an old log.
 
+### Removed
+- `docs/plans/INDEX.md`. Its fields are in the plan files (`status`, `depends-on`, Goal), and `docs/ux/PLANS.md` is the one plan index with run data. `plan` no longer writes it, and `orchestrate` no longer skips it by name. An existing `INDEX.md` can stay; skills ignore it.
+
 ### Fixed
 - States are stored by plan: `feedback` adds a state to `states/<NN-plan-slug>.json`, never to a file named for a round. `review` writes `discover.mjs` output to the run folder, then merges each state into its plan's state file. `RECORDS.md` says what a state file is and why skills reuse it.
 - `scratch-clean.mjs` never deletes a folder whose name ends in `-legacy`, and does not count it in the newest N. It prints `keep` with the reason "legacy records". The owner may delete a legacy folder by hand (`TOOLS.md` → Old evidence).

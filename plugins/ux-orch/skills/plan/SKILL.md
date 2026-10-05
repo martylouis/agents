@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Turn an idea, a brief, or design images into decided plans that /ux-orch:orchestrate builds well. A short interview, one decision at a time, then plan files and an index. --explore writes lo-fi variants to compare.
+description: Turn an idea, a brief, or design images into decided plans that /ux-orch:orchestrate builds well. A short interview, one decision at a time, then plan files. --explore writes lo-fi variants to compare.
 argument-hint: "<idea text | brief file | designs folder> [--explore]"
 disable-model-invocation: true
 ---
@@ -26,7 +26,7 @@ Also read, when they exist: `PRODUCT.md` (user context and product purpose; a so
 
 ## Plan rules
 
-1. **One plan = one thing the person reviews as a unit** (a flow or a feature). A project is several plans and an index.
+1. **One plan = one thing the person reviews as a unit** (a flow or a feature). A project is several plans.
 2. **The person owns the plan files.** After approval, tools add data in `docs/ux/PLANS.md`, never inside the plans. `/ux-orch:feedback` edits a plan only for an approved "what" change, and records it (rule 3).
 3. **"What" changes** → update the plan, plus a decision record or a row in `docs/ux/DECISIONS.md`, by significance (`<plugin>/shared/JUDGE.md` → Question bank). **"Why" changes** → a new plan with `supersedes:`.
 4. **Variants live in ONE plan** (a Variants section, each with a hypothesis; task prefixes `A-`, `B-`). A decision record selects the winner.
@@ -65,15 +65,7 @@ Stop when every plan meets the quality bar. Do not ask about things the repo, th
 
 ### 3. Write
 
-Write one file per plan, `docs/plans/<NN>-<slug>.md`, from `<plugin>/shared/templates/PLAN.md`, with `status: draft`. Delete template sections that do not apply (Variants, Why when empty), and keep no `<placeholder>`. Write or update the index, `docs/plans/INDEX.md`:
-
-```markdown
-# Plans
-
-| # | Plan | Goal | Depends on | Status |
-| --- | --- | --- | --- | --- |
-| 01 | [Foundation and login](01-foundation-and-auth.md) | A user can sign in with the demo account. | — | decided |
-```
+Write one file per plan, `docs/plans/<NN>-<slug>.md`, from `<plugin>/shared/templates/PLAN.md`, with `status: draft`. Delete template sections that do not apply (Variants, Why when empty), and keep no `<placeholder>`. The plan files are the only plan record; `orchestrate` lists them in `docs/ux/PLANS.md`.
 
 For `--explore`: one plan with a **Variants** section (2–3 variants). Each variant has a hypothesis and the screens and states that differ. Write variants only; the orchestrator builds them (one task set per variant), and a decision record selects the winner after the person compares them.
 
@@ -89,7 +81,7 @@ Plans — 3 drafts in docs/plans/
 Reply "approve", or name a plan to change.
 ```
 
-Change what the person asks, then show the lines again. On approval, set `status: decided` in each plan and in the index.
+Change what the person asks, then show the lines again. On approval, set `status: decided` in each plan file.
 
 Done when every plan meets the quality bar and the person approved it.
 
