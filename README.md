@@ -1,6 +1,6 @@
 # agents
 
-Agent plugins by Marty Thierry. The `.claude-plugin/marketplace.json` file makes this repo a Claude Code marketplace named `martylouis`.
+Agent plugins by Marty Thierry.
 
 ## Plugins
 
@@ -8,12 +8,18 @@ Agent plugins by Marty Thierry. The `.claude-plugin/marketplace.json` file makes
 | --- | --- |
 | [`ux-orch`](plugins/ux-orch/README.md) | Plan, build, review, and iterate UX prototypes with builder sub-agents, browser review, and decision records. |
 
-## Install
+## Claude Code
+
+This repo is a Claude Code marketplace named `martylouis`.
 
 ```bash
 claude plugin marketplace add martylouis/agents
 claude plugin install ux-orch@martylouis
 ```
+
+## Cursor
+
+Coming soon.
 
 ## Add a plugin
 
