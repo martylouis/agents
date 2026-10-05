@@ -307,6 +307,7 @@ docs/ux/
 ```
 ux-orch/
 ├── .claude-plugin/        plugin.json
+├── CHANGELOG.md           what changed in each version
 ├── agents/
 │   ├── ux-builder.md      haiku · executes one task file, runs its smoke check
 │   ├── ux-context.md      sonnet · builds and verifies CONTEXT.md from the installed library
