@@ -319,6 +319,7 @@ ux-orch/
 │   └── feedback/          /ux-orch:feedback
 └── shared/                one source for what several skills use
     ├── TOOLS.md           script install, judge check, dev server
+    ├── CONTEXT-DISPATCH.md
     ├── CONTEXT-PROCEDURE.md
     ├── RUN.md             the run loop (dispatch, review, fix rounds, blocked)
     ├── REVIEW.md, JUDGE.md, RECORDS.md

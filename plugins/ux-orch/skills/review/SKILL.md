@@ -60,7 +60,7 @@ Open the screenshot of EVERY state (Read tool on the PNG). Compare it with the c
 
 ### 5. Hi-fi: compare
 
-Only with a designs folder (argument, or `CONTEXT.md` → Fidelity hi-fi). Dispatch `ux-describer` (State template) for the screenshots AND for the matching design images, then run the acceptance judgment (`<plugin>/shared/JUDGE.md`) with one Noul per state. Lo-fi skips this step.
+Only with a designs folder (argument, or `CONTEXT.md` → Fidelity hi-fi). Dispatch `ux-describer` (State template) for the screenshots AND for the matching design images, then run the acceptance judgment (`<plugin>/shared/JUDGE.md` → Question bank) with one Noul per state. Lo-fi skips this step.
 
 ### 6. Audit (only with `--audit`)
 

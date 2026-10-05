@@ -1,25 +1,12 @@
 # Context procedure
 
-Creates or updates `docs/ux/CONTEXT.md` (stack, commands, exact vocabulary, component patterns, design system) and the design summary. The `ux-context` agent (Sonnet) runs it, dispatched by the `context` skill or by `orchestrate` step 1, so the library reading stays out of the main session. Builders read `CONTEXT.md` on every task, so every name in it must be exact and every line must earn its tokens.
+Creates or updates `docs/ux/CONTEXT.md` (stack, commands, exact vocabulary, component patterns, design system) and the design summary. The `ux-context` agent (Sonnet) runs it, dispatched by the `context` skill or by `orchestrate` step 1 (`CONTEXT-DISPATCH.md`), so the library reading stays out of the main session. Builders read `CONTEXT.md` on every task, so every name in it must be exact and every line must earn its tokens.
 
 Testing showed why: when `CONTEXT.md` said "semantic colors", a builder wrote `text-neutral-700 dark:text-neutral-200`; after it listed `text-muted` and `bg-elevated`, the next builders made no color errors. When a task gave only a component name, builders built look-alikes; a short code pattern fixed it.
 
-## Dispatch (the calling skill does this)
+## Mode
 
-1. **Hi-fi only:** dispatch `ux-describer` with the **Design inventory** template on the design images, output `docs/ux/DESIGN-INVENTORY.md`. Sub-agents cannot dispatch other agents, so this happens before step 2.
-2. Dispatch `ux-context`:
-   > Prototype root: `<path>`. Plugin root: `<plugin>`. Mode: `<create | refresh | sync>`. Designs: `<folder or none>`. Design inventory: `<docs/ux/DESIGN-INVENTORY.md or none>`.
-3. **Review its reply.** Read the Vocabulary and Component patterns sections of `docs/ux/CONTEXT.md`. For each name under "Not verified", and any name that is a category instead of an exact name, check it yourself in the library files and fix the file.
-
-The steps below are what `ux-context` does.
-
-## Modes
-
-| Mode | When | What it does |
-| --- | --- | --- |
-| **create** | No `docs/ux/CONTEXT.md` yet | Steps 1–8, writes the files. |
-| **refresh** | The library, the stack, or the designs changed | Steps 1–8 again, then shows what changed (step 9). |
-| **sync** | The real design system (the base) released a change | Step 10 only. |
+The prompt gives the mode: **create** = steps 1–8, **refresh** = steps 1–9, **sync** = step 10 only.
 
 ## Steps
 

@@ -4,7 +4,7 @@ Run with the prototype root as cwd. `<plugin>` is the plugin root.
 
 1. If `<plugin>/shared/scripts/node_modules` is missing, run `npm install --prefix <plugin>/shared/scripts`.
 2. If Chromium does not launch later, run `npx --prefix <plugin>/shared/scripts playwright install chromium`.
-3. Run `node <plugin>/shared/scripts/judge.mjs --check` and note `typesafe` or `self` (see `JUDGE.md`). Skills that use no judge question skip this.
+3. Run `node <plugin>/shared/scripts/judge.mjs --check` and note `typesafe` or `self` (see `JUDGE.md` → Which judge). Skills that use no judge question skip this.
 
 Tool scripts stay in `<plugin>/shared/scripts/`. Never copy them into the prototype repo.
 
