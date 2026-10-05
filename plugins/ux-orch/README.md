@@ -154,20 +154,20 @@ Jev reads text, not images. For visual checks, the review first turns each state
 In a terminal:
 
 ```bash
-claude plugin marketplace add martylouis/ux-orch
+claude plugin marketplace add martylouis/agents
 claude plugin install ux-orch@martylouis
 ```
 
 Or in an open Claude Code session:
 
 ```
-/plugin marketplace add martylouis/ux-orch
+/plugin marketplace add martylouis/agents
 /plugin install ux-orch@martylouis
 ```
 
 Then run `/reload-plugins`, or start a new session. The marketplace is named `martylouis` and the plugin `ux-orch`, so the skills are `/ux-orch:plan`, `/ux-orch:orchestrate`, and so on.
 
-To work on the plugin itself, add your local clone instead: `claude plugin marketplace add ~/code/martylouis/ux-orch`.
+To work on the plugin itself, add your local clone instead: `claude plugin marketplace add ~/code/martylouis/agents`.
 
 ### Update
 
@@ -178,7 +178,7 @@ claude plugin update ux-orch@martylouis
 
 Restart the session after an update.
 
-The installed copy is cached by version number, so an update picks up only a new version. When you change the plugin in a local clone, start Claude Code with `claude --plugin-dir ~/code/martylouis/ux-orch` to load the clone directly, or raise the version before you update.
+The installed copy is cached by version number, so an update picks up only a new version. When you change the plugin in a local clone, start Claude Code with `claude --plugin-dir ~/code/martylouis/agents/plugins/ux-orch` to load the clone directly, or raise the version before you update.
 
 ### Requirements
 
@@ -313,7 +313,7 @@ docs/ux/
 
 ```
 ux-orch/
-├── .claude-plugin/        plugin.json, marketplace.json
+├── .claude-plugin/        plugin.json
 ├── agents/
 │   ├── ux-builder.md      haiku · executes one task file, runs its smoke check
 │   ├── ux-context.md      sonnet · builds and verifies CONTEXT.md from the installed library
