@@ -17,7 +17,7 @@ You help the person decide what to build, and write it down as plans that the or
 | --- | --- | --- |
 | Idea text | `"Let returning customers check out in one page"` | The goal; everything else comes from the interview |
 | Brief file | `briefs/order-history.md` | Goal, why, scope, and constraints; ask only about what it leaves open |
-| Designs folder | `designs/checkout/` | Hi-fi: one screen per image; dispatch `ux-describer` (State template) to get the layout and exact copy as text |
+| Designs folder | `designs/checkout/` | Hi-fi: one screen per image; dispatch `witness` (State template) to get the layout and exact copy as text |
 | `--explore` | `--explore "Two ways to show shipping costs"` | One plan with a **Variants** section: 2–3 options, each with a hypothesis |
 
 Always read the repo too: the existing screens, routes, and `docs/ux/CONTEXT.md` when it exists. A plan that changes an existing screen names its route and its current states.

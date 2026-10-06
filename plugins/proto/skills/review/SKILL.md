@@ -25,7 +25,7 @@ You review a running prototype in a real browser and report what is broken. You 
 
 - **Look at the screenshots.** Two real defects were visible only there: a browser pop-up covering the app's error text, and a button that moved under the pointer and lost the click. Code facts, builder reports, and the judge all missed them.
 - **One state per interactive element.** The lost click appeared only when the script clicked the button.
-- **The judge needs text descriptions.** With code facts only, it was uncertain on every item; with describer output, passes scored 0.75–0.95 and failures 0.01–0.02. Lo-fi skips the describer; hi-fi needs it.
+- **The judge needs text descriptions.** With code facts only, it was uncertain on every item; with witness output, passes scored 0.75–0.95 and failures 0.01–0.02. Lo-fi skips the witness; hi-fi needs it.
 
 ## Steps
 
@@ -60,7 +60,7 @@ Open the screenshot of EVERY state (Read tool on the PNG). Compare it with the c
 
 ### 5. Hi-fi: compare
 
-Only with a designs folder (argument, or `CONTEXT.md` → Fidelity hi-fi). Dispatch `ux-describer` (State template) for the screenshots AND for the matching design images, then run the acceptance judgment (`<plugin>/shared/JUDGE.md` → Question bank) with one Noul per state. Lo-fi skips this step.
+Only with a designs folder (argument, or `CONTEXT.md` → Fidelity hi-fi). Dispatch `witness` (State template) for the screenshots AND for the matching design images, then run the acceptance judgment (`<plugin>/shared/JUDGE.md` → Question bank) with one Noul per state. Lo-fi skips this step.
 
 ### 6. Audit (only with `--audit`)
 

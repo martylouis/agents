@@ -8,6 +8,7 @@ All notable changes to the `proto` plugin (named `ux-orch` before 1.0.0), newest
 - **Breaking:** the plugin is renamed from `ux-orch` to `proto`, and the `orchestrate` skill to `build`. The commands are now `/proto:plan`, `/proto:context`, `/proto:build`, `/proto:review`, and `/proto:feedback`. The plugin folder is `plugins/proto/`. Uninstall `ux-orch@martylouis` and install `proto@martylouis` (README → Update).
 - New files start with `<!-- proto builder-rules 0.2.0 -->` and `<!-- proto design-summary -->`. An old `BUILDER-RULES.md` is replaced on the next run, as before. **refresh** still owns a `DESIGN.md` that starts with the old `ux-orch` line, and rewrites it with the new one.
 - The script package is `proto-scripts`.
+- The agents are renamed for their jobs and lose the `ux-` prefix, which repeated the plugin name: `ux-builder` is `builder`, `ux-describer` is `witness` (it says what it sees and leaves the verdict to the judge), and `ux-context` is `librarian` (it reads the installed library and keeps the exact names). They show up as `proto:builder`, `proto:witness`, and `proto:librarian`.
 
 ## 0.4.1 — 2026-10-05
 

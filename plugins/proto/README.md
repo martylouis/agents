@@ -68,7 +68,7 @@ plans/ + designs/ (optional)
  1. Intake ─────────── reads plans, repo, and designs → docs/ux/CONTEXT.md, PLANS.md
  2. Start confirmation  one message: plans, fidelity, framework, commits OK?   ◄── you
  3. Tasks ──────────── plans → small task files; each task routed to haiku or sonnet
- 4. Run (loop) ─────── ux-builder sub-agent builds one task
+ 4. Run (loop) ─────── builder sub-agent builds one task
         │                 │
         │                 ▼
         │              review: code read → checks → browser states → screenshots
@@ -134,7 +134,7 @@ The judge never replaces the step where the orchestrator looks at the screenshot
 
 ### Text only
 
-Jev reads text, not images. For visual checks, the review first turns each state into text: **code facts** (accessibility tree, URL, console errors) from `observe.mjs`, and, for hi-fi, a **neutral description** of the screenshot and of the design image from the `ux-describer` sub-agent. The judge then compares text with text. In the first test, the descriptions made the difference: with them, true passes scored 0.75–0.95 and failures 0.01–0.02; with code facts alone, every item was uncertain.
+Jev reads text, not images. For visual checks, the review first turns each state into text: **code facts** (accessibility tree, URL, console errors) from `observe.mjs`, and, for hi-fi, a **neutral description** of the screenshot and of the design image from the `witness` sub-agent. The judge then compares text with text. In the first test, the descriptions made the difference: with them, true passes scored 0.75–0.95 and failures 0.01–0.02; with code facts alone, every item was uncertain.
 
 ### Setup
 
@@ -223,7 +223,7 @@ Run every skill from the prototype's repo.
 /proto:context --sync           # the real design system changed: check prototype overrides
 ```
 
-The library reading and name checks run in the `ux-context` agent (Sonnet), so they stay out of your session's context; your session reviews the result. Use it before the first run to check the vocabulary, after a library upgrade or a design-system release, or when builders keep making the same mistake (wrong class, wrong icon, look-alike component).
+The library reading and name checks run in the `librarian` agent (Sonnet), so they stay out of your session's context; your session reviews the result. Use it before the first run to check the vocabulary, after a library upgrade or a design-system release, or when builders keep making the same mistake (wrong class, wrong icon, look-alike component).
 
 ### Build
 
@@ -316,9 +316,9 @@ proto/
 ├── .claude-plugin/        plugin.json
 ├── CHANGELOG.md           what changed in each version
 ├── agents/
-│   ├── ux-builder.md      haiku · executes one task file, runs its smoke check
-│   ├── ux-context.md      sonnet · builds and verifies CONTEXT.md from the installed library
-│   └── ux-describer.md    haiku · neutral text descriptions of images (states, design inventory)
+│   ├── builder.md         haiku · executes one task file, runs its smoke check
+│   ├── librarian.md       sonnet · builds and verifies CONTEXT.md from the installed library
+│   └── witness.md         haiku · neutral text descriptions of images (states, design inventory)
 ├── skills/
 │   ├── plan/              /proto:plan
 │   ├── context/           /proto:context

@@ -22,10 +22,10 @@ You prepare the vocabulary that every builder reads: `docs/ux/CONTEXT.md` and th
 
 ## Steps
 
-The reading and checking run in the `ux-context` agent (Sonnet), so the library files stay out of this session. You review its result.
+The reading and checking run in the `librarian` agent (Sonnet), so the library files stay out of this session. You review its result.
 
 1. Follow `<plugin>/shared/TOOLS.md` → File names (rename old lowercase files). In **sync** mode, also install the scripts first when needed (`<plugin>/shared/TOOLS.md`, step 1).
-2. Follow `<plugin>/shared/CONTEXT-DISPATCH.md`, in the mode above: the design inventory (hi-fi), then `ux-context`, then your review. Hi-fi runs write the inventory into the run folder `docs/ux/.scratch/<date>-context-<mode>/` (`<plugin>/shared/TOOLS.md` → Scratch).
+2. Follow `<plugin>/shared/CONTEXT-DISPATCH.md`, in the mode above: the design inventory (hi-fi), then `librarian`, then your review. Hi-fi runs write the inventory into the run folder `docs/ux/.scratch/<date>-context-<mode>/` (`<plugin>/shared/TOOLS.md` → Scratch).
 
 This skill changes no prototype code. It writes only `docs/ux/CONTEXT.md`, the design summary, `docs/ux/tokens/` (situation **none**), and decision records and `DECISIONS.md` rows in **sync** mode.
 

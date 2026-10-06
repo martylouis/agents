@@ -7,8 +7,8 @@ In every skill, `<skill>` means the skill's base directory and `<plugin>` means 
 | File | What it holds | Used by |
 | --- | --- | --- |
 | `TOOLS.md` | Install and check the scripts and the judge; dev server; UPPERCASE file names; scratch folder and cleanup | build, review, feedback, context |
-| `CONTEXT-DISPATCH.md` | How to dispatch `ux-context`: modes, design inventory, reviewing its result | context, build (step 1), feedback (step 0, no `CONTEXT.md`) |
-| `CONTEXT-PROCEDURE.md` | Create, refresh, or sync `docs/ux/CONTEXT.md` and the design summary | `ux-context` agent only |
+| `CONTEXT-DISPATCH.md` | How to dispatch `librarian`: modes, design inventory, reviewing its result | context, build (step 1), feedback (step 0, no `CONTEXT.md`) |
+| `CONTEXT-PROCEDURE.md` | Create, refresh, or sync `docs/ux/CONTEXT.md` and the design summary | `librarian` agent only |
 | `RUN.md` | The run loop: dispatch, review, fix rounds, blocked, records | build (step 4), feedback |
 | `REVIEW.md` | The review order, states files, verdicts | build, review, feedback |
 | `JUDGE.md` | Judge setup, thresholds, question bank | all skills |

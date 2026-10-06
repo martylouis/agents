@@ -1,6 +1,6 @@
 # Context procedure
 
-Creates or updates `docs/ux/CONTEXT.md` (stack, commands, exact vocabulary, component patterns, design system) and the design summary. The `ux-context` agent (Sonnet) runs it, dispatched by the `context` skill or by `build` step 1 (`CONTEXT-DISPATCH.md`), so the library reading stays out of the main session. Builders read `CONTEXT.md` on every task, so every name in it must be exact and every line must earn its tokens.
+Creates or updates `docs/ux/CONTEXT.md` (stack, commands, exact vocabulary, component patterns, design system) and the design summary. The `librarian` agent (Sonnet) runs it, dispatched by the `context` skill or by `build` step 1 (`CONTEXT-DISPATCH.md`), so the library reading stays out of the main session. Builders read `CONTEXT.md` on every task, so every name in it must be exact and every line must earn its tokens.
 
 Testing showed why: when `CONTEXT.md` said "semantic colors", a builder wrote `text-neutral-700 dark:text-neutral-200`; after it listed `text-muted` and `bg-elevated`, the next builders made no color errors. When a task gave only a component name, builders built look-alikes; a short code pattern fixed it.
 
@@ -46,7 +46,7 @@ Fill **Vocabulary** with exact names read from the installed library files, neve
 - **Icons:** the icon set that is installed (check `package.json` and `node_modules`), with its prefix, and the library's icon component (for example `UIcon`). An icon set that is not installed is a defect, not a choice. A bare `<i class="…">` renders nothing in most icon setups; say so under Forbidden.
 - **Forbidden:** what builders must not write (palette shades, hex, `rgb(`, manual `dark:` color variants), so the review can grep for it.
 
-Hi-fi: also read the design inventory (the path in your prompt; a scratch file), which the dispatching skill gets from `ux-describer` (**Design inventory** template) before it dispatches `ux-context`. Map each color, type style, and component it lists to a library name. A design element with no library match becomes a candidate component (step 6) or a prototype override (step 3).
+Hi-fi: also read the design inventory (the path in your prompt; a scratch file), which the dispatching skill gets from `witness` (**Design inventory** template) before it dispatches `librarian`. Map each color, type style, and component it lists to a library name. A design element with no library match becomes a candidate component (step 6) or a prototype override (step 3).
 
 ### 5. Component patterns
 

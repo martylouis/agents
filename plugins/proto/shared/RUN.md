@@ -1,6 +1,6 @@
 # Run loop
 
-The loop that builds task files with `ux-builder` sub-agents and reviews each result. `build` (step 4) and `feedback` both use it. The calling skill gives three inputs:
+The loop that builds task files with `builder` sub-agents and reviews each result. `build` (step 4) and `feedback` both use it. The calling skill gives three inputs:
 
 - **Tasks:** the task files to run (in `<run folder>/tasks/`), with `depends-on` and `model` in their frontmatter.
 - **Commit message:** the calling skill's format (for example `feat(ux): <task title>`).
@@ -12,7 +12,7 @@ Start or reuse the dev server (`TOOLS.md` → Dev server). Create one item per t
 
 ## Dispatch
 
-For each task whose dependencies are done, set its task-list item to in progress (`Building <NN> <title>`) and dispatch `ux-builder` with the model from the task's frontmatter:
+For each task whose dependencies are done, set its task-list item to in progress (`Building <NN> <title>`) and dispatch `builder` with the model from the task's frontmatter:
 
 > Work in `<prototype root>`. Execute ONLY this task: `<task path>`. A dev server runs on `<url>`; do not start another.
 
