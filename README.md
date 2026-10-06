@@ -6,7 +6,7 @@ Agent plugins by Marty Thierry.
 
 | Plugin | What it does |
 | --- | --- |
-| [`ux-orch`](plugins/ux-orch/README.md) | Plan, build, review, and iterate UX prototypes with builder sub-agents, browser review, and decision records. |
+| [`proto`](plugins/proto/README.md) | Plan, build, review, and iterate UX prototypes with builder sub-agents, browser review, and decision records. |
 
 ## Claude Code
 
@@ -14,7 +14,7 @@ This repo is a Claude Code marketplace named `martylouis`.
 
 ```bash
 claude plugin marketplace add martylouis/agents
-claude plugin install ux-orch@martylouis
+claude plugin install proto@martylouis
 ```
 
 ## Cursor
