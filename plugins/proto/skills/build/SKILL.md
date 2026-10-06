@@ -54,7 +54,7 @@ Proto build — ready
 - Fidelity: lo-fi (no designs) · framework: Nuxt UI
 - Why (inferred): <one sentence>
 - Judge: typesafe
-- Models: Claude Code defaults, fast → haiku · strong → sonnet
+- Models: <harness> defaults, fast → <model> · strong → <model>
 - Scratch: keep last 3 runs · committed: plans, context, states, `HISTORY.md`, decision log (`RECORDS.md`)
 - Loose plans: 02 (no states for the cart drawer) — `/proto:plan docs/plans/02-products-and-cart.md` can tighten it, or I fill the gaps and log each one
 - Commits: one per task on branch `ux/<name>` — OK?

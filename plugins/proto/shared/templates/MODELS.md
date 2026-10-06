@@ -6,4 +6,4 @@ Which model runs each proto tier, one line per harness. A line here wins over pr
 - `strong`: library setup, research, and the second fix round.
 
 <!-- One line per harness, for example: -->
-<!-- - Claude Code: fast → haiku · strong → sonnet -->
+<!-- - <harness>: fast → <model> · strong → <model> -->
