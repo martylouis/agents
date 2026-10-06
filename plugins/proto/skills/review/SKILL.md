@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Review
 
-You review a running prototype in a real browser and report what is broken. You change no prototype code: every finding becomes a feedback item, and `/proto:feedback` decides the fixes. Use it before a demo or a user test, after the prototype was changed by hand or by another tool, on a prototype that `build` did not build, and (hi-fi) to check that the build still matches the designs.
+You review a running prototype in a real browser and report what is broken. You change no prototype code: every finding becomes a feedback item, and `/proto:feedback` decides the fixes. Use it before a demo or a user test, after the prototype was changed by hand or by another tool, on a prototype that `/proto:build` did not make, and (hi-fi) to check that the prototype still matches the designs.
 
 `<skill>` means this skill's base directory and `<plugin>` means the plugin root (`<skill>/../..`).
 

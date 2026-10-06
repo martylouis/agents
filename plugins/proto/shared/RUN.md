@@ -12,7 +12,7 @@ Start or reuse the dev server (`TOOLS.md` → Dev server). Create one item per t
 
 ## Dispatch
 
-For each task whose dependencies are done, set its task-list item to in progress (`Building <NN> <title>`) and dispatch `builder` with the model from the task's frontmatter:
+For each task whose dependencies are done, set its task-list item to in progress (`Building <NN> <title>`) and dispatch `proto:builder` with the model from the task's frontmatter:
 
 > Work in `<prototype root>`. Execute ONLY this task: `<task path>`. A dev server runs on `<url>`; do not start another.
 

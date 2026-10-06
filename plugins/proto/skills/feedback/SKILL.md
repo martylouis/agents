@@ -36,7 +36,7 @@ The same as `build`: one confirmation at the start, live progress in the harness
 
 ### 0. Tools and context
 
-Follow `<plugin>/shared/TOOLS.md` (tools, file names, builder rules, old evidence, scratch cleanup). When `docs/ux/CONTEXT.md` does not exist (the prototype was not built by `build`), follow `<plugin>/shared/CONTEXT-DISPATCH.md` in **create** mode, so builders have their vocabulary.
+Follow `<plugin>/shared/TOOLS.md` (tools, file names, builder rules, old evidence, scratch cleanup). When `docs/ux/CONTEXT.md` does not exist (the prototype was not made with `/proto:build`), follow `<plugin>/shared/CONTEXT-DISPATCH.md` in **create** mode, so builders have their vocabulary.
 
 **Round number:** one more than the highest numeric Round in `docs/ux/HISTORY.md`. Everything the round writes except `HISTORY.md` rows, plan edits, `DECISIONS.md` rows, and design-system records (items, tasks, crops, screenshots, facts, judge files, `ROUND.md`) goes into the run folder `docs/ux/.scratch/<date>-feedback-r<N>/` (`<plugin>/shared/RECORDS.md`).
 

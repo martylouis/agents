@@ -59,7 +59,7 @@ plan → context → build → review → feedback ─┐
 
 ## How it works
 
-The build, `/proto:build`:
+What `/proto:build` does:
 
 ```
 plans/ + designs/ (optional)
@@ -326,6 +326,7 @@ proto/
 │   ├── review/            /proto:review
 │   └── feedback/          /proto:feedback
 └── shared/                one source for what several skills use
+    ├── README.md          which skill uses which shared file
     ├── TOOLS.md           script install, judge check, dev server
     ├── CONTEXT-DISPATCH.md
     ├── CONTEXT-PROCEDURE.md
@@ -336,7 +337,8 @@ proto/
     └── scripts/           observe.mjs (browser states), smoke.mjs (builder smoke check),
                            discover.mjs (state discovery),
                            comment.mjs (comment overlay), tokens.mjs (token diff),
-                           judge.mjs (TypeSafe)
+                           judge.mjs (TypeSafe), scratch-clean.mjs (scratch cleanup),
+                           size.mjs (token size of each file)
 ```
 
 ## What the first test showed

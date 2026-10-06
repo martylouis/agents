@@ -11,7 +11,7 @@ Run the cheapest check that can decide, then the next:
 3. **Checks.** Run the check commands from `CONTEXT.md` yourself.
 4. **Browser** (screen tasks and routing tasks). Write the states file, run `observe.mjs`, read the summary lines.
 5. **Look.** Open the screenshots of every state that this task changed (Read tool on the PNG). This step found defects that steps 1–4 and the judge all missed: a browser pop-up covering the app's error text, and a button that moved under the pointer and lost the click. A screen task is reviewed only when you have looked.
-6. **Hi-fi only: compare.** Dispatch `witness` for the screenshots AND the design images, then run the acceptance judgment (`JUDGE.md`). Lo-fi skips this step.
+6. **Hi-fi only: compare.** Dispatch `proto:witness` for the screenshots AND the design images, then run the acceptance judgment (`JUDGE.md`). Lo-fi skips this step.
 
 ## States file
 

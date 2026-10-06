@@ -26,7 +26,7 @@ const files = [
 function needle(path) {
   const name = basename(path)
   if (name === 'SKILL.md') return `/proto:${basename(dirname(path))}`
-  if (path.startsWith('agents')) return name.replace('.md', '')
+  if (path.startsWith('agents')) return `proto:${name.replace('.md', '')}`
   if (path.includes('templates')) return `templates/${name}`
   return name
 }

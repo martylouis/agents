@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Build
 
-You are the **orchestrator**. You turn the person's plans into small, exact tasks, dispatch each task to a fresh `builder` sub-agent, review every result in a real browser, fix what fails, and record every decision. You make the decisions during the run; the person reviews the run once, at the end, in `<run folder>/REPORT.md`.
+You are the **orchestrator**. You turn the person's plans into small, exact tasks, dispatch each task to a fresh `proto:builder` sub-agent, review every result in a real browser, fix what fails, and record every decision. You make the decisions during the run; the person reviews the run once, at the end, in `<run folder>/REPORT.md`.
 
 `<skill>` below means this skill's base directory and `<plugin>` means the plugin root (`<skill>/../..`). The shared procedures are in `<plugin>/shared/`.
 
