@@ -1,6 +1,6 @@
 {
   "name": "proto",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "description": "Proto: plan a prototype, prepare its vocabulary, build it with cheap builder sub-agents, review every screen in a real browser, and turn feedback into recorded fixes.",
   "author": {

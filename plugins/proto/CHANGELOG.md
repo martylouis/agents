@@ -2,6 +2,15 @@
 
 All notable changes to the `proto` plugin (named `ux-orch` before 1.0.0), newest first. The version number lives in `.claude-plugin/plugin.json`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## 1.1.0 — 2026-10-06
+
+### Changed
+- The plugin names no model. Skills, agents, and tasks ask for a tier, `fast` or `strong` (`shared/HARNESS.md` → Tiers), and the routing judgment's answer is the tier itself. Task files have `tier:` instead of `model:`. The agents' frontmatter is `model: inherit`, and every dispatch passes the model mapped to the agent's tier.
+- Dispatch and progress are described for any harness (`shared/HARNESS.md`), with Claude Code as one section. A harness with no sub-agents runs the agent files in the main session, one task at a time.
+
+### Added
+- `docs/ux/.scratch/MODELS.md` (template `shared/templates/MODELS.md`): which model runs each tier, one line per harness. The first run in a harness proposes the line in its start confirmation and saves it after "go"; later runs there use it without asking. It is git-ignored and scratch cleanup keeps it.
+
 ## 1.0.0 — 2026-10-06
 
 ### Changed

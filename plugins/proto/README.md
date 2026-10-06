@@ -67,7 +67,7 @@ plans/ + designs/ (optional)
         ▼
  1. Intake ─────────── reads plans, repo, and designs → docs/ux/CONTEXT.md, PLANS.md
  2. Start confirmation  one message: plans, fidelity, framework, commits OK?   ◄── you
- 3. Tasks ──────────── plans → small task files; each task routed to haiku or sonnet
+ 3. Tasks ──────────── plans → small task files; each task routed to the fast or strong tier
  4. Run (loop) ─────── builder sub-agent builds one task
         │                 │
         │                 ▼
@@ -83,7 +83,8 @@ plans/ + designs/ (optional)
 ### Main ideas
 
 - **The plan is the contract.** The orchestrator does not choose where the prototype lives or what it is built with. Your plans and your repo decide that.
-- **Strong model plans, small model builds.** The orchestrator (your session model) writes exact tasks. Builders run on Haiku by default and on Sonnet for library setup or research. Each builder starts with a fresh context and reads only `CONTEXT.md`, its task, and the files that the task names.
+- **Strong model plans, small model builds.** The orchestrator (your session model) writes exact tasks. Builders run on the `fast` tier by default and on the `strong` tier for library setup or research. Each builder starts with a fresh context and reads only `CONTEXT.md`, its task, and the files that the task names.
+- **Tiers, not model names.** The plugin asks for a `fast` or a `strong` model and never names one, so a new model release needs no plugin update. The first run in a harness proposes which of its models fills each tier, in the start confirmation; after your "go", the choice is saved in `docs/ux/.scratch/MODELS.md`, one line per harness, and later runs there use it without asking. The file is git-ignored, so switching between Claude Code, Cursor, or another harness never mixes up the choices. Edit or delete a line to choose again (`shared/HARNESS.md`).
 - **Exact vocabulary.** `CONTEXT.md` lists the real class names, component names, and icon prefixes. Small models follow exact names well and drift from categories.
 - **Evidence, not claims.** Builders run only a smoke check (do the named elements render?), so their reports are claims. The orchestrator runs each state in Chromium, records the accessibility tree and console errors, and looks at the screenshots.
 - **Decisions are recorded, not asked.** The orchestrator decides during the run and writes each decision to a log, or to a full decision record when it sets a pattern. You review all decisions in one report.
@@ -113,7 +114,7 @@ The judge is [TypeSafe](https://typesafe.ai)'s **Jev** model (`jev-latest`), cal
 
 | Question | When | What the answer decides |
 | --- | --- | --- |
-| **Routing** (Choice) | Build step 3 and feedback tasks, one request for all tasks | `fast` → Haiku, `strong` → Sonnet |
+| **Routing** (Choice) | Build step 3 and feedback tasks, one request for all tasks | The task's tier: `fast` or `strong` |
 | **Assumption triage** (Noul + Score) | After each builder returns | Accept with a log line, or fix (a tweak when it is one line) |
 | **Acceptance** (Noul per item) | Hi-fi review | Pass, blocker, or "look closer" |
 | **Significance** (Score) | Each orchestrator decision, and each `feedback --tweak` | Full decision record, or one row in `DECISIONS.md`; a tweak that scores high becomes a round |
@@ -223,7 +224,7 @@ Run every skill from the prototype's repo.
 /proto:context --sync           # the real design system changed: check prototype overrides
 ```
 
-The library reading and name checks run in the `librarian` agent (Sonnet), so they stay out of your session's context; your session reviews the result. Use it before the first run to check the vocabulary, after a library upgrade or a design-system release, or when builders keep making the same mistake (wrong class, wrong icon, look-alike component).
+The library reading and name checks run in the `librarian` agent (`strong` tier), so they stay out of your session's context; your session reviews the result. Use it before the first run to check the vocabulary, after a library upgrade or a design-system release, or when builders keep making the same mistake (wrong class, wrong icon, look-alike component).
 
 ### Build
 
@@ -304,6 +305,7 @@ docs/ux/
 │   └── NNN-slug.md       design-system records only (may add NNN.png)
 ├── .gitignore            contains .scratch/
 └── .scratch/             NOT committed; one folder per run, last 3 kept
+    ├── MODELS.md                     which model runs each tier, one line per harness (kept by cleanup)
     ├── 2026-10-03-build-all/         REPORT.md, RUN-LOG.md, tasks/, decisions/, evidence/, judgments/
     ├── 2026-10-03-review-all/        REVIEW.md, items/, evidence/
     └── 2026-10-04-feedback-r2/       ROUND.md, items/, tasks/, crops/, evidence/, judgments/
@@ -316,9 +318,9 @@ proto/
 ├── .claude-plugin/        plugin.json
 ├── CHANGELOG.md           what changed in each version
 ├── agents/
-│   ├── builder.md         haiku · executes one task file, runs its smoke check
-│   ├── librarian.md       sonnet · builds and verifies CONTEXT.md from the installed library
-│   └── witness.md         haiku · neutral text descriptions of images (states, design inventory)
+│   ├── builder.md         fast or strong · executes one task file, runs its smoke check
+│   ├── librarian.md       strong · builds and verifies CONTEXT.md from the installed library
+│   └── witness.md         fast · neutral text descriptions of images (states, design inventory)
 ├── skills/
 │   ├── plan/              /proto:plan
 │   ├── context/           /proto:context
@@ -328,11 +330,12 @@ proto/
 └── shared/                one source for what several skills use
     ├── README.md          which skill uses which shared file
     ├── TOOLS.md           script install, judge check, dev server
+    ├── HARNESS.md         tiers, per-harness model choices, dispatch and progress in any harness
     ├── CONTEXT-DISPATCH.md
     ├── CONTEXT-PROCEDURE.md
     ├── RUN.md             the run loop (dispatch, review, fix rounds, blocked)
     ├── REVIEW.md, JUDGE.md, RECORDS.md
-    ├── templates/         CONTEXT, DESIGN, PLAN, PLANS, TASK, DECISION, REPORT,
+    ├── templates/         CONTEXT, DESIGN, MODELS, PLAN, PLANS, TASK, DECISION, REPORT,
     │                      REVIEW-REPORT, FEEDBACK-ITEM, ROUND-REPORT, BUILDER-RULES
     └── scripts/           observe.mjs (browser states), smoke.mjs (builder smoke check),
                            discover.mjs (state discovery),
@@ -423,4 +426,4 @@ Like Impeccable, UI Skills stays optional.
 ### Other items
 
 - **Next:** hi-fi from Paper and Figma (not only images); a test of the new skills on a real prototype.
-- **Later:** unattended runs with `claude -p`; harness-neutral wording so the skills also run in Cursor, Codex, or OpenCode.
+- **Later:** unattended runs with `claude -p`; install steps and adapter notes for Cursor, Codex, Amp, or OpenCode (the skills already ask for tiers, not models).

@@ -13,7 +13,7 @@ You are the **orchestrator**. You turn the person's plans into small, exact task
 
 ## Voice
 
-Progress shows in the harness's task list (in Claude Code, the live checklist with a spinner), one item per task, updated in place (`<plugin>/shared/RUN.md` → Progress). Chat carries only:
+Progress shows in the harness's task list (`<plugin>/shared/HARNESS.md` → Task list), one item per task, updated in place (`<plugin>/shared/RUN.md` → Progress). Chat carries only:
 
 1. The **start confirmation** (step 2).
 2. One line per **blocked** task.
@@ -37,7 +37,7 @@ Done when observe, smoke, and judge are runnable and the run folder exists. `<ru
 
 Read the plans to build: the one plan file when the argument is a file; otherwise every plan in the folder (`NN-*.md`; skip other files). Skip a plan that `docs/ux/PLANS.md` marks `done`, and name the skipped plans in one line of the start confirmation; the person can say "rebuild 02". Also read the repo (`package.json`, config, `src/`), and the designs folder if given.
 
-- **Context:** follow `<plugin>/shared/CONTEXT-DISPATCH.md` in **create** mode: for hi-fi, `witness` writes the design inventory; then the `librarian` agent (Sonnet) builds `CONTEXT.md`; then you review its result. When `docs/ux/CONTEXT.md` already exists (for example from `/proto:context`), reuse it: dispatch **refresh** only if the library or the designs changed since its verify date.
+- **Context:** follow `<plugin>/shared/CONTEXT-DISPATCH.md` in **create** mode: for hi-fi, `witness` writes the design inventory; then the `librarian` agent (`strong` tier) builds `CONTEXT.md`; then you review its result. When `docs/ux/CONTEXT.md` already exists (for example from `/proto:context`), reuse it: dispatch **refresh** only if the library or the designs changed since its verify date.
 - Create the other files from `<plugin>/shared/templates/`: `docs/ux/PLANS.md` (filled), `docs/ux/DECISIONS.md`, and `<run folder>/RUN-LOG.md`.
 - **Plan readiness:** ask the plan-readiness judgment (`<plugin>/shared/JUDGE.md` → Question bank) for all plans in one request. A loose plan does not stop the run; name it in the start confirmation.
 - Infer a one-sentence **why** when the plans give none (also from `PRODUCT.md` when it exists).
@@ -54,13 +54,14 @@ Proto build — ready
 - Fidelity: lo-fi (no designs) · framework: Nuxt UI
 - Why (inferred): <one sentence>
 - Judge: typesafe
+- Models for Cursor (new): fast → composer · strong → composer
 - Scratch: keep last 3 runs · committed: plans, context, states, `HISTORY.md`, decision log (`RECORDS.md`)
 - Loose plans: 02 (no states for the cart drawer) — `/proto:plan docs/plans/02-products-and-cart.md` can tighten it, or I fill the gaps and log each one
 - Commits: one per task on branch `ux/<name>` — OK?
 Reply "go", or change any line.
 ```
 
-This is the only question of the run. Record the answers in `PLANS.md` → Run settings. When commits are approved, create the branch before step 4.
+Include the **Models** line only when `docs/ux/.scratch/MODELS.md` has no usable line for this harness (`<plugin>/shared/HARNESS.md` → Models). This is the only question of the run. Record the answers in `PLANS.md` → Run settings, except the models, which go only to `MODELS.md`. When commits are approved, create the branch before step 4.
 
 ### 3. Tasks
 
@@ -72,7 +73,7 @@ For each plan, in dependency order, write task files from `<plugin>/shared/templ
 - Name every component, file, and text exactly. For each named component, point to its pattern in `CONTEXT.md` → Component patterns (add it there when it is missing); builders replace named components with look-alikes when they get only a name.
 - Split **Builder checks** (commands) from **Reviewer checks** (browser states). Builders report only the first.
 - Plans with **Variants** get one task set per variant, with the variant prefix (`A-`, `B-`).
-- Route each task to `haiku` or `sonnet` with the routing judgment (`<plugin>/shared/JUDGE.md` → Question bank). Library setup and research tasks go to `sonnet`.
+- Route each task to the `fast` or `strong` tier with the routing judgment (`<plugin>/shared/JUDGE.md` → Question bank). Library setup and research tasks go to `strong`.
 
 Done when every step of every plan maps to a task, and every task has both check lists.
 

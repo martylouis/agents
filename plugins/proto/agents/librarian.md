@@ -1,7 +1,7 @@
 ---
 name: librarian
 description: Librarian for the Proto plugin. Reads the repo and the installed library, then creates, refreshes, or syncs docs/ux/CONTEXT.md and the design summary with exact, verified names. Dispatched by the proto context and build skills; not for general coding.
-model: sonnet
+model: inherit
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
