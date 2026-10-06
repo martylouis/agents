@@ -38,7 +38,7 @@ The judge never replaces the **Look** step in `REVIEW.md`. Its errors in testing
 
 **Routing** (step 3, one Choice per task, all tasks in one request): `state.tasks.<id>` = the task text.
 - criteria `fast`: "A small, fast coding model can do it reliably: exact, self-contained, known patterns, no research"; `strong`: "Needs research on a library setup that may have changed, resolving config conflicts, or many judgment calls".
-- `fast` → `haiku`; `strong` → `sonnet`. Below 0.5 → `haiku` for screen tasks (the fix-round rule escalates).
+- The answer is the task's `tier` (`HARNESS.md` → Tiers). Below 0.5 → `fast` for screen tasks (the fix-round rule escalates).
 
 **Assumption triage** (every builder assumption): `state.rules` = the vocabulary and builder rules; `state.assumptions.<id>` = one assumption.
 - Noul `<id>_violates`: "Does the assumption break `state.rules`?"

@@ -1,6 +1,6 @@
 # Context procedure
 
-Creates or updates `docs/ux/CONTEXT.md` (stack, commands, exact vocabulary, component patterns, design system) and the design summary. The `librarian` agent (Sonnet) runs it, dispatched by the `context` skill or by `build` step 1 (`CONTEXT-DISPATCH.md`), so the library reading stays out of the main session. Builders read `CONTEXT.md` on every task, so every name in it must be exact and every line must earn its tokens.
+Creates or updates `docs/ux/CONTEXT.md` (stack, commands, exact vocabulary, component patterns, design system) and the design summary. The `librarian` agent (`strong` tier) runs it, dispatched by the `context` skill or by `build` step 1 (`CONTEXT-DISPATCH.md`), so the library reading stays out of the main session. Builders read `CONTEXT.md` on every task, so every name in it must be exact and every line must earn its tokens.
 
 Testing showed why: when `CONTEXT.md` said "semantic colors", a builder wrote `text-neutral-700 dark:text-neutral-200`; after it listed `text-muted` and `bg-elevated`, the next builders made no color errors. When a task gave only a component name, builders built look-alikes; a short code pattern fixed it.
 

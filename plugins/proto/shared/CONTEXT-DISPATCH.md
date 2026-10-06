@@ -1,6 +1,6 @@
 # Context dispatch
 
-How a skill gets `docs/ux/CONTEXT.md` built: it dispatches `proto:librarian` and reviews the result. The agent reads `CONTEXT-PROCEDURE.md`; you do not.
+How a skill gets `docs/ux/CONTEXT.md` built: it dispatches `proto:librarian` and reviews the result. The agent reads `CONTEXT-PROCEDURE.md`; you do not. Map the tiers first (`HARNESS.md` → Models).
 
 ## Modes
 

@@ -9,11 +9,12 @@ In every skill, `<skill>` means the skill's base directory and `<plugin>` means 
 | `TOOLS.md` | Install and check the scripts and the judge; dev server; UPPERCASE file names; scratch folder and cleanup | build, review, feedback, context |
 | `CONTEXT-DISPATCH.md` | How to dispatch `librarian`: modes, design inventory, reviewing its result | context, build (step 1), feedback (step 0, no `CONTEXT.md`) |
 | `CONTEXT-PROCEDURE.md` | Create, refresh, or sync `docs/ux/CONTEXT.md` and the design summary | `librarian` agent only |
+| `HARNESS.md` | Tiers instead of model names, the per-harness model choices (`.scratch/MODELS.md`), how to dispatch an agent and show progress in any harness | every skill that dispatches an agent |
 | `RUN.md` | The run loop: dispatch, review, fix rounds, blocked, records | build (step 4), feedback |
 | `REVIEW.md` | The review order, states files, verdicts | build, review, feedback |
 | `JUDGE.md` | Judge setup, thresholds, question bank | all skills |
 | `RECORDS.md` | What is committed; run log, decision log, full decision records, `HISTORY.md`, round report | build, review, feedback |
-| `templates/` | File templates (`CONTEXT`, `DESIGN`, `PLAN`, `PLANS`, `TASK`, `DECISION`, `REPORT`, `REVIEW-REPORT`, `FEEDBACK-ITEM`, `ROUND-REPORT`, `BUILDER-RULES`) | see each skill |
+| `templates/` | File templates (`CONTEXT`, `DESIGN`, `MODELS`, `PLAN`, `PLANS`, `TASK`, `DECISION`, `REPORT`, `REVIEW-REPORT`, `FEEDBACK-ITEM`, `ROUND-REPORT`, `BUILDER-RULES`) | see each skill |
 | `scripts/` | `observe.mjs` (browser states), `smoke.mjs` (builder smoke check), `discover.mjs` (state discovery), `comment.mjs` (comment overlay), `tokens.mjs` (token diff), `judge.mjs` (TypeSafe), `scratch-clean.mjs` (scratch cleanup) | see each skill |
 
 Scripts run with the prototype root as cwd. The prototype repo holds only `docs/ux/` and the prototype itself; tool scripts and their packages stay here.

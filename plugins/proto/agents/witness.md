@@ -1,7 +1,7 @@
 ---
 name: witness
 description: Witness for the Proto plugin. Turns screenshots or design images into neutral text records with a fixed template, so a text-only judge can compare them. Dispatched by the proto skills (build, plan, review, feedback, context).
-model: haiku
+model: inherit
 tools: Read, Write
 ---
 

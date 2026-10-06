@@ -15,10 +15,10 @@ A state file (`states/<plan>.json`) holds saved routes to one screen in one cond
 
 ## `<run folder>/RUN-LOG.md`
 
-Append-only, one section per task, written when the task changes state:
+Starts with the models line (`HARNESS.md` → Models). Then append-only, one section per task, written when the task changes state:
 
 ```markdown
-### 01/05 Login screen — haiku — pass after 1 fix round
+### 01/05 Login screen — fast — pass after 1 fix round
 - Builder: <tokens>, <tool uses>, <seconds>. Checks: pass.
 - Review: <verdict>. Blockers: <cause, one line each>.
 - Assumptions: <accepted / fixed, with judge numbers>.

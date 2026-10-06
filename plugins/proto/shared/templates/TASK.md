@@ -2,7 +2,7 @@
 plan: <plan file> (steps <n–m>)
 depends-on: [<task numbers>]
 files: [<every file this task may create or change>]
-model: <haiku | sonnet>
+tier: <fast | strong>
 fidelity: <lo-fi | hi-fi>
 round: 1
 feedback: [<FB-NNN items this task closes; omit for plan tasks>]

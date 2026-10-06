@@ -6,7 +6,7 @@
 
 ## Checklist
 
-- [x] 01/01 <task title> — <model>, <fix rounds>
+- [x] 01/01 <task title> — <tier>, <fix rounds>
 - [ ] 01/04 <task title> — **blocked:** <reason in one line>
 
 ## Review these decisions (most significant first)

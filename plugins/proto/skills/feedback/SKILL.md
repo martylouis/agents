@@ -88,11 +88,11 @@ Feedback round 2 — 9 items
 Reply "go", or change any line.
 ```
 
-This is the only question of the round. After the answer, close bugs that did not reproduce as `rejected` (unless the person gave steps: then reproduce again), and close the conflict items the person did not pick as `rejected` (reason: "conflict: the person chose FB-<NNN>"). When commits are approved, create the branch.
+Add the **Models** line here too, as in `build`, unless `docs/ux/.scratch/MODELS.md` already has a line for this harness (`<plugin>/shared/HARNESS.md` → Models). This is the only question of the round. After the answer, close bugs that did not reproduce as `rejected` (unless the person gave steps: then reproduce again), and close the conflict items the person did not pick as `rejected` (reason: "conflict: the person chose FB-<NNN>"). When commits are approved, create the branch.
 
 ### 5. Tasks
 
-For each fix and change item, write a task from `<plugin>/shared/templates/TASK.md` into `<run folder>/tasks/<NN-plan-slug>/F<N>-<NN>-<slug>.md` (no plan → `<run folder>/tasks/feedback-r<N>/`), with `round: <N>` and `feedback: [FB-<NNN>]`. Items on the same screen may share one task. Give each task the target route, state, and element, the evidence (crop or screenshot), and the exact change. Route models with the routing judgment.
+For each fix and change item, write a task from `<plugin>/shared/templates/TASK.md` into `<run folder>/tasks/<NN-plan-slug>/F<N>-<NN>-<slug>.md` (no plan → `<run folder>/tasks/feedback-r<N>/`), with `round: <N>` and `feedback: [FB-<NNN>]`. Items on the same screen may share one task. Give each task the target route, state, and element, the evidence (crop or screenshot), and the exact change. Route each task to a tier with the routing judgment.
 
 For each "what" change: update the plan file (the person approved it in the confirmation) and ask the significance judgment (`<plugin>/shared/JUDGE.md` → Question bank). Score ≥ 2 (it sets a pattern or changes the design system) → a full decision record (`RECORDS.md` → Full decision records; `round: <N>`, the item IDs in Context). Below 2 → one row in `docs/ux/DECISIONS.md` with the item ID and the plan edit. Set the items to `building` in `HISTORY.md`.
 

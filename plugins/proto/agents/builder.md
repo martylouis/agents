@@ -1,7 +1,7 @@
 ---
 name: builder
 description: Builder for the Proto plugin. Executes exactly one task file under docs/ux/.scratch/*/tasks/ and appends a Result section. Dispatched by the proto build and feedback skills; not for general coding.
-model: haiku
+model: inherit
 tools: Read, Write, Edit, Bash, Glob, Grep, WebFetch
 ---
 
