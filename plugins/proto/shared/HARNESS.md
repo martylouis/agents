@@ -35,7 +35,7 @@ Model names go only in `MODELS.md` and in run-folder files, never in a committed
 
 ## Dispatch
 
-To dispatch an agent, start a sub-agent with the agent file (`<plugin>/agents/<name>.md`) as its instructions, the model mapped to its tier, and the prompt the skill gives.
+To dispatch an agent, start a sub-agent with the agent file (`<plugin>/agents/<name>.md`) as its instructions, the model mapped to its tier, and the prompt the skill gives. The skills name agents the Claude Code way (`proto:librarian`); in any other harness that means `<plugin>/agents/librarian.md`.
 
 - When the harness has no sub-agents, do the agent's work yourself, one task at a time, reading only what the agent file says to read. Builders then run one after another.
 - Sub-agents cannot dispatch other agents, so skills dispatch every agent themselves.
@@ -59,3 +59,8 @@ Defaults name model families, never versions, so a new release needs no change h
 - Agents are `proto:builder`, `proto:witness`, and `proto:librarian`. Their frontmatter says `model: inherit`; pass the mapped model on every dispatch. `haiku`, `sonnet`, and `opus` are aliases that always point at the newest release.
 - The task list is the task tools: the live checklist with a spinner.
 - Skills run as `/proto:<skill>`.
+
+### Cursor
+
+- Dispatch with the agent CLI's Task tool: paste the agent file's text into the sub-agent prompt, followed by the skill's prompt, and pass the mapped model.
+- The task list is Cursor's to-do list.
