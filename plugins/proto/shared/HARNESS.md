@@ -15,21 +15,23 @@ The orchestrator is the session itself, on whatever model the person runs. `witn
 
 The person's model choices live in `docs/ux/.scratch/MODELS.md`, one line per harness. The file is git-ignored, so it stays on the machine where it was made and a teammate on another harness never reads it. Scratch cleanup removes run folders only, so the file stays. Template: `<plugin>/shared/templates/MODELS.md`.
 
-At the start of every skill that dispatches an agent:
+At the start of every skill that dispatches an agent, name the harness you run in, then take the first of these that applies:
 
-1. Name the harness you run in (for example `Claude Code`, `Cursor`, `Codex`).
-2. Read its line in `docs/ux/.scratch/MODELS.md`. When the line exists and this harness still offers both models, use them. Ask nothing.
-3. Otherwise propose a map and confirm it once:
-   - When the person said which models to use (for example "only our in-house models"), choose from those only.
+1. **Saved.** `docs/ux/.scratch/MODELS.md` has a line for this harness, and the harness still offers both models: use them. Ask nothing.
+2. **Known harness.** The harness is in Known harnesses below: resolve its defaults to the models it offers today and use them. Ask nothing. When the skill has a start confirmation, show the map there as information (`Models: <harness> defaults, fast → <model> · strong → <model>`), so the person can change it in the same answer. Save no line unless the person changes it.
+3. **Anything else.** Propose a map and confirm it once:
    - `fast` → the cheapest model that fits the tier. `strong` → the next one up, or the session model.
    - When the harness cannot choose a model per sub-agent, write `fast → (harness default) · strong → (harness default)`. That is a valid map, not an error, and it needs no question.
    - Put the proposal in the skill's start confirmation as one line, `Models for <harness> (new): fast → <model> · strong → <model>`. A skill with no confirmation asks that one line as its question before the first dispatch.
    - After "go" (or the person's change), add or replace the harness's line in `MODELS.md`. A dispatch before the confirmation (for example `build` intake) uses the proposed map.
-4. Write the map in use at the top of `<run folder>/RUN-LOG.md` when the skill writes one.
+
+When the person said which models to use (for example "only our in-house models"), choose from those only, in every case above, and save the line.
+
+Write the map in use at the top of `<run folder>/RUN-LOG.md` when the skill writes one.
 
 When the `fast` model cannot read images, `witness` runs on `strong`. When neither can, describe the images yourself.
 
-Model names go only in `MODELS.md` and in run-folder files, never in a committed file. The plugin's own files name models only as the harness examples below.
+Model names go only in `MODELS.md` and in run-folder files, never in a committed file. The plugin's own files name model families only, in Known harnesses below.
 
 ## Dispatch
 
@@ -42,8 +44,18 @@ To dispatch an agent, start a sub-agent with the agent file (`<plugin>/agents/<n
 
 Progress goes in the harness's own task or to-do list, updated in place. When the harness has none, keep the list in `<run folder>/RUN-LOG.md` and still print nothing in chat while a run works.
 
-## Claude Code
+## Known harnesses
 
-- Agents are `proto:builder`, `proto:witness`, and `proto:librarian`. Their frontmatter says `model: inherit`; pass the mapped model on every dispatch. Claude Code's model choices for a sub-agent are aliases (`haiku`, `sonnet`, `opus`) that always point at the newest release, so `fast` is usually `haiku` and `strong` usually `sonnet`.
+Defaults name model families, never versions, so a new release needs no change here: resolve each to the newest model of that family the harness offers. When a family is gone, treat the harness as "anything else" (Models, case 3).
+
+| Harness | `fast` | `strong` |
+| --- | --- | --- |
+| Claude Code | `haiku` | `sonnet` |
+| Codex | the newest small (mini) coding model | the newest full coding model |
+| Cursor | Cursor's own Composer model | the session model |
+
+### Claude Code
+
+- Agents are `proto:builder`, `proto:witness`, and `proto:librarian`. Their frontmatter says `model: inherit`; pass the mapped model on every dispatch. `haiku`, `sonnet`, and `opus` are aliases that always point at the newest release.
 - The task list is the task tools: the live checklist with a spinner.
 - Skills run as `/proto:<skill>`.

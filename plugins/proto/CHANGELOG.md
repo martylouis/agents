@@ -9,7 +9,8 @@ All notable changes to the `proto` plugin (named `ux-orch` before 1.0.0), newest
 - Dispatch and progress are described for any harness (`shared/HARNESS.md`), with Claude Code as one section. A harness with no sub-agents runs the agent files in the main session, one task at a time.
 
 ### Added
-- `docs/ux/.scratch/MODELS.md` (template `shared/templates/MODELS.md`): which model runs each tier, one line per harness. The first run in a harness proposes the line in its start confirmation and saves it after "go"; later runs there use it without asking. It is git-ignored and scratch cleanup keeps it.
+- Built-in defaults for Claude Code, Codex, and Cursor, written as model families so new releases need no update (`shared/HARNESS.md` → Known harnesses). These harnesses never ask.
+- `docs/ux/.scratch/MODELS.md` (template `shared/templates/MODELS.md`): which model runs each tier, one line per harness. It overrides a default. Any other harness proposes its line once in the start confirmation and saves it after "go". It is git-ignored and scratch cleanup keeps it.
 
 ## 1.0.0 — 2026-10-06
 

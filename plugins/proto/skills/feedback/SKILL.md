@@ -88,7 +88,7 @@ Feedback round 2 — 9 items
 Reply "go", or change any line.
 ```
 
-When `docs/ux/.scratch/MODELS.md` has no usable line for this harness, add the **Models** line here too (`<plugin>/shared/HARNESS.md` → Models). This is the only question of the round. After the answer, close bugs that did not reproduce as `rejected` (unless the person gave steps: then reproduce again), and close the conflict items the person did not pick as `rejected` (reason: "conflict: the person chose FB-<NNN>"). When commits are approved, create the branch.
+Add the **Models** line here too, as in `build`, unless `docs/ux/.scratch/MODELS.md` already has a line for this harness (`<plugin>/shared/HARNESS.md` → Models). This is the only question of the round. After the answer, close bugs that did not reproduce as `rejected` (unless the person gave steps: then reproduce again), and close the conflict items the person did not pick as `rejected` (reason: "conflict: the person chose FB-<NNN>"). When commits are approved, create the branch.
 
 ### 5. Tasks
 

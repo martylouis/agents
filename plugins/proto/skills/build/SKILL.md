@@ -54,14 +54,14 @@ Proto build — ready
 - Fidelity: lo-fi (no designs) · framework: Nuxt UI
 - Why (inferred): <one sentence>
 - Judge: typesafe
-- Models for Cursor (new): fast → composer · strong → composer
+- Models: Claude Code defaults, fast → haiku · strong → sonnet
 - Scratch: keep last 3 runs · committed: plans, context, states, `HISTORY.md`, decision log (`RECORDS.md`)
 - Loose plans: 02 (no states for the cart drawer) — `/proto:plan docs/plans/02-products-and-cart.md` can tighten it, or I fill the gaps and log each one
 - Commits: one per task on branch `ux/<name>` — OK?
 Reply "go", or change any line.
 ```
 
-Include the **Models** line only when `docs/ux/.scratch/MODELS.md` has no usable line for this harness (`<plugin>/shared/HARNESS.md` → Models). This is the only question of the run. Record the answers in `PLANS.md` → Run settings, except the models, which go only to `MODELS.md`. When commits are approved, create the branch before step 4.
+The **Models** line shows the map in use: the harness defaults, or a proposal to confirm when the harness is new to proto (`<plugin>/shared/HARNESS.md` → Models). Leave it out when `docs/ux/.scratch/MODELS.md` already has a line for this harness. This is the only question of the run. Record the answers in `PLANS.md` → Run settings, except the models, which go only to `MODELS.md`. When commits are approved, create the branch before step 4.
 
 ### 3. Tasks
 
