@@ -63,4 +63,5 @@ Defaults name model families, never versions, so a new release needs no change h
 ### Cursor
 
 - Dispatch with the agent CLI's Task tool: paste the agent file's text into the sub-agent prompt, followed by the skill's prompt, and pass the mapped model.
+- Agents load by their bare names (`builder`, `witness`, `librarian`), and skills run as `/<skill>` (for example `/build`), not `/proto:<skill>`.
 - The task list is Cursor's to-do list.

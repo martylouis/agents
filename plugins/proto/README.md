@@ -152,6 +152,8 @@ Jev reads text, not images. For visual checks, the review first turns each state
 
 ## Install
 
+Install steps for every harness (Claude Code, Cursor, and others) are in the [repo README](../../README.md#install). Below are the Claude Code details.
+
 In a terminal:
 
 ```bash
@@ -193,7 +195,7 @@ The installed copy is cached by version number, so an update picks up only a new
 
 ### Requirements
 
-- Claude Code with plugin support
+- Claude Code with plugin support, or Cursor's agent CLI (see the [repo README](../../README.md#cursor))
 - Node.js 20 or later (for the review scripts)
 - Chromium for Playwright. The skill installs the script packages on the first run. If Chromium is missing, it runs `playwright install chromium`.
 - Optional: a [TypeSafe](https://typesafe.ai) API key in `TYPESAFE_API_KEY` (environment, or the prototype's `.env`). Without a key, the orchestrator makes the same judgments itself.
