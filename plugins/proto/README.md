@@ -152,7 +152,7 @@ Jev reads text, not images. For visual checks, the review first turns each state
 
 ## Install
 
-Install steps for every harness (Claude Code, Cursor, and others) are in the [repo README](../../README.md#install). Below are the Claude Code details.
+Install steps for every harness are in the [repo README](../../README.md#install): Claude Code marketplace, Cursor marketplace (`martylouis/agents` in Customize), or a local clone with `cursor-agent --plugin-dir`. Below are the Claude Code details.
 
 In a terminal:
 

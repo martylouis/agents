@@ -1,0 +1,17 @@
+{
+  "name": "martylouis",
+  "owner": {
+    "name": "Marty Thierry"
+  },
+  "metadata": {
+    "description": "Plugins by Marty Thierry.",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "proto",
+      "description": "Proto: plan, build, review, and iterate UX prototypes with builder sub-agents, browser review, feedback rounds, and decision records.",
+      "source": "proto"
+    }
+  ]
+}
