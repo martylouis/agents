@@ -4,8 +4,8 @@
   "license": "MIT",
   "description": "Proto: plan a prototype, prepare its vocabulary, build it with cheap builder sub-agents, review every screen in a real browser, and turn feedback into recorded fixes.",
   "author": {
-    "name": "Marty Thierry",
-    "url": "https://martylouis.com"
+    "name": "Marty Thierry"
   },
+  "repository": "https://github.com/martylouis/agents",
   "keywords": ["ux", "prototype", "orchestrator", "subagents", "design", "review", "feedback"]
 }

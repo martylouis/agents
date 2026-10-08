@@ -2,6 +2,11 @@
 
 All notable changes to the `proto` plugin (named `ux-orch` before 1.0.0), newest first. The version number lives in `.claude-plugin/plugin.json`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## 1.2.0 — 2026-10-07
+
+### Added
+- Cursor marketplace manifests at the repo root (`.cursor-plugin/marketplace.json`) and under `plugins/proto/.cursor-plugin/`. Install `proto` from the `martylouis/agents` marketplace in Cursor Customize, or keep using a local clone with `cursor-agent --plugin-dir`.
+
 ## 1.1.0 — 2026-10-06
 
 ### Changed
