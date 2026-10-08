@@ -4,9 +4,9 @@ Agent plugins by Marty Thierry.
 
 ## Plugins
 
-| Plugin | What it does | Claude Code | Cursor | Codex |
-| --- | --- | --- | --- | --- |
-| [`proto`](plugins/proto/README.md) | Plan, build, review, and iterate UX prototypes with builder sub-agents, browser review, and decision records. | Yes | Yes, from a local clone | Not tested yet |
+| Plugin | Latest release | What it does | Claude Code | Cursor | Codex |
+| --- | --- | --- | --- | --- | --- |
+| [`proto`](plugins/proto/README.md) | [![proto release](https://img.shields.io/github/v/release/martylouis/agents?filter=proto-v*&sort=semver&display_name=release&label=release)](https://github.com/martylouis/agents/releases?q=proto-v&expanded=true) | Plan, build, review, and iterate UX prototypes with builder sub-agents, browser review, and decision records. | Yes | Yes, from a local clone | Not tested yet |
 
 Each plugin's README covers how to use it. This page covers how to install it in each harness.
 
@@ -66,7 +66,7 @@ Plugins are written for any harness. Skills ask for a model tier (`fast` or `str
 
 1. Create `plugins/<name>/` with its own `.claude-plugin/plugin.json`.
 2. Add an entry to `.claude-plugin/marketplace.json` with `"source": "./plugins/<name>"`.
-3. Add a row to the Plugins table above, with a column for each harness.
+3. Add a row to the Plugins table above, with a column for each harness. For Latest release, copy proto's badge and change `proto-v` to `<name>-v` in both the badge and the link.
 4. Keep each plugin self-contained. Do not reference files outside its folder.
 5. Name no models in skills or agents. Ask for a tier, and keep model families in the plugin's `HARNESS.md`.
 
