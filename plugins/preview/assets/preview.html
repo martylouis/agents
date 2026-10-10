@@ -1,0 +1,466 @@
+<!doctype html>
+<!-- preview viewer 0.1.0 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview</title>
+<style>
+  :root {
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --text: #18181b;
+    --muted: #63636b;
+    --border: #e4e4e7;
+    --control: #f4f4f5;
+    --accent: #18181b;
+    --accent-text: #ffffff;
+    --focus: #2563eb;
+    --frame-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0c0e;
+      --panel: #18181b;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --border: #2e2e33;
+      --control: #26262b;
+      --accent: #f4f4f5;
+      --accent-text: #18181b;
+      --focus: #60a5fa;
+      --frame-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: grid;
+    grid-template-columns: 272px 1fr;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  body.collapsed { grid-template-columns: 0 1fr; }
+  body.collapsed aside { visibility: hidden; }
+
+  aside {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+  }
+  h1 { margin: 0; font-size: 15px; font-weight: 600; }
+  .sub { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+  .group { display: flex; flex-direction: column; gap: 6px; }
+  .label { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .note { margin: 0; color: var(--muted); font-size: 12px; white-space: pre-line; }
+  .note:empty { display: none; }
+  .warn { margin: 0; padding: 8px 10px; border-radius: 8px; background: var(--control); font-size: 12px; }
+  .warn:empty { display: none; }
+  #params { display: flex; flex-direction: column; gap: 20px; }
+  #params:empty { display: none; }
+
+  .segmented { display: flex; padding: 3px; border-radius: 999px; background: var(--control); }
+  .segmented button {
+    flex: 1;
+    padding: 5px 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .segmented button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+
+  select, input[type="text"] {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+  }
+  input[type="text"] { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .switch { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .actions { display: flex; gap: 8px; }
+  .actions button, .actions a {
+    flex: 1;
+    padding: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .spacer { flex: 1; }
+  .hint { color: var(--muted); font-size: 11px; }
+  kbd { font: inherit; padding: 0 4px; border: 1px solid var(--border); border-radius: 4px; }
+
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  main { position: relative; min-width: 0; overflow: hidden; }
+  #toggle-sidebar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+  }
+  #stage {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+    height: 100%;
+    padding: 16px 16px 16px 48px;
+  }
+  .frame { display: flex; flex-direction: column; gap: 6px; flex: none; }
+  .frame[hidden] { display: none; }
+  .frame-head { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+  .frame-head strong { color: var(--text); font-weight: 600; }
+  .viewport {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: var(--frame-shadow);
+  }
+  .viewport iframe { display: block; border: 0; transform-origin: 0 0; background: #fff; }
+</style>
+</head>
+<body>
+<aside aria-label="Preview controls">
+  <div>
+    <h1 id="title">Preview</h1>
+    <p class="sub" id="subtitle"></p>
+  </div>
+
+  <div class="group">
+    <span class="label" id="viewport-label">Viewport</span>
+    <div class="segmented" role="group" aria-labelledby="viewport-label">
+      <button type="button" data-view="mobile" aria-pressed="false">Mobile</button>
+      <button type="button" data-view="desktop" aria-pressed="false">Desktop</button>
+      <button type="button" data-view="both" aria-pressed="true">Both</button>
+    </div>
+  </div>
+
+  <div class="group" id="page-group" hidden>
+    <label class="label" for="page">Page</label>
+    <select id="page"></select>
+    <p class="note" id="page-note"></p>
+  </div>
+
+  <div id="params"></div>
+
+  <div class="group">
+    <label class="label" for="address">Address</label>
+    <input type="text" id="address" spellcheck="false" autocomplete="off">
+    <span class="hint">Press <kbd>Enter</kbd> to open it in both frames.</span>
+  </div>
+
+  <p class="warn" id="warn" role="status"></p>
+
+  <div class="spacer"></div>
+
+  <div class="group">
+    <label class="row switch">
+      <span>Sync navigation</span>
+      <input type="checkbox" id="sync" checked>
+    </label>
+    <div class="actions">
+      <button type="button" id="reload">Reload</button>
+      <a id="open" href="/" target="_blank" rel="noopener">Open in tab</a>
+    </div>
+    <span class="hint"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> switch viewport, <kbd>\</kbd> hides this panel</span>
+  </div>
+</aside>
+
+<main>
+  <button type="button" id="toggle-sidebar" aria-label="Hide controls" aria-expanded="true">&#8676;</button>
+  <div id="stage">
+    <section class="frame" id="frame-mobile" aria-label="Mobile view">
+      <div class="frame-head"><strong>Mobile</strong><span class="size"></span></div>
+      <div class="viewport"><iframe title="Mobile view"></iframe></div>
+    </section>
+    <section class="frame" id="frame-desktop" aria-label="Desktop view">
+      <div class="frame-head"><strong>Desktop</strong><span class="size"></span></div>
+      <div class="viewport"><iframe title="Desktop view"></iframe></div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = (sel) => document.querySelector(sel)
+  const viewerParams = new URLSearchParams(location.search)
+  const store = {
+    get(key) { try { return localStorage.getItem('preview:' + key) } catch { return null } },
+    set(key, value) { try { localStorage.setItem('preview:' + key, value) } catch {} },
+  }
+
+  let config = { title: 'Preview', base: '', viewports: { mobile: 390, desktop: 1440 }, params: [], pages: [{ label: 'Home', path: '/' }] }
+  let view = viewerParams.get('view') || store.get('view') || 'both'
+  let current = null // path + search + hash shown in the frames
+  const warnings = new Set()
+
+  const frames = ['mobile', 'desktop'].map((name) => {
+    const section = $('#frame-' + name)
+    const frame = { name, section, viewport: section.querySelector('.viewport'), iframe: section.querySelector('iframe'), size: section.querySelector('.size'), seen: null, loading: false, crossOrigin: false }
+    // Until a new src has loaded, the frame still reports its old location; watch() skips it.
+    frame.iframe.addEventListener('load', () => { frame.loading = false })
+    return frame
+  })
+
+  // URLs. Paths in preview.json are relative to `base` (default: this page's origin).
+  const baseUrl = () => new URL(config.base || location.origin, location.href)
+  const full = (path) => new URL(path, baseUrl()).href
+  const relative = (url) => {
+    const u = new URL(url, baseUrl())
+    return u.origin === baseUrl().origin ? u.pathname + u.search + u.hash : u.href
+  }
+
+  function warn(text, on = true) {
+    on ? warnings.add(text) : warnings.delete(text)
+    $('#warn').textContent = [...warnings].join('\n')
+  }
+
+  // Pages and params.
+  function pageFor(path) {
+    const pathname = new URL(path, baseUrl()).pathname
+    const pages = config.pages
+    return pages.find((p) => new URL(p.path, baseUrl()).pathname === pathname)
+      || pages.filter((p) => p.match && pathname.startsWith(p.match)).sort((a, b) => b.match.length - a.match.length)[0]
+      || null
+  }
+  const paramsFor = (page) => [...(config.params || []), ...((page && page.params) || [])]
+
+  function renderControls() {
+    const page = pageFor(current)
+    const select = $('#page')
+    $('#page-group').hidden = config.pages.length < 2
+    select.replaceChildren(...config.pages.map((p, i) => new Option(p.label || p.path, i)))
+    if (!page) select.prepend(new Option('Other page', '', true, true))
+    else select.value = config.pages.indexOf(page)
+    $('#page-note').textContent = (page && page.note) || ''
+
+    const search = new URL(current, baseUrl()).searchParams
+    const box = $('#params')
+    box.replaceChildren()
+    for (const param of paramsFor(page)) {
+      const id = 'param-' + param.name
+      const group = document.createElement('div')
+      group.className = 'group'
+      const label = document.createElement('label')
+      label.className = 'label'
+      label.htmlFor = id
+      label.textContent = param.label || param.name
+      const sel = document.createElement('select')
+      sel.id = id
+      const options = param.options || []
+      for (const o of options) sel.add(new Option(o.label || o.value || 'None', o.value ?? ''))
+      const value = search.get(param.name) ?? ''
+      if (!options.some((o) => (o.value ?? '') === value)) sel.add(new Option(value ? `${value} (not in list)` : 'None', value))
+      sel.value = value
+      const note = document.createElement('p')
+      note.className = 'note'
+      note.textContent = (options.find((o) => (o.value ?? '') === value) || {}).note || ''
+      sel.addEventListener('change', () => setParam(param.name, sel.value))
+      group.append(label, sel, note)
+      box.append(group)
+    }
+  }
+
+  function setParam(name, value) {
+    const u = new URL(current, baseUrl())
+    value === '' ? u.searchParams.delete(name) : u.searchParams.set(name, value)
+    go(relative(u.href))
+  }
+
+  $('#page').addEventListener('change', (e) => {
+    const page = config.pages[e.target.value]
+    if (!page) return
+    // Keep values of the shared params (like variant) when the page changes.
+    const from = new URL(current, baseUrl()).searchParams
+    const u = new URL(page.path, baseUrl())
+    for (const p of config.params || []) if (from.has(p.name) && !u.searchParams.has(p.name)) u.searchParams.set(p.name, from.get(p.name))
+    go(relative(u.href))
+  })
+
+  // Navigation.
+  function load(frame, path) {
+    frame.seen = path
+    const href = full(path)
+    try {
+      if (frame.iframe.contentWindow.location.href === href) return
+    } catch {}
+    frame.loading = true
+    frame.iframe.src = href
+  }
+
+  function go(path, { reload = false } = {}) {
+    current = path
+    for (const f of frames) {
+      if (reload) { f.seen = path; f.loading = true; f.iframe.src = full(path) }
+      else if (!f.section.hidden || f.seen === null) load(f, path)
+    }
+    shown()
+  }
+
+  // Called whenever `current` changes: update the sidebar, address, and this page's URL.
+  function shown() {
+    $('#address').value = current
+    $('#open').href = full(current)
+    renderControls()
+    const p = new URLSearchParams(location.search)
+    p.set('path', current)
+    p.set('view', view)
+    history.replaceState(null, '', '?' + p.toString())
+  }
+
+  // Watch each frame. A click inside the app changes its location, and the other frame follows.
+  function watch() {
+    for (const f of frames) {
+      if (f.loading) continue
+      let path
+      try {
+        const loc = f.iframe.contentWindow.location
+        if (loc.protocol === 'about:') continue
+        path = loc.pathname + loc.search + loc.hash
+        if (f.crossOrigin) { f.crossOrigin = false; updateCrossOriginWarning() }
+      } catch {
+        if (!f.crossOrigin) { f.crossOrigin = true; updateCrossOriginWarning() }
+        continue
+      }
+      if (path === f.seen) continue
+      f.seen = path
+      if (path === current) continue
+      current = path
+      if ($('#sync').checked) for (const other of frames) if (other !== f && !other.section.hidden) load(other, path)
+      shown()
+    }
+  }
+
+  function updateCrossOriginWarning() {
+    warn('This site is on another origin, so the frames cannot sync, and the sidebar cannot follow clicks. A blank frame means the site does not allow framing; use "Open in tab".', frames.some((f) => f.crossOrigin))
+  }
+
+  // Layout. In Both, the phone gets up to 35% of the width (so it stays readable, often at 100%)
+  // and the desktop scales into the rest. A single frame scales to fit. Frames never scale up.
+  function layout() {
+    for (const b of document.querySelectorAll('.segmented button')) b.setAttribute('aria-pressed', b.dataset.view === view)
+    for (const f of frames) f.section.hidden = !(view === 'both' || view === f.name)
+    const stage = $('#stage')
+    const cs = getComputedStyle(stage)
+    const gap = parseFloat(cs.columnGap) || 24
+    const availW = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+    const head = 24
+    const availH = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - head
+    const visible = frames.filter((f) => !f.section.hidden)
+    const { mobile, desktop } = config.viewports
+    const scales = {}
+    if (visible.length === 2) {
+      scales.mobile = Math.min(1, ((availW - gap) * 0.35) / mobile)
+      scales.desktop = Math.min(1, (availW - gap - mobile * scales.mobile) / desktop)
+    } else {
+      scales[visible[0].name] = Math.min(1, availW / config.viewports[visible[0].name])
+    }
+    visible.forEach((f) => {
+      const w = config.viewports[f.name]
+      const scale = scales[f.name]
+      const h = availH / scale
+      f.viewport.style.width = w * scale + 2 + 'px'
+      f.viewport.style.height = availH + 'px'
+      f.iframe.style.width = w + 'px'
+      f.iframe.style.height = h + 'px'
+      f.iframe.style.transform = `scale(${scale})`
+      f.size.textContent = `${w} × ${Math.round(h)}` + (scale < 1 ? ` · ${Math.round(scale * 100)}%` : '')
+    })
+  }
+
+  function setView(next) {
+    view = next
+    store.set('view', view)
+    layout()
+    // A frame that was hidden may be behind; bring it to the current page.
+    for (const f of frames) if (!f.section.hidden && f.seen !== current) load(f, current)
+    shown()
+  }
+
+  // Events.
+  for (const b of document.querySelectorAll('.segmented button')) b.addEventListener('click', () => setView(b.dataset.view))
+  $('#address').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return
+    const value = e.target.value.trim()
+    if (value) go(relative(value.startsWith('/') || /^https?:/.test(value) ? value : '/' + value))
+  })
+  $('#reload').addEventListener('click', () => go(current, { reload: true }))
+  $('#sync').addEventListener('change', (e) => {
+    store.set('sync', e.target.checked ? '1' : '0')
+    if (e.target.checked) for (const f of frames) if (!f.section.hidden) load(f, current)
+  })
+  function toggleSidebar() {
+    const collapsed = document.body.classList.toggle('collapsed')
+    $('#toggle-sidebar').setAttribute('aria-expanded', String(!collapsed))
+    $('#toggle-sidebar').setAttribute('aria-label', collapsed ? 'Show controls' : 'Hide controls')
+    $('#toggle-sidebar').innerHTML = collapsed ? '&#8677;' : '&#8676;'
+    store.set('collapsed', collapsed ? '1' : '0')
+    layout()
+  }
+  $('#toggle-sidebar').addEventListener('click', toggleSidebar)
+  document.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, select, textarea') || e.metaKey || e.ctrlKey || e.altKey) return
+    const views = { 1: 'mobile', 2: 'desktop', 3: 'both' }
+    if (views[e.key]) setView(views[e.key])
+    if (e.key === '\\') toggleSidebar()
+  })
+  new ResizeObserver(layout).observe($('#stage'))
+
+  // Start.
+  async function start() {
+    const file = viewerParams.get('config') || 'preview.json'
+    try {
+      const res = await fetch(file, { cache: 'no-store' })
+      if (!res.ok) throw new Error(res.status)
+      const loaded = await res.json()
+      config = { ...config, ...loaded, viewports: { ...config.viewports, ...(loaded.viewports || {}) } }
+      if (!config.pages || !config.pages.length) config.pages = [{ label: 'Home', path: '/' }]
+    } catch (err) {
+      warn(`Could not read ${file} (${err.message}). Showing the home page; type any path under Address.`)
+    }
+    document.title = config.title ? `${config.title} · Preview` : 'Preview'
+    $('#title').textContent = config.title || 'Preview'
+    $('#subtitle').textContent = config.subtitle || ''
+    if (store.get('sync') === '0') $('#sync').checked = false
+    if (store.get('collapsed') === '1') toggleSidebar()
+    if (!['mobile', 'desktop', 'both'].includes(view)) view = 'both'
+    layout()
+    go(viewerParams.get('path') || config.start || config.pages[0].path)
+    setInterval(watch, 250)
+  }
+  start()
+})()
+</script>
+</body>
+</html>

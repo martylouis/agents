@@ -38,6 +38,7 @@ Also read, when they exist: `PRODUCT.md` (user context and product purpose; a so
 A plan is ready when:
 
 - Every screen has its states (default, empty, loading, error, success, as they apply) and the exact copy where it matters.
+- Every state has a URL: the route plus named query params, one per condition (`/cart?drawer=open&error=network`). A person can open any state, or combine two, by typing its URL.
 - **In scope** and **Out of scope** are both present.
 - The **Check list** has items a person can follow in a browser (open, do, see). They become review states.
 - Steps are small enough that each is one screen, one piece of logic, or one setup step.
@@ -67,7 +68,7 @@ Stop when every plan meets the quality bar. Do not ask about things the repo, th
 
 Write one file per plan, `docs/plans/<NN>-<slug>.md`, from `<plugin>/shared/templates/PLAN.md`, with `status: draft`. Delete template sections that do not apply (Variants, Why when empty), and keep no `<placeholder>`. The plan files are the only plan record; `build` lists them in `docs/ux/PLANS.md`.
 
-For `--explore`: one plan with a **Variants** section (2–3 variants). Each variant has a hypothesis and the screens and states that differ. Write variants only; the orchestrator builds them (one task set per variant), and a decision record selects the winner after the person compares them.
+For `--explore`: one plan with a **Variants** section (2–3 variants). Each variant has a hypothesis and the screens and states that differ, and opens with `?variant=<letter>`. Write variants only; the orchestrator builds them (one task set per variant), and a decision record selects the winner after the person compares them.
 
 ### 4. Review and approve
 

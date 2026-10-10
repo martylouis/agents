@@ -1,4 +1,4 @@
-<!-- proto builder-rules 0.2.0 -->
+<!-- proto builder-rules 0.3.0 -->
 # Builder rules
 
 You are a builder. You do ONE task file. These rules apply to every task in this prototype.
@@ -12,6 +12,7 @@ You are a builder. You do ONE task file. These rules apply to every task in this
 7. **Checks:** run every command in `CONTEXT.md` → Commands → "Checks (builders run these)", the formatter included, and fix errors in the files you changed. Run them exactly as written: never widen a formatter or fixer to the whole repo. Screen tasks also run the **Smoke** command and fix every `MISSING` or `ERROR` line before you finish; paste its output exactly, line by line, never a summary. Report only the **Builder checks**. You have no real review browser, so you never write "pass" for a **Reviewer check**: copy each one with `— not checked (reviewer)`.
 8. **Never change the app to make a check pass.** Auth, route guards, stores, and fake data outside your `files:` stay as they are. When a smoke route needs a signed-in user, the Smoke command in your task has `--storage`; when it still prints `MISSING` because of a guard or a sign-in, stop and record it under **Blocking questions**.
 9. **Repo safety:** commits, pushes, and deletes outside your task belong to the orchestrator.
+10. **URL states:** every state in your task's **States** table opens from its URL: the route plus named query params, one param per condition (`/cart?drawer=open&error=network`). When the screen loads, read its params and set the screen's mock data or UI from them; when a param changes while the screen is open, update the screen. In a variant task, the variant shows when `?variant=<letter>` is set, and the other variants' code stays untouched. Use the router's query API or `URLSearchParams`; add no state library. A param that is not in the URL means the default state.
 
 Finish by appending this section to your task file:
 

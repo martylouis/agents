@@ -1,0 +1,11 @@
+{
+  "name": "preview",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Preview: a side-by-side phone and desktop viewer for any web app, with a sidebar that switches pages, variants, and states through URL params.",
+  "author": {
+    "name": "Marty Thierry"
+  },
+  "repository": "https://github.com/martylouis/agents",
+  "keywords": ["ux", "prototype", "preview", "responsive", "demo", "variants"]
+}

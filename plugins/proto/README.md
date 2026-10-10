@@ -277,6 +277,7 @@ The plugin builds plans that are already decided. A plan works best when it has:
 
 - A goal: what the user can do when the plan is done.
 - The screens, their states, and the exact text.
+- A URL for each state (route plus query params, like `/cart?drawer=open`), so anyone can open it directly. The [`preview`](../preview/README.md) plugin uses these URLs to show every state and variant side by side on phone and desktop.
 - What is in scope and what is not.
 - A check list that a person could follow in a browser.
 
