@@ -1,10 +1,14 @@
 ---
-name: preview
-description: Add a side-by-side phone and desktop viewer to a web app, at /preview.html, with a sidebar that switches pages, variants, and states through URL params. Works with any framework, and reads proto plans when they exist.
+name: responsive-preview
+description: Responsive preview with a variant switcher. Adds a side-by-side mobile and desktop preview of a running web app at /preview.html, with a sidebar that switches pages, states, and design variants through URL params. Works with any framework, and reads proto plans when they exist.
+license: MIT
+metadata:
+  version: 0.1.0
+  author: Marty Thierry
 argument-hint: "[app folder or URL] [--refresh]"
 ---
 
-# Preview
+# Responsive preview
 
 Writes two files into the app's static folder:
 
@@ -19,10 +23,10 @@ This skill never changes the app's code. It runs in the main session and needs n
 
 | Argument | Example | Meaning |
 | --- | --- | --- |
-| none | `/preview:preview` | The app in the current folder |
-| folder | `/preview:preview apps/web` | The app in that folder |
-| URL | `/preview:preview https://staging.example.com` | A site you don't run here (see **Other sites**) |
-| `--refresh` | `/preview:preview --refresh` | Update `preview.json` from the sources again, and the viewer when the plugin has a newer one |
+| none | `/responsive-preview` | The app in the current folder |
+| folder | `/responsive-preview apps/web` | The app in that folder |
+| URL | `/responsive-preview https://staging.example.com` | A site you don't run here (see **Other sites**) |
+| `--refresh` | `/responsive-preview --refresh` | Update `preview.json` from the sources again, and the viewer when this skill has a newer one |
 
 ## Steps
 
@@ -41,7 +45,7 @@ When the folder is not clear (a monorepo, a custom server), ask once which app a
 
 ### 2. Copy the viewer
 
-Copy `<plugin>/assets/preview.html` into the static folder unchanged. Its second line names its version (`<!-- preview viewer 0.1.0 -->`). When a `preview.html` already exists with the same line, leave it. When the line differs or is missing, replace the file and say so in one line; changes the person wants belong in `preview.json`, not in the viewer.
+Copy `assets/preview.html` from this skill's folder into the static folder unchanged. Its second line names its version (`<!-- preview viewer 0.1.0 -->`). When a `preview.html` already exists with the same line, leave it. When the line differs or is missing, replace the file and say so in one line; changes the person wants belong in `preview.json`, not in the viewer.
 
 ### 3. Write the nav
 

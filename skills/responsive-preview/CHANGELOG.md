@@ -1,11 +1,11 @@
 # Changelog
 
-All notable changes to the `preview` plugin, newest first. The version number lives in `.claude-plugin/plugin.json`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
+All notable changes to the `responsive-preview` skill, newest first. The version number lives in `metadata.version` in `SKILL.md`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
 
 ## 0.1.0 — 2026-10-10
 
 ### Added
-- `/preview:preview` writes `preview.html` and `preview.json` into the app's static folder. Open `/preview.html` on the dev server to see the app in a phone frame and a desktop frame side by side.
+- `/responsive-preview` writes `preview.html` and `preview.json` into the app's static folder. Open `/preview.html` on the dev server to see the app in a phone frame and a desktop frame side by side.
 - Sidebar: Mobile, Desktop, or Both; a page menu; one menu per URL param, with a note under the chosen option (for example a variant's hypothesis).
 - Styled menus that stay the browser's own control, so keyboard and screen reader behavior are native. Chrome and Edge 135+ also get a styled option list with a checkmark.
 - An address bar above the frames, like a browser's, with icon buttons to reload both frames and open the page in a new tab.

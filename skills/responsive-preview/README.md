@@ -1,6 +1,6 @@
-# Preview
+# Responsive preview
 
-A plugin that adds a side-by-side phone and desktop viewer to any web app, so you can build, compare, and demo screens, states, and variants on one screen.
+A skill that adds a responsive preview with a variant switcher to any web app: phone and desktop side by side, so you can build, compare, and demo screens, states, and variants on one screen.
 
 ```text
 +----------------+-----------+------------------------------+
@@ -13,24 +13,15 @@ A plugin that adds a side-by-side phone and desktop viewer to any web app, so yo
 +----------------+-----------+------------------------------+
 ```
 
-## Skill
+## Use
 
-| Skill | What it does | You |
-| --- | --- | --- |
-| `/preview:preview` | Writes `preview.html` and `preview.json` into the app's static folder, fills the nav from proto plans or the app's routes, and checks the viewer in a browser. `--refresh` updates the nav. | Open `/preview.html` on your dev server |
-
-In Cursor the skill runs as `/preview`.
+Run `/responsive-preview` in your app's folder. It writes `preview.html` and `preview.json` into the app's static folder, fills the sidebar from proto plans or the app's routes, and checks the viewer in a browser. Then open `/preview.html` on your dev server. `/responsive-preview --refresh` updates the sidebar after new pages, states, or variants.
 
 ## Install
 
-Install steps for every harness are in the [repo README](../../README.md#install). In Claude Code:
-
 ```bash
-claude plugin marketplace add martylouis/agents
-claude plugin install preview@martylouis
+npx skills add martylouis/agents --skill responsive-preview
 ```
-
-Then run `/reload-plugins`, or start a new session.
 
 ## How it works
 
@@ -49,24 +40,22 @@ Then run `/reload-plugins`, or start a new session.
 3. the app's routes and the query params its code reads,
 4. you, when none of these have enough.
 
-Edit it by hand any time; the viewer reads it on every load. The format is in [the skill](skills/preview/SKILL.md#previewjson).
+Edit it by hand any time; the viewer reads it on every load. The format is in [the skill](SKILL.md#previewjson).
 
 ## With proto
 
-[`proto`](../proto/README.md) builds prototypes whose states and variants open from their URLs, so the viewer can show every planned state. Run `/preview:preview` after `/proto:build`, and `--refresh` after new plans or variants. Proto does not need this plugin, and this plugin does not need proto.
+[`proto`](../../plugins/proto/README.md) builds prototypes whose states and variants open from their URLs, so the viewer can show every planned state. Run `/responsive-preview` after `/proto:build`, and `--refresh` after new plans or variants. Proto does not need this skill, and this skill does not need proto.
 
 ## Other sites
 
 The viewer can show a site you don't run here, like staging or production: the skill puts the files in a `preview/` folder with `base` set to the site, for any static server. Frames on another origin can't sync, and many sites refuse to load in a frame at all. For a site you own, add the files to its static folder instead.
 
-## Plugin contents
+## Contents
 
 ```
-preview/
-├── .claude-plugin/plugin.json
-├── .cursor-plugin/plugin.json
+responsive-preview/
+├── SKILL.md                 the skill
 ├── assets/preview.html      the viewer, copied into the app unchanged
-├── skills/preview/SKILL.md
 ├── CHANGELOG.md
 └── README.md
 ```

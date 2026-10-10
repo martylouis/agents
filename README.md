@@ -7,9 +7,22 @@ Agent plugins by Marty Thierry.
 | Plugin | What it does | Claude Code | Cursor | Codex |
 | --- | --- | --- | --- | --- |
 | [`proto`](plugins/proto/README.md) | Plan, build, review, and iterate UX prototypes with builder sub-agents, browser review, and decision records. | Yes | Yes, marketplace or local clone | Not tested yet |
-| [`preview`](plugins/preview/README.md) | A side-by-side phone and desktop viewer for any web app, with a sidebar that switches pages, variants, and states through URL params. | Yes | Yes, marketplace or local clone | Not tested yet |
 
 Each plugin's README covers how to use it. This page covers how to install it in each harness.
+
+## Skills
+
+Single skills that need no plugin. They follow the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Cursor, Codex, and other agents.
+
+| Skill | What it does |
+| --- | --- |
+| [`responsive-preview`](skills/responsive-preview/README.md) | Responsive preview with a variant switcher: your running app in phone and desktop frames side by side, with a sidebar that switches pages, states, and variants through URL params. |
+
+Install one with the [skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add martylouis/agents --skill responsive-preview
+```
 
 ## Install
 
@@ -25,7 +38,6 @@ Then install the plugins you want:
 
 ```bash
 claude plugin install proto@martylouis
-claude plugin install preview@martylouis
 ```
 
 Skills run as `/<plugin>:<skill>`, for example `/proto:build`.
@@ -36,7 +48,7 @@ Skills run as `/<plugin>:<skill>`, for example `/proto:build`.
 
 ### Cursor
 
-This repo is a Cursor marketplace named `martylouis`. In Cursor, open **Customize**, add the marketplace from GitHub (`martylouis/agents`), then install **proto** and **preview**.
+This repo is a Cursor marketplace named `martylouis`. In Cursor, open **Customize**, add the marketplace from GitHub (`martylouis/agents`), then install **proto**.
 
 Skills run as `/<skill>`, without the plugin name, for example `/build`. Cursor lists the plugin's agents by their bare names (`builder`, `witness`, `librarian`).
 
