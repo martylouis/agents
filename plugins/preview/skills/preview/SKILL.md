@@ -8,7 +8,7 @@ argument-hint: "[app folder or URL] [--refresh]"
 
 Writes two files into the app's static folder:
 
-- `preview.html`: the viewer. A sidebar on the left (Mobile, Desktop, or Both; a page menu; one menu per URL param, with a note under the chosen option), and live frames of the app on the right, scaled to fit the screen. The frames stay on the same URL as you click through the app; a switch turns that off.
+- `preview.html`: the viewer. A sidebar on the left (Mobile, Desktop, or Both; a page menu; one menu per URL param, with a note under the chosen option), an address bar above the frames, and live frames of the app on the right, scaled to fit the screen. The frames stay on the same URL as you click through the app; a switch turns that off.
 - `preview.json`: what the sidebar lists. The person can edit it by hand; the viewer reads it on every load.
 
 The viewer works on the app as it runs, so it shows code changes as soon as the dev server reloads. It reaches each state by its URL, never by clicks, so the app must be able to show a state from its route and query params (see **URL states**).
@@ -93,7 +93,7 @@ The viewer can show a site that this folder does not run, such as a staging or p
 
 - Write both files to `preview/` in the current folder, and set `base` in `preview.json` to the site's origin.
 - Serve that folder with any static server (for example `npx serve preview`), because the viewer reads `preview.json` over HTTP.
-- The frames are on another origin, so they cannot sync, and the sidebar cannot follow clicks inside them. Menus and Address still move both frames.
+- The frames are on another origin, so they cannot sync, and the sidebar cannot follow clicks inside them. Menus and the address bar still move both frames.
 - Many sites refuse to load in a frame (`X-Frame-Options` or `Content-Security-Policy: frame-ancestors`). Those frames stay blank; the viewer's **Open in tab** still works. Say this when the site is not the person's own.
 
 When the person owns the site, the better way is to add the two files to its static folder, so the viewer is on the same origin.
@@ -142,4 +142,4 @@ When the person owns the site, the better way is to add the two files to its sta
 | `options[].value` | The param's value. `""` means the param is not in the URL. |
 | `options[].note` | Shown under the menu while that option is chosen (a hypothesis, or what the state shows). |
 
-The viewer also has an **Address** field for any URL, keys `1`, `2`, `3` for Mobile, Desktop, Both, and `\` to hide the sidebar. Its own URL keeps the frame URL and the viewport (`/preview.html?path=%2Fcart%3Fvariant%3DB&view=both`), so a link to it opens the same view. Another nav file opens with `?config=<file>.json`.
+Above the frames is an address bar for any URL, with Reload and Open in tab. The viewer also has keys `1`, `2`, `3` for Mobile, Desktop, Both, and `\` to hide the sidebar. Its own URL keeps the frame URL and the viewport (`/preview.html?path=%2Fcart%3Fvariant%3DB&view=both`), so a link to it opens the same view. Another nav file opens with `?config=<file>.json`.

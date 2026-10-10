@@ -94,10 +94,9 @@
 
   .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .switch { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-  .actions { display: flex; gap: 8px; }
-  .actions button, .actions a {
-    flex: 1;
-    padding: 6px 0;
+  .toolbar button, .toolbar a {
+    flex: none;
+    padding: 6px 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
     background: var(--panel);
@@ -106,6 +105,7 @@
     font-size: 13px;
     text-align: center;
     text-decoration: none;
+    white-space: nowrap;
     cursor: pointer;
   }
   .spacer { flex: 1; }
@@ -114,27 +114,25 @@
 
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-  main { position: relative; min-width: 0; overflow: hidden; }
-  #toggle-sidebar {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 2;
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+  main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
     background: var(--panel);
-    color: var(--text);
-    cursor: pointer;
+    border-bottom: 1px solid var(--border);
   }
+  .toolbar input { flex: 1; min-width: 0; }
+  #toggle-sidebar { width: 32px; padding: 6px 0; }
   #stage {
     display: flex;
+    flex: 1;
+    min-height: 0;
     justify-content: center;
     align-items: flex-start;
     gap: 24px;
-    height: 100%;
-    padding: 16px 16px 16px 48px;
+    padding: 16px;
   }
   .frame { display: flex; flex-direction: column; gap: 6px; flex: none; }
   .frame[hidden] { display: none; }
@@ -174,12 +172,6 @@
 
   <div id="params"></div>
 
-  <div class="group">
-    <label class="label" for="address">Address</label>
-    <input type="text" id="address" spellcheck="false" autocomplete="off">
-    <span class="hint">Press <kbd>Enter</kbd> to open it in both frames.</span>
-  </div>
-
   <p class="warn" id="warn" role="status"></p>
 
   <div class="spacer"></div>
@@ -189,16 +181,17 @@
       <span>Sync navigation</span>
       <input type="checkbox" id="sync" checked>
     </label>
-    <div class="actions">
-      <button type="button" id="reload">Reload</button>
-      <a id="open" href="/" target="_blank" rel="noopener">Open in tab</a>
-    </div>
     <span class="hint"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> switch viewport, <kbd>\</kbd> hides this panel</span>
   </div>
 </aside>
 
 <main>
-  <button type="button" id="toggle-sidebar" aria-label="Hide controls" aria-expanded="true">&#8676;</button>
+  <div class="toolbar">
+    <button type="button" id="toggle-sidebar" aria-label="Hide controls" aria-expanded="true">&#8676;</button>
+    <input type="text" id="address" aria-label="Address" title="Type a path and press Enter to open it in both frames" spellcheck="false" autocomplete="off">
+    <button type="button" id="reload">Reload</button>
+    <a id="open" href="/" target="_blank" rel="noopener">Open in tab</a>
+  </div>
   <div id="stage">
     <section class="frame" id="frame-mobile" aria-label="Mobile view">
       <div class="frame-head"><strong>Mobile</strong><span class="size"></span></div>
@@ -449,7 +442,7 @@
       config = { ...config, ...loaded, viewports: { ...config.viewports, ...(loaded.viewports || {}) } }
       if (!config.pages || !config.pages.length) config.pages = [{ label: 'Home', path: '/' }]
     } catch (err) {
-      warn(`Could not read ${file} (${err.message}). Showing the home page; type any path under Address.`)
+      warn(`Could not read ${file} (${err.message}). Showing the home page; type any path in the address bar above the frames.`)
     }
     document.title = config.title ? `${config.title} · Preview` : 'Preview'
     $('#title').textContent = config.title || 'Preview'
