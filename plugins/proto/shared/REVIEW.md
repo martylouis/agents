@@ -34,7 +34,7 @@ One state file per plan: `docs/ux/states/<NN-plan-slug>.json`. Add a state to th
 
 Step types and state options are listed at the top of `<plugin>/shared/scripts/observe.mjs`. Screenshots show the viewport; add `"fullPage": true` for a tall page, or `"capture": "<selector>"` to crop to one element (a drawer, a dialog). A `click`, `hover`, `clickText`, or `fill` that matches more than one element fails; add `"nth": 0` only when the first match is really meant. Rules for a complete states file:
 
-- One state per row of the task's **States** table.
+- One state per row of the task's **States** table, opened by a `goto` to the state's URL (route and params). Clicks only for interaction states. A URL that does not show its state is a blocker.
 - One state per **interactive element**: click it, then capture. Interaction bugs only show when the interaction runs.
 - Phone width (375 × 812) and dark mode for every screen.
 - One **focus** state per screen: `{ "tab": N }` steps; the facts record the focused element after each state.

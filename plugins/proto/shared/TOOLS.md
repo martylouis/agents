@@ -58,7 +58,7 @@ Done when `docs/ux/DECISIONS.md` exists and `decisions/LOG.md` and `decisions/IN
 
 ## Builder rules
 
-`docs/ux/BUILDER-RULES.md` belongs to the plugin, not to the person: builders follow it, and it changes when the plugin changes. Its first line names the version (`<!-- proto builder-rules 0.2.0 -->`). When the file is missing, or its first line differs from the one in `<plugin>/shared/templates/BUILDER-RULES.md`, copy the template over it and say so in one line. Rules the person wants for this prototype go into `CONTEXT.md`, never into this file.
+`docs/ux/BUILDER-RULES.md` belongs to the plugin, not to the person: builders follow it, and it changes when the plugin changes. Its first line names the version (`<!-- proto builder-rules 0.3.0 -->`). When the file is missing, or its first line differs from the one in `<plugin>/shared/templates/BUILDER-RULES.md`, copy the template over it and say so in one line. Rules the person wants for this prototype go into `CONTEXT.md`, never into this file.
 
 ## Scratch
 

@@ -10,6 +10,20 @@ Agent plugins by Marty Thierry.
 
 Each plugin's README covers how to use it. This page covers how to install it in each harness.
 
+## Skills
+
+Single skills that need no plugin. They follow the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Cursor, Codex, and other agents.
+
+| Skill | What it does |
+| --- | --- |
+| [`responsive-preview`](skills/responsive-preview/README.md) | Responsive preview with a variant switcher: your running app in phone and desktop frames side by side, with a sidebar that switches pages, states, and variants through URL params. |
+
+Install one with the [skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add martylouis/agents --skill responsive-preview
+```
+
 ## Install
 
 ### Claude Code

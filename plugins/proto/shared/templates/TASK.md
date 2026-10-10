@@ -21,9 +21,9 @@ design: <design image path, hi-fi only>
 <regions top to bottom / left to right, with exact text>
 
 ## States
-| State | What the user sees |
-| --- | --- |
-| Default | |
+| State | URL | What the user sees |
+| --- | --- | --- |
+| Default | `<route>` | |
 
 ## Interactions
 <click, Enter, focus, navigation — one line each>

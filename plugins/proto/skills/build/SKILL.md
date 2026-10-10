@@ -72,7 +72,8 @@ For each plan, in dependency order, write task files from `<plugin>/shared/templ
 - Screen tasks get a **Smoke** check: the route and the elements that must render, by role and name, with the absolute path of `smoke.mjs` filled in. For a route behind a sign-in, add `--storage <key>=<value>` with the key and value the app writes when the demo user signs in (read them from its auth code), so no builder touches auth to reach the screen.
 - Name every component, file, and text exactly. For each named component, point to its pattern in `CONTEXT.md` → Component patterns (add it there when it is missing); builders replace named components with look-alikes when they get only a name.
 - Split **Builder checks** (commands) from **Reviewer checks** (browser states). Builders report only the first.
-- Plans with **Variants** get one task set per variant, with the variant prefix (`A-`, `B-`).
+- Plans with **Variants** get one task set per variant, with the variant prefix (`A-`, `B-`). All variants live in one app and show by `?variant=<letter>`; the first variant task adds the switch.
+- Copy each state's URL from the plan into the task's **States** table. Builders make each URL open its state (builder rules → URL states).
 - Route each task to the `fast` or `strong` tier with the routing judgment (`<plugin>/shared/JUDGE.md` → Question bank). Library setup and research tasks go to `strong`.
 
 Done when every step of every plan maps to a task, and every task has both check lists.

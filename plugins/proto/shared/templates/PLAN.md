@@ -34,10 +34,10 @@ designs: <designs folder for this plan, or none>
 
 ### <Screen name> (`<route>`)
 
-| State | What the user sees |
-| --- | --- |
-| Default | <layout, top to bottom> |
-| <Empty / Loading / Error / Success / …> | |
+| State | URL | What the user sees |
+| --- | --- | --- |
+| Default | `<route>` | <layout, top to bottom> |
+| <Empty / Loading / Error / Success / …> | `<route>?<param>=<value>` | |
 
 Copy (exact):
 
@@ -52,7 +52,7 @@ Copy (exact):
 | A | <we believe … because …> | <screens and states that differ> | `A-` |
 | B | | | `B-` |
 
-A decision record (`variant-selected`) selects the winner.
+Each variant opens at the plan's routes with `?variant=<letter>` (`/cart?variant=B`). A decision record (`variant-selected`) selects the winner.
 
 ## Steps
 
