@@ -94,7 +94,7 @@ The viewer can show a site that this folder does not run, such as a staging or p
 - Write both files to `preview/` in the current folder, and set `base` in `preview.json` to the site's origin.
 - Serve that folder with any static server (for example `npx serve preview`), because the viewer reads `preview.json` over HTTP.
 - The frames are on another origin, so they cannot sync, and the sidebar cannot follow clicks inside them. Menus and the address bar still move both frames.
-- Many sites refuse to load in a frame (`X-Frame-Options` or `Content-Security-Policy: frame-ancestors`). Those frames stay blank; the viewer's **Open in tab** still works. Say this when the site is not the person's own.
+- Many sites refuse to load in a frame (`X-Frame-Options` or `Content-Security-Policy: frame-ancestors`). Those frames stay blank; the viewer's open-in-new-tab button still works. Say this when the site is not the person's own.
 
 When the person owns the site, the better way is to add the two files to its static folder, so the viewer is on the same origin.
 
@@ -142,4 +142,4 @@ When the person owns the site, the better way is to add the two files to its sta
 | `options[].value` | The param's value. `""` means the param is not in the URL. |
 | `options[].note` | Shown under the menu while that option is chosen (a hypothesis, or what the state shows). |
 
-Above the frames is an address bar for any URL, with Reload and Open in tab. The `?` button (or the `?` key) lists the keyboard shortcuts: `1`, `2`, `3` for Mobile, Desktop, Both, `S` for sync, `R` to reload, `\` to hide the sidebar, and `/` for the address bar. The viewer's own URL keeps the frame URL and the viewport (`/preview.html?path=%2Fcart%3Fvariant%3DB&view=both`), so a link to it opens the same view. Another nav file opens with `?config=<file>.json`.
+Above the frames is an address bar for any URL, with icon buttons to reload both frames and open the page in a new tab. The `?` button (or the `?` key) lists the keyboard shortcuts: `1`, `2`, `3` for Mobile, Desktop, Both, `S` for sync, `R` to reload, `\` to hide the sidebar, and `/` for the address bar. The viewer's own URL keeps the frame URL and the viewport (`/preview.html?path=%2Fcart%3Fvariant%3DB&view=both`), so a link to it opens the same view. Another nav file opens with `?config=<file>.json`.

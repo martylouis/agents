@@ -190,20 +190,22 @@
     font: inherit;
     cursor: pointer;
   }
-  .toolbar button, .toolbar a {
+  .toolbar .icon {
+    display: grid;
+    place-items: center;
     flex: none;
-    padding: 6px 12px;
-    border: 1px solid var(--border);
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid transparent;
     border-radius: 8px;
-    background: var(--panel);
-    color: var(--text);
-    font: inherit;
-    font-size: 13px;
-    text-align: center;
-    text-decoration: none;
-    white-space: nowrap;
+    background: transparent;
+    color: var(--muted);
     cursor: pointer;
+    transition: background 0.15s, color 0.15s;
   }
+  .toolbar .icon:hover { background: var(--control); color: var(--text); }
+  .toolbar .icon svg { width: 16px; height: 16px; }
   .spacer { flex: 1; }
   kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; text-align: center; }
 
@@ -218,8 +220,7 @@
     background: var(--panel);
     border-bottom: 1px solid var(--border);
   }
-  .toolbar input { flex: 1; min-width: 0; }
-  #toggle-sidebar { width: 32px; padding: 6px 0; }
+  .toolbar input { flex: 1; min-width: 0; height: 32px; }
   #stage {
     display: flex;
     flex: 1;
@@ -298,10 +299,10 @@
 
 <main>
   <div class="toolbar">
-    <button type="button" id="toggle-sidebar" aria-label="Hide controls" aria-expanded="true">&#8676;</button>
+    <button type="button" class="icon" id="toggle-sidebar" aria-label="Hide sidebar" title="Hide sidebar (\)" aria-expanded="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="10.5" rx="2"/><path d="M6 2.75v10.5"/></svg></button>
     <input type="text" id="address" aria-label="Address" title="Type a path and press Enter to open it in both frames" spellcheck="false" autocomplete="off">
-    <button type="button" id="reload">Reload</button>
-    <a id="open" href="/" target="_blank" rel="noopener">Open in tab</a>
+    <button type="button" class="icon" id="reload" aria-label="Reload" title="Reload (R)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71"/><path d="M13.25 2.5v3h-3"/></svg></button>
+    <a class="icon" id="open" href="/" target="_blank" rel="noopener" aria-label="Open in new tab" title="Open in new tab"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.75h3.75V6.5"/><path d="M13.25 2.75 7.5 8.5"/><path d="M12 9.5v2.75a1 1 0 0 1-1 1H3.75a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1H6.5"/></svg></a>
   </div>
   <div id="stage">
     <section class="frame" id="frame-mobile" aria-label="Mobile view">
@@ -469,7 +470,7 @@
   }
 
   function updateCrossOriginWarning() {
-    warn('This site is on another origin, so the frames cannot sync, and the sidebar cannot follow clicks. A blank frame means the site does not allow framing; use "Open in tab".', frames.some((f) => f.crossOrigin))
+    warn('This site is on another origin, so the frames cannot sync, and the sidebar cannot follow clicks. A blank frame means the site does not allow framing; use "Open in new tab" (the arrow at the right of the address bar).', frames.some((f) => f.crossOrigin))
   }
 
   // Layout. In Both, the phone gets up to 35% of the width (so it stays readable, often at 100%)
@@ -532,8 +533,8 @@
   function toggleSidebar() {
     const collapsed = document.body.classList.toggle('collapsed')
     $('#toggle-sidebar').setAttribute('aria-expanded', String(!collapsed))
-    $('#toggle-sidebar').setAttribute('aria-label', collapsed ? 'Show controls' : 'Hide controls')
-    $('#toggle-sidebar').innerHTML = collapsed ? '&#8677;' : '&#8676;'
+    $('#toggle-sidebar').setAttribute('aria-label', collapsed ? 'Show sidebar' : 'Hide sidebar')
+    $('#toggle-sidebar').title = (collapsed ? 'Show sidebar' : 'Hide sidebar') + ' (\\)'
     store.set('collapsed', collapsed ? '1' : '0')
     layout()
   }

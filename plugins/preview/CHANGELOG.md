@@ -8,7 +8,7 @@ All notable changes to the `preview` plugin, newest first. The version number li
 - `/preview:preview` writes `preview.html` and `preview.json` into the app's static folder. Open `/preview.html` on the dev server to see the app in a phone frame and a desktop frame side by side.
 - Sidebar: Mobile, Desktop, or Both; a page menu; one menu per URL param, with a note under the chosen option (for example a variant's hypothesis).
 - Styled menus that stay the browser's own control, so keyboard and screen reader behavior are native. Chrome and Edge 135+ also get a styled option list with a checkmark.
-- An address bar above the frames, like a browser's, with Reload and Open in tab.
+- An address bar above the frames, like a browser's, with icon buttons to reload both frames and open the page in a new tab.
 - The frames scale to fit the screen. In Both, the phone keeps up to 35% of the width, so it stays readable, and the desktop scales into the rest.
 - Sync: a click inside one frame moves the other to the same URL, and the sidebar follows. A switch turns it off.
 - Keyboard shortcuts for viewport, sync, reload, sidebar, and address bar, listed in a dialog behind the `?` button or the `?` key.
