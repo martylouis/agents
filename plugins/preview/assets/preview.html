@@ -280,7 +280,9 @@
       sel.id = id
       const options = param.options || []
       for (const o of options) sel.add(new Option(o.label || o.value || 'None', o.value ?? ''))
-      const value = search.get(param.name) ?? ''
+      // No param in the URL means the app's default: `default`, else "" when listed, else the first option.
+      const fallback = param.default ?? (options.some((o) => (o.value ?? '') === '') ? '' : (options[0] && options[0].value) || '')
+      const value = search.get(param.name) ?? fallback
       if (!options.some((o) => (o.value ?? '') === value)) sel.add(new Option(value ? `${value} (not in list)` : 'None', value))
       sel.value = value
       const note = document.createElement('p')

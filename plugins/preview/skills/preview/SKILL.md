@@ -51,7 +51,7 @@ Write `preview.json` next to the viewer, in the format under **preview.json**. T
 2. **Proto plans** (`docs/plans/*.md`, with `docs/ux/PLANS.md`), when they exist:
    - Each screen heading `### <Screen> (`<route>`)` is a page, with the screen name as its label and the plan's number and title as its `note`.
    - Each row of a screen's States table whose URL has query params gives that page's params: one param per query name, and one option per value, labelled with the state name. The state without that param is the option with value `""`.
-   - A **Variants** table gives a shared `variant` param: one option per variant, value the letter (`A`), label `A · <short name>`, note the hypothesis. Add the value `""` labelled `Current` only when the app has a version without variants.
+   - A **Variants** table gives a shared `variant` param: one option per variant, value the letter (`A`), label `A · <short name>`, note the hypothesis, and `default` set to the variant the app shows without the param (the first one, unless the code says otherwise). Add the value `""` labelled `Current` only when the app has a version without variants.
    - `title` is the project name; `subtitle` is the plan title when there is one plan, else the number of plans.
 3. **The app's routes and code**: the router config or the file-based pages folder (Nuxt `pages/`, Next `app/` or `pages/`, SvelteKit `src/routes/`). Give a route with a dynamic segment a real sample value from the app's mock data. For params, search the code for query reads (`route.query.x`, `useRoute().query`, `useSearchParams`, `searchParams.get('x')`, `queryParamMap`, `ActivatedRoute`) and list the values the code compares them to.
 4. **The person.** When the first three give fewer than two pages, ask once for the pages and states to show, with the routes you found as the proposed answer.
@@ -109,6 +109,7 @@ When the person owns the site, the better way is to add the two files to its sta
     {
       "name": "variant",
       "label": "Variant",
+      "default": "A",
       "options": [
         { "value": "A", "label": "A · Inline costs", "note": "We believe showing costs next to each item reduces drop-off at checkout." },
         { "value": "B", "label": "B · Summary card", "note": "We believe one summary card is easier to scan." }
@@ -137,6 +138,7 @@ When the person owns the site, the better way is to add the two files to its sta
 | `pages[].path` | The URL the page menu opens, with any params it needs. |
 | `pages[].match` | Optional path prefix, so a page with a dynamic segment (`/products/<id>`) still shows its menus when you click to another item. |
 | `pages[].params` | Params for this page only. |
+| `params[].default` | Optional. The value the app shows when the param is not in the URL, so the menu shows it. Default: the option with value `""`, else the first option. |
 | `options[].value` | The param's value. `""` means the param is not in the URL. |
 | `options[].note` | Shown under the menu while that option is chosen (a hypothesis, or what the state shows). |
 
