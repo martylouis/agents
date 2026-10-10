@@ -94,6 +94,68 @@
 
   .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .switch { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .switch input {
+    appearance: none;
+    position: relative;
+    flex: none;
+    width: 34px;
+    height: 20px;
+    margin: 0;
+    border-radius: 999px;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .switch input::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+    transition: transform 0.15s;
+  }
+  .switch input:checked { background: var(--accent); }
+  .switch input:checked::after { transform: translateX(14px); background: var(--accent-text); }
+  .icon-button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  dialog {
+    width: min(360px, calc(100vw - 32px));
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
+  }
+  dialog::backdrop { background: rgb(0 0 0 / 0.3); }
+  dialog h2 { margin: 0 0 12px; font-size: 15px; }
+  dialog dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0 0 16px; align-items: center; }
+  dialog dt { white-space: nowrap; }
+  dialog dd { margin: 0; color: var(--muted); }
+  dialog form { display: flex; justify-content: flex-end; }
+  dialog form button {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
   .toolbar button, .toolbar a {
     flex: none;
     padding: 6px 12px;
@@ -109,8 +171,7 @@
     cursor: pointer;
   }
   .spacer { flex: 1; }
-  .hint { color: var(--muted); font-size: 11px; }
-  kbd { font: inherit; padding: 0 4px; border: 1px solid var(--border); border-radius: 4px; }
+  kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; text-align: center; }
 
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
@@ -176,14 +237,30 @@
 
   <div class="spacer"></div>
 
-  <div class="group">
-    <label class="row switch">
+  <div class="row">
+    <label class="switch">
+      <input type="checkbox" role="switch" id="sync" checked>
       <span>Sync navigation</span>
-      <input type="checkbox" id="sync" checked>
     </label>
-    <span class="hint"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> switch viewport, <kbd>\</kbd> hides this panel</span>
+    <button type="button" class="icon-button" id="shortcuts-button" aria-label="Keyboard shortcuts" aria-haspopup="dialog" title="Keyboard shortcuts (?)">?</button>
   </div>
 </aside>
+
+<dialog id="shortcuts" aria-labelledby="shortcuts-title">
+  <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+  <dl>
+    <dt><kbd>1</kbd></dt><dd>Mobile</dd>
+    <dt><kbd>2</kbd></dt><dd>Desktop</dd>
+    <dt><kbd>3</kbd></dt><dd>Both</dd>
+    <dt><kbd>S</kbd></dt><dd>Turn sync navigation on or off</dd>
+    <dt><kbd>R</kbd></dt><dd>Reload both frames</dd>
+    <dt><kbd>\</kbd></dt><dd>Hide or show the sidebar</dd>
+    <dt><kbd>/</kbd></dt><dd>Go to the address bar</dd>
+    <dt><kbd>?</kbd></dt><dd>Show these shortcuts</dd>
+  </dl>
+  <p class="note">Shortcuts work after you click the sidebar or the space around the frames, not inside a frame.</p>
+  <form method="dialog"><button>Close</button></form>
+</dialog>
 
 <main>
   <div class="toolbar">
@@ -411,10 +488,13 @@
     if (value) go(relative(value.startsWith('/') || /^https?:/.test(value) ? value : '/' + value))
   })
   $('#reload').addEventListener('click', () => go(current, { reload: true }))
-  $('#sync').addEventListener('change', (e) => {
-    store.set('sync', e.target.checked ? '1' : '0')
-    if (e.target.checked) for (const f of frames) if (!f.section.hidden) load(f, current)
-  })
+  function syncChanged() {
+    const on = $('#sync').checked
+    store.set('sync', on ? '1' : '0')
+    if (on) for (const f of frames) if (!f.section.hidden) load(f, current)
+  }
+  $('#sync').addEventListener('change', syncChanged)
+  $('#shortcuts-button').addEventListener('click', () => $('#shortcuts').showModal())
   function toggleSidebar() {
     const collapsed = document.body.classList.toggle('collapsed')
     $('#toggle-sidebar').setAttribute('aria-expanded', String(!collapsed))
@@ -425,10 +505,18 @@
   }
   $('#toggle-sidebar').addEventListener('click', toggleSidebar)
   document.addEventListener('keydown', (e) => {
-    if (e.target.closest('input, select, textarea') || e.metaKey || e.ctrlKey || e.altKey) return
+    if (e.target.closest('input[type="text"], select, textarea') || e.metaKey || e.ctrlKey || e.altKey) return
+    if ($('#shortcuts').open) return
     const views = { 1: 'mobile', 2: 'desktop', 3: 'both' }
-    if (views[e.key]) setView(views[e.key])
-    if (e.key === '\\') toggleSidebar()
+    const key = e.key.toLowerCase()
+    if (views[key]) setView(views[key])
+    else if (key === '\\') toggleSidebar()
+    else if (key === '?') $('#shortcuts').showModal()
+    else if (key === 's') { $('#sync').checked = !$('#sync').checked; syncChanged() }
+    else if (key === 'r') go(current, { reload: true })
+    else if (key === '/') { e.preventDefault(); $('#address').focus(); $('#address').select() }
+    else return
+    e.preventDefault()
   })
   new ResizeObserver(layout).observe($('#stage'))
 

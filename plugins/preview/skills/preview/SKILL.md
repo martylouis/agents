@@ -142,4 +142,4 @@ When the person owns the site, the better way is to add the two files to its sta
 | `options[].value` | The param's value. `""` means the param is not in the URL. |
 | `options[].note` | Shown under the menu while that option is chosen (a hypothesis, or what the state shows). |
 
-Above the frames is an address bar for any URL, with Reload and Open in tab. The viewer also has keys `1`, `2`, `3` for Mobile, Desktop, Both, and `\` to hide the sidebar. Its own URL keeps the frame URL and the viewport (`/preview.html?path=%2Fcart%3Fvariant%3DB&view=both`), so a link to it opens the same view. Another nav file opens with `?config=<file>.json`.
+Above the frames is an address bar for any URL, with Reload and Open in tab. The `?` button (or the `?` key) lists the keyboard shortcuts: `1`, `2`, `3` for Mobile, Desktop, Both, `S` for sync, `R` to reload, `\` to hide the sidebar, and `/` for the address bar. Its own URL keeps the frame URL and the viewport (`/preview.html?path=%2Fcart%3Fvariant%3DB&view=both`), so a link to it opens the same view. Another nav file opens with `?config=<file>.json`.
