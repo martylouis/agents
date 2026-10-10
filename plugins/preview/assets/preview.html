@@ -17,6 +17,7 @@
     --accent-text: #ffffff;
     --focus: #2563eb;
     --frame-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.06);
+    --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2363636b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
@@ -31,6 +32,7 @@
       --accent-text: #18181b;
       --focus: #60a5fa;
       --frame-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+      --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
       color-scheme: dark;
     }
   }
@@ -91,6 +93,38 @@
     font: inherit;
   }
   input[type="text"] { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+
+  /* Selects: the browser's own control, restyled. Keyboard and screen reader behavior stay native. */
+  select {
+    appearance: none;
+    height: 36px;
+    padding: 0 32px 0 11px;
+    background: var(--panel) var(--chevron) no-repeat right 11px center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  select:hover { border-color: var(--muted); }
+  select:focus-visible { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent); }
+  /* Browsers that support a customizable select (Chrome and Edge 135+) also get a styled list. */
+  @supports (appearance: base-select) {
+    select, ::picker(select) { appearance: base-select; }
+    select { display: flex; align-items: center; }
+    select::picker-icon { display: none; }
+    ::picker(select) {
+      margin-top: 4px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: 0 8px 28px rgb(0 0 0 / 0.14);
+    }
+    option { padding: 7px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    option:hover, option:focus-visible { outline: none; background: var(--control); }
+    option:checked { font-weight: 600; }
+    option::checkmark { order: 1; margin-left: auto; color: var(--text); }
+  }
 
   .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .switch { display: flex; align-items: center; gap: 8px; cursor: pointer; }
