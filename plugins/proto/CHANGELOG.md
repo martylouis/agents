@@ -1,31 +1,14 @@
 # Changelog
 
-All notable changes to the `proto` plugin (named `ux-orch` before 1.0.0), newest first. The version number lives in `.claude-plugin/plugin.json`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
+All notable changes to the `proto` plugin (named `ux-orch` before 0.5.0), newest first. The version number lives in `.claude-plugin/plugin.json`; this file holds the notes. Changes merge under Unreleased, and a release gives them a version (root README → Releases). Format: [Keep a Changelog](https://keepachangelog.com).
 
-## 1.3.0 — 2026-10-10
+## Unreleased
 
-### Added
-- URL states. Every planned state opens from its URL: the route plus named query params, one per condition (`/cart?drawer=open&error=network`). Plan and task States tables have a URL column, `plan` asks for a URL per state, and the builder rules have a new rule 10 (builder rules 0.3.0, so the next run replaces `docs/ux/BUILDER-RULES.md`). No state library: the router's query API or `URLSearchParams`.
-- Variants live in one app and show by `?variant=<letter>`.
-- Review states open each planned state with a `goto` to its URL; a URL that does not show its state is a blocker.
-- With these URLs, the new [`responsive-preview`](../../skills/responsive-preview/README.md) skill shows any state or variant in a phone and a desktop frame side by side. Screens built before 1.3.0 get their URLs when a build or feedback task next changes them.
+Nothing yet.
 
-## 1.2.0 — 2026-10-07
+## 0.5.0 — 2026-10-11
 
-### Added
-- Cursor marketplace manifests at the repo root (`.cursor-plugin/marketplace.json`) and under `plugins/proto/.cursor-plugin/`. Install `proto` from the `martylouis/agents` marketplace in Cursor Customize, or keep using a local clone with `cursor-agent --plugin-dir`.
-
-## 1.1.0 — 2026-10-06
-
-### Changed
-- The plugin names no model. Skills, agents, and tasks ask for a tier, `fast` or `strong` (`shared/HARNESS.md` → Tiers), and the routing judgment's answer is the tier itself. Task files have `tier:` instead of `model:`. The agents' frontmatter is `model: inherit`, and every dispatch passes the model mapped to the agent's tier.
-- Dispatch and progress are described for any harness (`shared/HARNESS.md`), with Claude Code as one section. A harness with no sub-agents runs the agent files in the main session, one task at a time.
-
-### Added
-- Built-in defaults for Claude Code, Codex, and Cursor, written as model families so new releases need no update (`shared/HARNESS.md` → Known harnesses). These harnesses never ask.
-- `docs/ux/.scratch/MODELS.md` (template `shared/templates/MODELS.md`): which model runs each tier, one line per harness. It overrides a default. Any other harness proposes its line once in the start confirmation and saves it after "go". It is git-ignored and scratch cleanup keeps it.
-
-## 1.0.0 — 2026-10-06
+This release was first numbered 1.0.0 to 1.3.0 (2026-10-06 to 2026-10-10). The plugin is back under 0.x while it is still being explored, and the notes for those four versions are merged here. If `claude plugin update` keeps 1.3.0, uninstall `proto@martylouis` and install it again.
 
 ### Changed
 - **Breaking:** the plugin is renamed from `ux-orch` to `proto`, and the `orchestrate` skill to `build`. The commands are now `/proto:plan`, `/proto:context`, `/proto:build`, `/proto:review`, and `/proto:feedback`. The plugin folder is `plugins/proto/`. Uninstall `ux-orch@martylouis` and install `proto@martylouis` (README → Update).
@@ -34,6 +17,17 @@ All notable changes to the `proto` plugin (named `ux-orch` before 1.0.0), newest
 - The start confirmation of `build` opens with "Proto build — ready", and the `CONTEXT.md` template line "Orchestration files" is now "Proto files".
 - Skills dispatch the agents by their full names (`proto:builder`, `proto:witness`, `proto:librarian`), so an agent of the same name elsewhere is never picked instead.
 - The agents are renamed for their jobs and lose the `ux-` prefix, which repeated the plugin name: `ux-builder` is `builder`, `ux-describer` is `witness` (it says what it sees and leaves the verdict to the judge), and `ux-context` is `librarian` (it reads the installed library and keeps the exact names). They show up as `proto:builder`, `proto:witness`, and `proto:librarian`.
+- The plugin names no model. Skills, agents, and tasks ask for a tier, `fast` or `strong` (`shared/HARNESS.md` → Tiers), and the routing judgment's answer is the tier itself. Task files have `tier:` instead of `model:`. The agents' frontmatter is `model: inherit`, and every dispatch passes the model mapped to the agent's tier.
+- Dispatch and progress are described for any harness (`shared/HARNESS.md`), with Claude Code as one section. A harness with no sub-agents runs the agent files in the main session, one task at a time.
+
+### Added
+- Built-in defaults for Claude Code, Codex, and Cursor, written as model families so new releases need no update (`shared/HARNESS.md` → Known harnesses). These harnesses never ask.
+- `docs/ux/.scratch/MODELS.md` (template `shared/templates/MODELS.md`): which model runs each tier, one line per harness. It overrides a default. Any other harness proposes its line once in the start confirmation and saves it after "go". It is git-ignored and scratch cleanup keeps it.
+- Cursor marketplace manifests at the repo root (`.cursor-plugin/marketplace.json`) and under `plugins/proto/.cursor-plugin/`. Install `proto` from the `martylouis/agents` marketplace in Cursor Customize, or keep using a local clone with `cursor-agent --plugin-dir`.
+- URL states. Every planned state opens from its URL: the route plus named query params, one per condition (`/cart?drawer=open&error=network`). Plan and task States tables have a URL column, `plan` asks for a URL per state, and the builder rules have a new rule 10 (builder rules 0.3.0, so the next run replaces `docs/ux/BUILDER-RULES.md`). No state library: the router's query API or `URLSearchParams`.
+- Variants live in one app and show by `?variant=<letter>`.
+- Review states open each planned state with a `goto` to its URL; a URL that does not show its state is a blocker.
+- With these URLs, the new [`responsive-preview`](../../skills/responsive-preview/README.md) skill shows any state or variant in a phone and a desktop frame side by side. Screens built without state URLs get them when a build or feedback task next changes them.
 
 ## 0.4.1 — 2026-10-05
 

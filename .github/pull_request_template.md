@@ -1,6 +1,7 @@
 <!--
-Title: conventional commit with the new version at the end, for example
-feat(proto): tiers instead of model names (1.1.0). Use feat! for a breaking change.
+Title: conventional commit, for example feat(proto): tiers instead of model
+names. Use feat! for a breaking change. No version in the title: versions change
+only in a release PR (root README → Releases).
 -->
 
 Before: what someone using the plugin saw or did before this change.
@@ -15,10 +16,10 @@ Tested: what you ran and what it showed (for example `claude plugin validate .`,
 
 Delete a line that doesn't apply, and say why if it's not obvious.
 
-### Version and changelog
+### Changelog
 
-- [ ] Version raised in `plugins/<plugin>/.claude-plugin/plugin.json` only, not in `marketplace.json` (patch for fixes and wording, minor for new skills, agents, or options, major for anything that breaks how people use it)
-- [ ] `plugins/<plugin>/CHANGELOG.md` has a `## <version> — <date>` section with the changes, and no empty headings
+- [ ] Lines added under `## Unreleased` in the plugin's or skill's `CHANGELOG.md`, with no empty headings
+- [ ] Version not changed (only a release PR changes it)
 - [ ] Breaking change: the plugin README says how to move over (old to new commands, what to uninstall)
 
 ### Docs
@@ -34,7 +35,3 @@ Delete a line that doesn't apply, and say why if it's not obvious.
 - [ ] Tested in Claude Code
 - [ ] Tested in Cursor (`cursor-agent --plugin-dir`), or marked not tested
 - [ ] Tested in Codex, or marked not tested
-
-### After merge
-
-- [ ] Tag and release `<plugin>-v<version>` on the merge commit (`gh release create <plugin>-v<version> --target <sha> --notes-file <changelog section>`), run locally since cloud sessions can't push tags

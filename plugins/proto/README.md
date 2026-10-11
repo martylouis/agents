@@ -181,7 +181,7 @@ claude plugin update proto@martylouis
 
 Restart the session after an update.
 
-**Coming from `ux-orch`.** Before 1.0.0 the plugin was named `ux-orch` and the build skill was `/ux-orch:orchestrate`. A new name is a new plugin to Claude Code, so remove the old one and install `proto`:
+**Coming from `ux-orch`.** Before 0.5.0 the plugin was named `ux-orch` and the build skill was `/ux-orch:orchestrate`. A new name is a new plugin to Claude Code, so remove the old one and install `proto`:
 
 ```bash
 claude plugin uninstall ux-orch@martylouis
