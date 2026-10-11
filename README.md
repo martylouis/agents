@@ -105,11 +105,9 @@ Installed copies are cached by version, so a merged change does not reach an ins
 
 ### Releases
 
-There is no release per PR. A release happens only when Marty decides to cut one.
+There is no release per PR. A release happens only when Marty decides to cut one, and the merged release PR is the release. There are no GitHub releases or git tags, since one repo holds several plugins and skills and a single Releases list would mix them.
 
-1. Open a small PR that renames `## Unreleased` to `## <version> — <date>`, adds a new `## Unreleased` above it that says "Nothing yet.", and raises the version (both `plugin.json` files for a plugin, `metadata.version` for a skill). Title it `chore(<name>): release <version>`.
-2. After it merges, create a GitHub release on `main` with the tag `<name>-v<version>` (for example `proto-v0.5.0`) and the changelog section as its notes. On github.com: Releases, Draft a new release, type the new tag, pick `main`. This works from a phone browser. From a terminal: `gh release create <name>-v<version> --target main --notes-file <notes>`.
-3. Never move a tag. To undo a release, delete the release and its tag, and release again with the next number.
+To cut one, open a small PR that renames `## Unreleased` to `## <version> — <date>`, adds a new `## Unreleased` above it that says "Nothing yet.", and raises the version (both `plugin.json` files for a plugin, `metadata.version` for a skill). Title it `chore(<name>): release <version>`. To find the commit of an older version, look for its release PR in the git log.
 
 ## License
 

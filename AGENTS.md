@@ -7,7 +7,7 @@ This repo holds Marty's agent plugins (`plugins/`) and standalone skills (`skill
 - Do not change a version in a regular PR. Versions change only in a release PR, and only when Marty asks for a release.
 - Add your changes to the plugin's or skill's `CHANGELOG.md` under `## Unreleased`, in Added, Changed, Removed, or Fixed. Leave out headings you don't use.
 - Everything stays under `0.x`. Never propose `1.0.0`; Marty decides when something is stable.
-- Releases and tags follow README → Releases. Cloud sessions can't push tags, so give Marty the steps instead.
+- Releases follow README → Releases. A release is a merged release PR. Do not create GitHub releases or git tags.
 
 ## Plugins and skills
 
