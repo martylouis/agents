@@ -24,6 +24,14 @@ Install one with the [skills CLI](https://github.com/vercel-labs/skills):
 npx skills add martylouis/agents --skill responsive-preview
 ```
 
+## Examples
+
+Small demo apps for trying the plugins and skills. They live in `examples/` and are not part of any install.
+
+| Example | Stack |
+| --- | --- |
+| [`react-todo`](examples/react-todo/README.md) | Vite, React, Tailwind CSS, shadcn/ui |
+
 ## Install
 
 ### Claude Code
@@ -80,6 +88,12 @@ Plugins are written for any harness. Skills ask for a model tier (`fast` or `str
 3. Add a row to the Plugins table above, with a column for each harness.
 4. Keep each plugin self-contained. Do not reference files outside its folder.
 5. Name no models in skills or agents. Ask for a tier, and keep model families in the plugin's `HARNESS.md`.
+
+### Add an example
+
+1. Create `examples/<stack>-<app>/`, for example `react-todo`, with its own `README.md` that says how to run it.
+2. Commit the lockfile, and keep `node_modules` and build output out of git.
+3. Add a row to the Examples table above.
 
 ### Add a harness
 
