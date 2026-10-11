@@ -90,13 +90,26 @@ Plugins are written for any harness. Skills ask for a model tier (`fast` or `str
 
 ### Versioning
 
-Each plugin has its own [semver](https://semver.org) version. Set it in the plugin's `.claude-plugin/plugin.json` and copy the same number to `.cursor-plugin/plugin.json`. Do not repeat it in marketplace files.
+Each plugin and each standalone skill has its own [semver](https://semver.org) version. A plugin keeps it in `.claude-plugin/plugin.json`, with the same number copied to `.cursor-plugin/plugin.json`, and a skill keeps it in `metadata.version` in its `SKILL.md`. Do not repeat it in marketplace files.
 
-- **Patch** (`0.2.1` → `0.2.2`): fixes and wording changes.
-- **Minor** (`0.2.1` → `0.3.0`): new skills, agents, or options that keep old behavior.
-- **Major** (`0.x` → `1.0.0`): changes that break how people use the plugin.
+Everything stays under `0.x` while it is still being explored. `1.0.0` comes only when Marty calls a plugin or skill stable. Until then:
 
-Installed copies are cached by version, so raise the version in any commit that changes a plugin, and add its lines to the plugin's `CHANGELOG.md` under that version. Commits that touch only the README or other repo files need no bump.
+- **Minor** (`0.5.0` → `0.6.0`): new skills, agents, or options, and changes that break how people use it.
+- **Patch** (`0.5.0` → `0.5.1`): fixes and wording changes.
+
+### Changes in a PR
+
+A PR does not change the version. It adds its lines to the plugin's or skill's `CHANGELOG.md` under `## Unreleased`, in the usual sections (Added, Changed, Removed, Fixed). PRs that touch only the README or other repo files need no changelog lines.
+
+Installed copies are cached by version, so a merged change does not reach an installed plugin until the next release. To try unreleased work, load your clone with `--plugin-dir` (Install → Work on a plugin).
+
+### Releases
+
+There is no release per PR. A release happens only when Marty decides to cut one.
+
+1. Open a small PR that renames `## Unreleased` to `## <version> — <date>`, adds a new `## Unreleased` above it that says "Nothing yet.", and raises the version (both `plugin.json` files for a plugin, `metadata.version` for a skill). Title it `chore(<name>): release <version>`.
+2. After it merges, create a GitHub release on `main` with the tag `<name>-v<version>` (for example `proto-v0.5.0`) and the changelog section as its notes. On github.com: Releases, Draft a new release, type the new tag, pick `main`. This works from a phone browser. From a terminal: `gh release create <name>-v<version> --target main --notes-file <notes>`.
+3. Never move a tag. To undo a release, delete the release and its tag, and release again with the next number.
 
 ## License
 

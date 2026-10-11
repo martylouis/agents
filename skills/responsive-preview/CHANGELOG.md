@@ -1,6 +1,10 @@
 # Changelog
 
-All notable changes to the `responsive-preview` skill, newest first. The version number lives in `metadata.version` in `SKILL.md`; this file holds the notes. Format: [Keep a Changelog](https://keepachangelog.com).
+All notable changes to the `responsive-preview` skill, newest first. The version number lives in `metadata.version` in `SKILL.md`; this file holds the notes. Changes merge under Unreleased, and a release gives them a version (root README → Releases). Format: [Keep a Changelog](https://keepachangelog.com).
+
+## Unreleased
+
+Nothing yet.
 
 ## 0.1.0 — 2026-10-10
 
