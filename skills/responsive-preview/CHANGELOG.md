@@ -4,7 +4,16 @@ All notable changes to the `responsive-preview` skill, newest first. The version
 
 ## Unreleased
 
-Nothing yet.
+### Added
+- The skill adds a `responsive-preview` script to the app's `package.json`. It starts the dev server and opens the viewer, so you run one command instead of starting the server and typing the URL.
+- A height menu above the phone frame: **Full height** fills the window, and **Phone** uses a set phone height (844 by default, `viewports.mobileHeight` in `preview.json`).
+- A zoom menu above the desktop frame, from 100% down to 50%, next to the frame's size. The viewer remembers it.
+
+### Changed
+- The desktop frame fills the width of the window instead of scaling a 1440 pixel page to fit. Use the zoom menu to see a wider layout. `viewports.desktop` in `preview.json` is no longer used.
+- The Mobile, Desktop, and Both buttons moved from the sidebar to the right of the address bar, as a group of icon buttons.
+- The report leads with the command that opens the viewer.
+- The skill replaces an existing `preview.html` whenever it differs from its own copy, instead of checking the version line.
 
 ## 0.1.0 — 2026-10-10
 

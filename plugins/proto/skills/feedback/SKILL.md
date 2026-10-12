@@ -3,6 +3,8 @@ name: feedback
 description: Turn feedback on a prototype from any source (notes, a review, user tests, audit plans, or comments on elements in the running prototype) into fix and change tasks, build them with the run loop, close every item, and tag the round.
 argument-hint: "[notes file | review folder | audit plan file | --comment | --tweak \"<text>\"]"
 disable-model-invocation: true
+metadata:
+  internal: true
 ---
 
 # Feedback
