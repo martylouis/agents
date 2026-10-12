@@ -11,7 +11,7 @@ All notable changes to the `responsive-preview` skill, newest first. The version
 
 ### Changed
 - The desktop frame fills the width of the window instead of scaling a 1440 pixel page to fit. Use the zoom menu to see a wider layout. `viewports.desktop` in `preview.json` is no longer used.
-- The Mobile, Desktop, and Both buttons moved from the sidebar to the right of the address bar, as a group of icon buttons.
+- The Mobile, Desktop, and Both buttons moved from the sidebar to the left of the address bar, as a group of icon buttons.
 - The report leads with the command that opens the viewer.
 - The skill replaces an existing `preview.html` whenever it differs from its own copy, instead of checking the version line.
 

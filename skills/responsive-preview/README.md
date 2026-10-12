@@ -4,7 +4,7 @@ A skill that adds a responsive preview with a variant switcher to any web app: p
 
 ```text
 +----------------+------------------------------------------+
-|                | /cart                   [ph] [dt] [both] |
+|                | [ph] [dt] [both] /cart                   |
 |                |  Mobile   |  Desktop                     |
 |                | +-------+ | +--------------------------+ |
 |                | |       | | |                          | |
