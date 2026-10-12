@@ -106,7 +106,7 @@ Plugins are written for any harness. Skills ask for a model tier (`fast` or `str
 
 Each plugin and each standalone skill has its own [semver](https://semver.org) version. A plugin keeps it in `.claude-plugin/plugin.json`, with the same number copied to `.cursor-plugin/plugin.json`, and a skill keeps it in `metadata.version` in its `SKILL.md`. Do not repeat it in marketplace files.
 
-Everything stays under `0.x` while it is still being explored. `1.0.0` comes only when Marty calls a plugin or skill stable. Until then:
+Everything stays under `0.x` while it is still being explored.
 
 - **Minor** (`0.5.0` → `0.6.0`): new skills, agents, or options, and changes that break how people use it.
 - **Patch** (`0.5.0` → `0.5.1`): fixes and wording changes.
@@ -119,7 +119,7 @@ Installed copies are cached by version, so a merged change does not reach an ins
 
 ### Releases
 
-There is no release per PR. A release happens only when Marty decides to cut one, and the merged release PR is the release. There are no GitHub releases or git tags, since one repo holds several plugins and skills and a single Releases list would mix them.
+There is no release per PR. A release happens only when the maintainer decides to cut one, and the merged release PR is the release. There are no GitHub releases or git tags, since one repo holds several plugins and skills and a single Releases list would mix them.
 
 To cut one, open a small PR that renames `## Unreleased` to `## <version> — <date>`, adds a new `## Unreleased` above it that says "Nothing yet.", and raises the version (both `plugin.json` files for a plugin, `metadata.version` for a skill). Title it `chore(<name>): release <version>`. To find the commit of an older version, look for its release PR in the git log.
 
