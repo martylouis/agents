@@ -16,6 +16,9 @@ All notable changes to the `responsive-preview` skill, newest first. The version
 - The report leads with the command that opens the viewer.
 - The skill replaces an existing `preview.html` whenever it differs from its own copy, instead of checking the version line.
 
+### Fixed
+- When `preview.json` is missing, the sidebar says so plainly instead of showing a JSON error. Many dev servers answer a missing file with the app's HTML page, which made the viewer report an unexpected `<` token.
+
 ## 0.1.0 — 2026-10-10
 
 ### Added

@@ -1158,12 +1158,17 @@
     const file = viewerParams.get('config') || 'preview.json'
     try {
       const res = await fetch(file, { cache: 'no-store' })
-      if (!res.ok) throw new Error(res.status)
-      const loaded = await res.json()
+      const body = res.ok ? await res.text() : ''
+      // Many dev servers answer a missing file with the app's own HTML page, not a 404.
+      if (!res.ok || /^\s*</.test(body)) throw new Error('missing')
+      let loaded
+      try { loaded = JSON.parse(body) } catch (err) { throw new Error(`${file} is not valid JSON: ${err.message}`) }
       config = { ...config, ...loaded, viewports: { ...config.viewports, ...(loaded.viewports || {}) } }
       if (!config.pages || !config.pages.length) config.pages = [{ label: 'Home', path: '/' }]
     } catch (err) {
-      warn(`Could not read ${file} (${err.message}). Showing the home page; type any path in the address bar above the frames.`)
+      warn(err.message === 'missing'
+        ? `There is no ${file} next to this page, so the menu has only the home page. Run the skill to write it, or type any path in the address bar.`
+        : `${err.message}. Showing the home page; type any path in the address bar.`)
     }
     document.title = config.title ? `${config.title} · Preview` : 'Preview'
     $('#title').textContent = config.title || 'Preview'
