@@ -309,7 +309,56 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .pick-copy { margin-left: auto; }
+  .actions { display: flex; gap: 6px; margin-left: auto; }
+  .pick-add {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+  .pick-add:hover { background: var(--control); }
+  /* The count of saved elements, on the Select button. It opens and closes the list. */
+  .select-wrap { position: relative; display: flex; flex: none; }
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border: 2px solid var(--panel);
+    border-radius: 999px;
+    background: var(--focus);
+    color: #fff;
+    font: 600 10px/14px system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .badge[hidden] { display: none; }
+  .list {
+    position: fixed;
+    z-index: 11;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 340px;
+    max-height: min(480px, calc(100vh - 80px));
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
+  }
+  .list[hidden] { display: none; }
+  .list ol { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+  .list li { display: flex; gap: 8px; align-items: flex-start; padding: 8px; border-radius: 8px; background: var(--control); font-size: 12px; }
+  .list li .what { flex: 1; min-width: 0; }
+  .list li strong { display: block; font-size: 13px; overflow-wrap: anywhere; }
+  .list li span { display: block; color: var(--muted); overflow-wrap: anywhere; }
   .pick-close { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 16px; line-height: 1; cursor: pointer; }
   .pick-close:hover { background: var(--control); color: var(--text); }
 </style>
@@ -364,7 +413,13 @@
   <div class="pick-head"><strong id="pick-title"></strong><button type="button" class="pick-close" id="pick-close" aria-label="Close" title="Close (Esc)">×</button></div>
   <p class="note" id="pick-sub"></p>
   <textarea id="pick-comment" aria-label="Comment for the agent" placeholder="Comment for the agent (optional)"></textarea>
-  <div class="row"><span class="note" id="pick-status" role="status"></span><button type="button" class="pick-copy" id="pick-copy" title="Copy (⌘ Enter)">Copy</button></div>
+  <div class="row"><span class="note" id="pick-status" role="status"></span><span class="actions"><button type="button" class="pick-add" id="pick-add" title="Add to the list and pick another (⇧ Enter)">Add</button><button type="button" class="pick-copy" id="pick-copy" title="Copy (⌘ Enter)">Copy</button></span></div>
+</div>
+
+<div class="list" id="list" role="dialog" aria-labelledby="list-title" hidden>
+  <div class="pick-head"><strong id="list-title">Selection</strong><button type="button" class="pick-close" id="list-close" aria-label="Close" title="Close (Esc)">×</button></div>
+  <ol id="list-items"></ol>
+  <div class="row"><span class="note" id="list-status" role="status"></span><span class="actions"><button type="button" class="pick-add" id="list-clear">Clear</button><button type="button" class="pick-copy" id="list-copy">Copy all</button></span></div>
 </div>
 
 <main>
@@ -377,7 +432,10 @@
     </div>
     <button type="button" class="icon" id="reload" aria-label="Reload" title="Reload (R)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71"/><path d="M13.25 2.5v3h-3"/></svg></button>
     <input type="text" id="address" aria-label="Address" title="Type a path and press Enter to open it in both frames" spellcheck="false" autocomplete="off">
-    <button type="button" class="icon" id="select" aria-pressed="false" aria-label="Select an element" title="Select an element to copy for an agent (C)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 13.25H3.75a1 1 0 0 1-1-1V3.75a1 1 0 0 1 1-1h8.5a1 1 0 0 1 1 1V6.5"/><path d="m8.25 8.25 6 2-2.5 1-1 2.5z"/></svg></button>
+    <span class="select-wrap">
+      <button type="button" class="icon" id="select" aria-pressed="false" aria-label="Select an element" title="Select an element to copy for an agent (C)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 13.25H3.75a1 1 0 0 1-1-1V3.75a1 1 0 0 1 1-1h8.5a1 1 0 0 1 1 1V6.5"/><path d="m8.25 8.25 6 2-2.5 1-1 2.5z"/></svg></button>
+      <button type="button" class="badge" id="badge" aria-label="Show the selection list" aria-expanded="false" aria-controls="list" hidden>0</button>
+    </span>
     <a class="icon" id="open" href="/" target="_blank" rel="noopener" aria-label="Open in new tab" title="Open in new tab"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.75h3.75V6.5"/><path d="M13.25 2.75 7.5 8.5"/><path d="M12 9.5v2.75a1 1 0 0 1-1 1H3.75a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1H6.5"/></svg></a>
   </div>
   <div id="stage">
@@ -639,7 +697,7 @@
   }
   $('#toggle-sidebar').addEventListener('click', toggleSidebar)
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && (picked || selecting) && !$('#shortcuts').open) { e.preventDefault(); escape(); return }
+    if (e.key === 'Escape' && (picked || selecting || !$('#list').hidden) && !$('#shortcuts').open) { e.preventDefault(); escape(); return }
     if (e.target.closest('input[type="text"], select, textarea') || e.metaKey || e.ctrlKey || e.altKey) return
     if ($('#shortcuts').open) return
     const views = { 1: 'mobile', 2: 'desktop', 3: 'both' }
@@ -744,7 +802,8 @@
   }
 
   function escape() {
-    if (picked) unpick()
+    if (!$('#list').hidden) toggleList(false)
+    else if (picked) unpick()
     else setSelecting(false)
   }
 
@@ -988,16 +1047,109 @@
     return ok
   }
 
+  // The list: elements saved with Add, copied together as numbered items.
+  const saved = []
+
+  function addPicked() {
+    if (!picked) return
+    const { frame: f, el } = picked
+    const info = inspect(f, el)
+    const comment = $('#pick-comment').value.trim()
+    saved.push({ title: info.title, sel: info.sel, comment, text: contextText(comment) })
+    $('#pick-comment').value = ''
+    unpick()
+    renderList()
+  }
+
+  function listText() {
+    if (saved.length === 1) return saved[0].text
+    return saved.map((item, i) => `${i + 1}. ${item.title} · ${item.sel}\n${item.text}`).join('\n\n')
+  }
+
+  function renderList() {
+    const n = saved.length
+    $('#badge').hidden = n === 0
+    $('#badge').textContent = n
+    $('#badge').setAttribute('aria-label', `Show the selection list (${n} saved)`)
+    $('#pick-copy').textContent = n ? `Copy ${n + 1}` : 'Copy'
+    $('#list-title').textContent = `Selection (${n})`
+    $('#list-items').replaceChildren(...saved.map((item, i) => {
+      const li = document.createElement('li')
+      const what = document.createElement('div')
+      what.className = 'what'
+      const title = document.createElement('strong')
+      title.textContent = `${i + 1}. ${item.title}`
+      const sel = document.createElement('span')
+      sel.textContent = item.sel
+      what.append(title, sel)
+      if (item.comment) {
+        const comment = document.createElement('span')
+        comment.textContent = item.comment
+        what.append(comment)
+      }
+      const remove = Object.assign(document.createElement('button'), { type: 'button', className: 'pick-close', textContent: '×', title: 'Remove' })
+      remove.setAttribute('aria-label', `Remove ${i + 1}`)
+      remove.addEventListener('click', () => { saved.splice(i, 1); renderList() })
+      li.append(what, remove)
+      return li
+    }))
+    if (!n) toggleList(false)
+    placeList()
+  }
+
+  function toggleList(open = $('#list').hidden) {
+    $('#list').hidden = !open || !saved.length
+    $('#badge').setAttribute('aria-expanded', String(!$('#list').hidden))
+    $('#list-status').textContent = ''
+    placeList()
+  }
+
+  // Under the Select button, inside the window.
+  function placeList() {
+    const list = $('#list')
+    if (list.hidden) return
+    const b = $('#select').getBoundingClientRect()
+    list.style.top = b.bottom + 8 + 'px'
+    list.style.left = Math.max(8, Math.min(b.right - list.offsetWidth, innerWidth - list.offsetWidth - 8)) + 'px'
+  }
+
+  // Copy the saved elements and the one in the box (if any), then clear the list.
+  async function copyAll(status) {
+    if (picked) addPicked()
+    if (!saved.length) return
+    const ok = await copy(listText())
+    status.textContent = ok ? `Copied ${saved.length === 1 ? 'it' : saved.length}. Paste into your agent.` : 'Could not copy. Your browser blocked the clipboard.'
+    if (ok) { saved.length = 0; renderList() }
+  }
+
   async function copyPicked() {
     if (!picked) return
+    if (saved.length) { await copyAll($('#pick-status')); flash(); return }
     const ok = await copy(contextText($('#pick-comment').value.trim()))
     $('#pick-status').textContent = ok ? 'Copied. Paste it into your agent.' : 'Could not copy. Your browser blocked the clipboard.'
+  }
+  // After copying the list the box is gone, so say it on the Select button for a moment.
+  function flash() {
+    const b = $('#select')
+    b.title = 'Copied. Paste into your agent.'
+    warn('Copied. Paste it into your agent.')
+    setTimeout(() => { warn('Copied. Paste it into your agent.', false); b.title = 'Select an element to copy for an agent (C)' }, 2500)
   }
 
   $('#select').addEventListener('click', () => setSelecting(!selecting))
   $('#pick-copy').addEventListener('click', copyPicked)
+  $('#pick-add').addEventListener('click', addPicked)
+  $('#badge').addEventListener('click', () => toggleList())
+  $('#list-close').addEventListener('click', () => toggleList(false))
+  $('#list-clear').addEventListener('click', () => { saved.length = 0; renderList() })
+  $('#list-copy').addEventListener('click', async () => { await copyAll($('#list-status')); if (!saved.length) flash() })
+  addEventListener('resize', placeList)
   $('#pick-close').addEventListener('click', unpick)
-  $('#pick-comment').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); copyPicked() } })
+  $('#pick-comment').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return
+    if (e.metaKey || e.ctrlKey) { e.preventDefault(); copyPicked() }
+    else if (e.shiftKey) { e.preventDefault(); addPicked() }
+  })
   addEventListener('resize', placeBox)
 
 
