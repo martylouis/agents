@@ -5,6 +5,7 @@ All notable changes to the `proto` plugin (named `ux-orch` before 0.5.0), newest
 ## Unreleased
 
 ### Changed
+- The README links to the `viewpoint` skill, the new name of `responsive-preview`.
 - The proto skills are marked `metadata.internal: true`, so `npx skills add martylouis/agents` lists only the standalone skills. The proto skills need the plugin's agents and shared files, so they only work when the plugin is installed. Plugin installs in Claude Code and Cursor are not affected.
 
 ## 0.5.0 — 2026-10-11
@@ -28,7 +29,7 @@ This release was first numbered 1.0.0 to 1.3.0 (2026-10-06 to 2026-10-10). The p
 - URL states. Every planned state opens from its URL: the route plus named query params, one per condition (`/cart?drawer=open&error=network`). Plan and task States tables have a URL column, `plan` asks for a URL per state, and the builder rules have a new rule 10 (builder rules 0.3.0, so the next run replaces `docs/ux/BUILDER-RULES.md`). No state library: the router's query API or `URLSearchParams`.
 - Variants live in one app and show by `?variant=<letter>`.
 - Review states open each planned state with a `goto` to its URL; a URL that does not show its state is a blocker.
-- With these URLs, the new [`responsive-preview`](../../skills/responsive-preview/README.md) skill shows any state or variant in a phone and a desktop frame side by side. Screens built without state URLs get them when a build or feedback task next changes them.
+- With these URLs, the new [`responsive-preview`](../../skills/viewpoint/README.md) skill (now `viewpoint`) shows any state or variant in a phone and a desktop frame side by side. Screens built without state URLs get them when a build or feedback task next changes them.
 
 ## 0.4.1 — 2026-10-05
 

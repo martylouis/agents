@@ -1,19 +1,25 @@
 # Changelog
 
-All notable changes to the `responsive-preview` skill, newest first. The version number lives in `metadata.version` in `SKILL.md`; this file holds the notes. Changes merge under Unreleased, and a release gives them a version (root README → Releases). Format: [Keep a Changelog](https://keepachangelog.com).
+All notable changes to the `viewpoint` skill (named `responsive-preview` in 0.1.0), newest first. The version number lives in `metadata.version` in `SKILL.md`; this file holds the notes. Changes merge under Unreleased, and a release gives them a version (root README → Releases). Format: [Keep a Changelog](https://keepachangelog.com).
 
 ## Unreleased
 
 ### Added
-- The skill adds a `responsive-preview` script to the app's `package.json`. It starts the dev server and opens the viewer, so you run one command instead of starting the server and typing the URL.
+- Select mode, from the Select button at the right of the address bar or the `C` key. Click an element in either frame, add a comment, and press **Copy** (or Cmd+Enter) to copy plain text for an AI agent: the page URL and sidebar state, the viewport, the element's tag, text, selector, and size, the component that renders it with its parents and file, and the comment at the end. The Reload button moved to the left of the address bar. Components are read from Angular, Vue, React, Svelte, and Astro islands in dev mode, and from the nearest custom element otherwise. **Add** (or Shift+Enter) saves an element and its comment to a list so you can pick several, and Copy then copies them all as numbered items and clears the list. A count badge on the Select button opens and closes the list, where you can remove items. `Esc` closes the list or the box, then leaves select mode.
+- The skill offers to add a `dev:viewpoint` script to the app's `package.json`, and adds it after a yes. It starts the dev server and opens the viewer, so you run one command instead of starting the server and typing the URL.
 - A height menu above the phone frame: **Full height** fills the window, and **Phone** uses a set phone height (844 by default, `viewports.mobileHeight` in `preview.json`).
 - A zoom menu above the desktop frame, from 100% down to 50%, next to the frame's size. The viewer remembers it.
 
 ### Changed
+- The skill is renamed from `responsive-preview` to `viewpoint`, because with select mode it is more than a responsive preview. Run it as `/viewpoint`.
+- The viewer and its nav file live in their own folder, `__viewpoint/index.html` and `__viewpoint/viewpoint.json` in the app's static folder, so they never clash with the app's files. Open `/__viewpoint/index.html` on the dev server.
 - The desktop frame fills the width of the window instead of scaling a 1440 pixel page to fit. Use the zoom menu to see a wider layout. `viewports.desktop` in `preview.json` is no longer used.
 - The Mobile, Desktop, and Both buttons moved from the sidebar to the left of the address bar, as a group of icon buttons.
 - The report leads with the command that opens the viewer.
-- The skill replaces an existing `preview.html` whenever it differs from its own copy, instead of checking the version line.
+- The skill replaces an existing viewer whenever it differs from its own copy, instead of checking the version line.
+
+### Fixed
+- When `viewpoint.json` is missing, the sidebar says so plainly instead of showing a JSON error. Many dev servers answer a missing file with the app's HTML page, which made the viewer report an unexpected `<` token.
 
 ## 0.1.0 — 2026-10-10
 

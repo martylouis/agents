@@ -1,0 +1,1187 @@
+<!doctype html>
+<!-- viewpoint viewer 0.1.0 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viewpoint</title>
+<style>
+  :root {
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --text: #18181b;
+    --muted: #63636b;
+    --border: #e4e4e7;
+    --control: #f4f4f5;
+    --accent: #18181b;
+    --accent-text: #ffffff;
+    --focus: #2563eb;
+    --frame-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.06);
+    --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2363636b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0c0e;
+      --panel: #18181b;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --border: #2e2e33;
+      --control: #26262b;
+      --accent: #f4f4f5;
+      --accent-text: #18181b;
+      --focus: #60a5fa;
+      --frame-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+      --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: grid;
+    grid-template-columns: 272px 1fr;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  body.collapsed { grid-template-columns: 0 1fr; }
+  body.collapsed aside { visibility: hidden; }
+
+  aside {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+  }
+  h1 { margin: 0; font-size: 15px; font-weight: 600; }
+  .sub { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+  .group { display: flex; flex-direction: column; gap: 6px; }
+  .label { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .note { margin: 0; color: var(--muted); font-size: 12px; white-space: pre-line; }
+  .note:empty { display: none; }
+  .warn { margin: 0; padding: 8px 10px; border-radius: 8px; background: var(--control); font-size: 12px; }
+  .warn:empty { display: none; }
+  #params { display: flex; flex-direction: column; gap: 20px; }
+  #params:empty { display: none; }
+
+  .views { display: flex; flex: none; gap: 2px; padding: 2px; border-radius: 9px; background: var(--control); }
+  .views button {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .views button:hover { color: var(--text); }
+  .views button[aria-pressed="true"] { background: var(--panel); color: var(--text); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+  .views svg { width: 16px; height: 16px; }
+
+  select, input[type="text"] {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+  }
+  input[type="text"] { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+
+  /* Selects: the browser's own control, restyled. Keyboard and screen reader behavior stay native. */
+  select {
+    appearance: none;
+    height: 36px;
+    padding: 0 32px 0 11px;
+    background: var(--panel) var(--chevron) no-repeat right 11px center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  select:hover { border-color: var(--muted); }
+  select:focus-visible { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent); }
+  /* Browsers that support a customizable select (Chrome and Edge 135+) also get a styled list. */
+  @supports (appearance: base-select) {
+    select, ::picker(select) { appearance: base-select; }
+    select { display: flex; align-items: center; }
+    select::picker-icon { display: none; }
+    ::picker(select) {
+      margin-top: 4px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: 0 8px 28px rgb(0 0 0 / 0.14);
+    }
+    option { padding: 7px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    option:hover, option:focus-visible { outline: none; background: var(--control); }
+    option:checked { font-weight: 600; }
+    option::checkmark { order: 1; margin-left: auto; color: var(--text); }
+  }
+
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .switch { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .switch input {
+    appearance: none;
+    position: relative;
+    flex: none;
+    width: 34px;
+    height: 20px;
+    margin: 0;
+    border-radius: 999px;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .switch input::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+    transition: transform 0.15s;
+  }
+  .switch input:checked { background: var(--accent); }
+  .switch input:checked::after { transform: translateX(14px); background: var(--accent-text); }
+  .icon-button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  dialog {
+    width: min(360px, calc(100vw - 32px));
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
+  }
+  dialog::backdrop { background: rgb(0 0 0 / 0.3); }
+  dialog h2 { margin: 0 0 12px; font-size: 15px; }
+  dialog dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0 0 16px; align-items: center; }
+  dialog dt { white-space: nowrap; }
+  dialog dd { margin: 0; color: var(--muted); }
+  dialog form { display: flex; justify-content: flex-end; }
+  dialog form button {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+  .toolbar .icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .toolbar .icon:hover { background: var(--control); color: var(--text); }
+  .toolbar .icon[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  .toolbar .icon svg { width: 16px; height: 16px; }
+  .spacer { flex: 1; }
+  kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; text-align: center; }
+
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+  }
+  .toolbar input { flex: 1; min-width: 0; height: 32px; }
+  #stage {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 16px;
+  }
+  .frame { display: flex; flex-direction: column; gap: 6px; flex: none; }
+  .frame[hidden] { display: none; }
+  .frame-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 24px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .frame-head strong { color: var(--text); font-weight: 600; }
+  .frame-head .end { display: flex; align-items: center; gap: 4px; min-width: 0; }
+  /* Small menus in the frame heads: plain text until hovered. */
+  .frame-head select {
+    width: auto;
+    height: 24px;
+    padding: 0 22px 0 6px;
+    border-color: transparent;
+    border-radius: 6px;
+    background-color: transparent;
+    background-position: right 6px center;
+    color: var(--muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .frame-head select:hover { border-color: var(--border); color: var(--text); }
+  .frame-head option { font-size: 13px; }
+  .viewport {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: var(--frame-shadow);
+  }
+  .viewport iframe { display: block; border: 0; transform-origin: 0 0; background: #fff; }
+  /* Select mode: outlines drawn over the frames, and the box with the comment. */
+  .mark { position: absolute; pointer-events: none; border: 1.5px solid var(--focus); border-radius: 3px; background: color-mix(in srgb, var(--focus) 8%, transparent); }
+  .mark.chosen { border-width: 2px; background: color-mix(in srgb, var(--focus) 14%, transparent); }
+  .mark[hidden] { display: none; }
+  .pick {
+    position: fixed;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 320px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
+  }
+  .pick[hidden] { display: none; }
+  .pick-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .pick-head strong { font-size: 13px; overflow-wrap: anywhere; }
+  .pick .note { overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+  .pick textarea {
+    width: 100%;
+    min-height: 64px;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    resize: vertical;
+  }
+  .pick .row .note { font-family: inherit; font-size: 12px; }
+  .pick-copy {
+    flex: none;
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .actions { display: flex; gap: 6px; margin-left: auto; }
+  .pick-add {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+  .pick-add:hover { background: var(--control); }
+  /* The count of saved elements, on the Select button. It opens and closes the list. */
+  .select-wrap { position: relative; display: flex; flex: none; }
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border: 2px solid var(--panel);
+    border-radius: 999px;
+    background: var(--focus);
+    color: #fff;
+    font: 600 10px/14px system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .badge[hidden] { display: none; }
+  .list {
+    position: fixed;
+    z-index: 11;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 340px;
+    max-height: min(480px, calc(100vh - 80px));
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
+  }
+  .list[hidden] { display: none; }
+  .list ol { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+  .list li { display: flex; gap: 8px; align-items: flex-start; padding: 8px; border-radius: 8px; background: var(--control); font-size: 12px; }
+  .list li .what { flex: 1; min-width: 0; }
+  .list li strong { display: block; font-size: 13px; overflow-wrap: anywhere; }
+  .list li span { display: block; color: var(--muted); overflow-wrap: anywhere; }
+  .pick-close { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 16px; line-height: 1; cursor: pointer; }
+  .pick-close:hover { background: var(--control); color: var(--text); }
+</style>
+</head>
+<body>
+<aside aria-label="Preview controls">
+  <div>
+    <h1 id="title">Viewpoint</h1>
+    <p class="sub" id="subtitle"></p>
+  </div>
+
+  <div class="group" id="page-group" hidden>
+    <label class="label" for="page">Page</label>
+    <select id="page"></select>
+    <p class="note" id="page-note"></p>
+  </div>
+
+  <div id="params"></div>
+
+  <p class="warn" id="warn" role="status"></p>
+
+  <div class="spacer"></div>
+
+  <div class="row">
+    <label class="switch">
+      <input type="checkbox" role="switch" id="sync" checked>
+      <span>Sync navigation</span>
+    </label>
+    <button type="button" class="icon-button" id="shortcuts-button" aria-label="Keyboard shortcuts" aria-haspopup="dialog" title="Keyboard shortcuts (?)">?</button>
+  </div>
+</aside>
+
+<dialog id="shortcuts" aria-labelledby="shortcuts-title">
+  <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+  <dl>
+    <dt><kbd>1</kbd></dt><dd>Mobile</dd>
+    <dt><kbd>2</kbd></dt><dd>Desktop</dd>
+    <dt><kbd>3</kbd></dt><dd>Both</dd>
+    <dt><kbd>S</kbd></dt><dd>Turn sync navigation on or off</dd>
+    <dt><kbd>R</kbd></dt><dd>Reload both frames</dd>
+    <dt><kbd>\</kbd></dt><dd>Hide or show the sidebar</dd>
+    <dt><kbd>/</kbd></dt><dd>Go to the address bar</dd>
+    <dt><kbd>C</kbd></dt><dd>Select an element to copy for an agent</dd>
+    <dt><kbd>Esc</kbd></dt><dd>Close the selected element, then leave select mode</dd>
+    <dt><kbd>?</kbd></dt><dd>Show these shortcuts</dd>
+  </dl>
+  <p class="note">Shortcuts work after you click the sidebar or the space around the frames, not inside a frame.</p>
+  <form method="dialog"><button>Close</button></form>
+</dialog>
+
+<div class="pick" id="pick" role="dialog" aria-labelledby="pick-title" hidden>
+  <div class="pick-head"><strong id="pick-title"></strong><button type="button" class="pick-close" id="pick-close" aria-label="Close" title="Close (Esc)">×</button></div>
+  <p class="note" id="pick-sub"></p>
+  <textarea id="pick-comment" aria-label="Comment for the agent" placeholder="Comment for the agent (optional)"></textarea>
+  <div class="row"><span class="note" id="pick-status" role="status"></span><span class="actions"><button type="button" class="pick-add" id="pick-add" title="Add to the list and pick another (⇧ Enter)">Add</button><button type="button" class="pick-copy" id="pick-copy" title="Copy (⌘ Enter)">Copy</button></span></div>
+</div>
+
+<div class="list" id="list" role="dialog" aria-labelledby="list-title" hidden>
+  <div class="pick-head"><strong id="list-title">Selection</strong><button type="button" class="pick-close" id="list-close" aria-label="Close" title="Close (Esc)">×</button></div>
+  <ol id="list-items"></ol>
+  <div class="row"><span class="note" id="list-status" role="status"></span><span class="actions"><button type="button" class="pick-add" id="list-clear">Clear</button><button type="button" class="pick-copy" id="list-copy">Copy all</button></span></div>
+</div>
+
+<main>
+  <div class="toolbar">
+    <button type="button" class="icon" id="toggle-sidebar" aria-label="Hide sidebar" title="Hide sidebar (\)" aria-expanded="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="10.5" rx="2"/><path d="M6 2.75v10.5"/></svg></button>
+    <div class="views" role="group" aria-label="Viewport">
+      <button type="button" data-view="mobile" aria-pressed="false" aria-label="Mobile" title="Mobile (1)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.25" y="1.75" width="7.5" height="12.5" rx="1.75"/><path d="M7 11.75h2"/></svg></button>
+      <button type="button" data-view="desktop" aria-pressed="false" aria-label="Desktop" title="Desktop (2)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="8.5" rx="1.5"/><path d="M5.5 13.75h5"/><path d="M8 11.25v2.5"/></svg></button>
+      <button type="button" data-view="both" aria-pressed="true" aria-label="Both" title="Both (3)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="0.75" y="3.25" width="9" height="6.75" rx="1.25"/><path d="M3.5 13.25h3.5"/><path d="M5.25 10v3.25"/><rect x="11.5" y="4.75" width="3.75" height="8.5" rx="1"/></svg></button>
+    </div>
+    <button type="button" class="icon" id="reload" aria-label="Reload" title="Reload (R)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71"/><path d="M13.25 2.5v3h-3"/></svg></button>
+    <input type="text" id="address" aria-label="Address" title="Type a path and press Enter to open it in both frames" spellcheck="false" autocomplete="off">
+    <span class="select-wrap">
+      <button type="button" class="icon" id="select" aria-pressed="false" aria-label="Select an element" title="Select an element to copy for an agent (C)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 13.25H3.75a1 1 0 0 1-1-1V3.75a1 1 0 0 1 1-1h8.5a1 1 0 0 1 1 1V6.5"/><path d="m8.25 8.25 6 2-2.5 1-1 2.5z"/></svg></button>
+      <button type="button" class="badge" id="badge" aria-label="Show the selection list" aria-expanded="false" aria-controls="list" hidden>0</button>
+    </span>
+    <a class="icon" id="open" href="/" target="_blank" rel="noopener" aria-label="Open in new tab" title="Open in new tab"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.75h3.75V6.5"/><path d="M13.25 2.75 7.5 8.5"/><path d="M12 9.5v2.75a1 1 0 0 1-1 1H3.75a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1H6.5"/></svg></a>
+  </div>
+  <div id="stage">
+    <section class="frame" id="frame-mobile" aria-label="Mobile view">
+      <div class="frame-head"><strong>Mobile</strong><span class="end"><span class="size"></span><select id="mobile-height" aria-label="Mobile height"><option value="full">Full height</option><option value="fixed">Phone</option></select></span></div>
+      <div class="viewport"><iframe title="Mobile view"></iframe></div>
+    </section>
+    <section class="frame" id="frame-desktop" aria-label="Desktop view">
+      <div class="frame-head"><strong>Desktop</strong><span class="end"><span class="size"></span><select id="zoom" aria-label="Desktop zoom"><option value="1">100%</option><option value="0.9">90%</option><option value="0.8">80%</option><option value="0.75">75%</option><option value="0.67">67%</option><option value="0.5">50%</option></select></span></div>
+      <div class="viewport"><iframe title="Desktop view"></iframe></div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = (sel) => document.querySelector(sel)
+  const viewerParams = new URLSearchParams(location.search)
+  const store = {
+    get(key) { try { return localStorage.getItem('viewpoint:' + key) } catch { return null } },
+    set(key, value) { try { localStorage.setItem('viewpoint:' + key, value) } catch {} },
+  }
+
+  let config = { title: 'Viewpoint', base: '', viewports: { mobile: 390, mobileHeight: 844 }, params: [], pages: [{ label: 'Home', path: '/' }] }
+  let view = viewerParams.get('view') || store.get('view') || 'both'
+  let mobileHeight = store.get('mobileHeight') === 'fixed' ? 'fixed' : 'full' // full: the window's height; fixed: a phone's
+  let zoom = Number(store.get('zoom')) || 1 // desktop zoom; the desktop frame always fills the width
+  let current = null // path + search + hash shown in the frames
+  const warnings = new Set()
+
+  const frames = ['mobile', 'desktop'].map((name) => {
+    const section = $('#frame-' + name)
+    const frame = { name, section, viewport: section.querySelector('.viewport'), iframe: section.querySelector('iframe'), size: section.querySelector('.size'), seen: null, loading: false, crossOrigin: false }
+    // Until a new src has loaded, the frame still reports its old location; watch() skips it.
+    frame.iframe.addEventListener('load', () => { frame.loading = false })
+    return frame
+  })
+
+  // URLs. Paths in viewpoint.json are relative to `base` (default: this page's origin).
+  const baseUrl = () => new URL(config.base || location.origin, location.href)
+  const full = (path) => new URL(path, baseUrl()).href
+  const relative = (url) => {
+    const u = new URL(url, baseUrl())
+    return u.origin === baseUrl().origin ? u.pathname + u.search + u.hash : u.href
+  }
+
+  function warn(text, on = true) {
+    on ? warnings.add(text) : warnings.delete(text)
+    $('#warn').textContent = [...warnings].join('\n')
+  }
+
+  // Pages and params.
+  function pageFor(path) {
+    const pathname = new URL(path, baseUrl()).pathname
+    const pages = config.pages
+    return pages.find((p) => new URL(p.path, baseUrl()).pathname === pathname)
+      || pages.filter((p) => p.match && pathname.startsWith(p.match)).sort((a, b) => b.match.length - a.match.length)[0]
+      || null
+  }
+  const paramsFor = (page) => [...(config.params || []), ...((page && page.params) || [])]
+
+  function renderControls() {
+    const page = pageFor(current)
+    const select = $('#page')
+    $('#page-group').hidden = config.pages.length < 2
+    select.replaceChildren(...config.pages.map((p, i) => new Option(p.label || p.path, i)))
+    if (!page) select.prepend(new Option('Other page', '', true, true))
+    else select.value = config.pages.indexOf(page)
+    $('#page-note').textContent = (page && page.note) || ''
+
+    const search = new URL(current, baseUrl()).searchParams
+    const box = $('#params')
+    box.replaceChildren()
+    for (const param of paramsFor(page)) {
+      const id = 'param-' + param.name
+      const group = document.createElement('div')
+      group.className = 'group'
+      const label = document.createElement('label')
+      label.className = 'label'
+      label.htmlFor = id
+      label.textContent = param.label || param.name
+      const sel = document.createElement('select')
+      sel.id = id
+      const options = param.options || []
+      for (const o of options) sel.add(new Option(o.label || o.value || 'None', o.value ?? ''))
+      // No param in the URL means the app's default: `default`, else "" when listed, else the first option.
+      const fallback = param.default ?? (options.some((o) => (o.value ?? '') === '') ? '' : (options[0] && options[0].value) || '')
+      const value = search.get(param.name) ?? fallback
+      if (!options.some((o) => (o.value ?? '') === value)) sel.add(new Option(value ? `${value} (not in list)` : 'None', value))
+      sel.value = value
+      const note = document.createElement('p')
+      note.className = 'note'
+      note.textContent = (options.find((o) => (o.value ?? '') === value) || {}).note || ''
+      sel.addEventListener('change', () => setParam(param.name, sel.value))
+      group.append(label, sel, note)
+      box.append(group)
+    }
+  }
+
+  function setParam(name, value) {
+    const u = new URL(current, baseUrl())
+    value === '' ? u.searchParams.delete(name) : u.searchParams.set(name, value)
+    go(relative(u.href))
+  }
+
+  $('#page').addEventListener('change', (e) => {
+    const page = config.pages[e.target.value]
+    if (!page) return
+    // Keep values of the shared params (like variant) when the page changes.
+    const from = new URL(current, baseUrl()).searchParams
+    const u = new URL(page.path, baseUrl())
+    for (const p of config.params || []) if (from.has(p.name) && !u.searchParams.has(p.name)) u.searchParams.set(p.name, from.get(p.name))
+    go(relative(u.href))
+  })
+
+  // Navigation.
+  function load(frame, path) {
+    frame.seen = path
+    const href = full(path)
+    try {
+      if (frame.iframe.contentWindow.location.href === href) return
+    } catch {}
+    frame.loading = true
+    frame.iframe.src = href
+  }
+
+  function go(path, { reload = false } = {}) {
+    current = path
+    for (const f of frames) {
+      if (reload) { f.seen = path; f.loading = true; f.iframe.src = full(path) }
+      else if (!f.section.hidden || f.seen === null) load(f, path)
+    }
+    shown()
+  }
+
+  // Called whenever `current` changes: update the sidebar, address, and this page's URL.
+  function shown() {
+    $('#address').value = current
+    $('#open').href = full(current)
+    renderControls()
+    const p = new URLSearchParams(location.search)
+    p.set('path', current)
+    p.set('view', view)
+    history.replaceState(null, '', '?' + p.toString())
+  }
+
+  // Watch each frame. A click inside the app changes its location, and the other frame follows.
+  function watch() {
+    for (const f of frames) hook(f)
+    refreshMarks()
+    for (const f of frames) {
+      if (f.loading) continue
+      let path
+      try {
+        const loc = f.iframe.contentWindow.location
+        if (loc.protocol === 'about:') continue
+        path = loc.pathname + loc.search + loc.hash
+        if (f.crossOrigin) { f.crossOrigin = false; updateCrossOriginWarning() }
+      } catch {
+        if (!f.crossOrigin) { f.crossOrigin = true; updateCrossOriginWarning() }
+        continue
+      }
+      if (path === f.seen) continue
+      f.seen = path
+      if (path === current) continue
+      current = path
+      if ($('#sync').checked) for (const other of frames) if (other !== f && !other.section.hidden) load(other, path)
+      shown()
+    }
+  }
+
+  function updateCrossOriginWarning() {
+    warn('This site is on another origin, so the frames cannot sync, and the sidebar cannot follow clicks. A blank frame means the site does not allow framing; use "Open in new tab" (the arrow at the right of the address bar).', frames.some((f) => f.crossOrigin))
+  }
+
+  // Layout. The phone keeps its width (in Both it gets up to 35% of the stage, so it stays readable) and
+  // scales down only when it has to; its height is the window's or a phone's. The desktop frame fills
+  // the rest of the width and the height, and the zoom sets how many CSS pixels it shows. Frames never scale up.
+  function layout() {
+    for (const b of document.querySelectorAll('.views button')) b.setAttribute('aria-pressed', b.dataset.view === view)
+    for (const f of frames) f.section.hidden = !(view === 'both' || view === f.name)
+    const stage = $('#stage')
+    const cs = getComputedStyle(stage)
+    const gap = parseFloat(cs.columnGap) || 24
+    const availW = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+    const head = 30
+    const availH = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - head
+    const both = view === 'both'
+    const [phone, desk] = frames
+    let used = 0
+    if (!phone.section.hidden) {
+      const w = config.viewports.mobile
+      const fixedH = config.viewports.mobileHeight
+      let scale = Math.min(1, (both ? (availW - gap) * 0.35 : availW) / w)
+      if (mobileHeight === 'fixed') scale = Math.min(scale, availH / fixedH)
+      const h = mobileHeight === 'fixed' ? fixedH : availH / scale
+      size(phone, w, h, scale)
+      used = w * scale + 2 + gap
+      const [full, fixed] = $('#mobile-height').options
+      full.textContent = `Full height · ${w} × ${Math.round(availH / scale)}`
+      fixed.textContent = `Phone · ${w} × ${fixedH}`
+      phone.size.textContent = Math.round(scale * 100) < 100 ? `${Math.round(scale * 100)}%` : ''
+    }
+    if (!desk.section.hidden) {
+      const boxW = Math.max(0, availW - used) - 2
+      const w = Math.round(boxW / zoom)
+      const h = Math.round(availH / zoom)
+      size(desk, w, h, zoom)
+      desk.size.textContent = `${w} × ${h}`
+    }
+    refreshMarks()
+  }
+
+  function size(f, w, h, scale) {
+    f.viewport.style.width = w * scale + 2 + 'px'
+    f.viewport.style.height = h * scale + 'px'
+    f.iframe.style.width = w + 'px'
+    f.iframe.style.height = h + 'px'
+    f.iframe.style.transform = `scale(${scale})`
+    Object.assign(f, { scale, cssW: w, cssH: h })
+  }
+
+  function setView(next) {
+    view = next
+    store.set('view', view)
+    layout()
+    // A frame that was hidden may be behind; bring it to the current page.
+    for (const f of frames) if (!f.section.hidden && f.seen !== current) load(f, current)
+    shown()
+  }
+
+  // Events.
+  for (const b of document.querySelectorAll('.views button')) b.addEventListener('click', () => setView(b.dataset.view))
+  $('#mobile-height').value = mobileHeight
+  $('#mobile-height').addEventListener('change', (e) => { mobileHeight = e.target.value; store.set('mobileHeight', mobileHeight); layout() })
+  if (![...$('#zoom').options].some((o) => Number(o.value) === zoom)) zoom = 1
+  $('#zoom').value = String(zoom)
+  $('#zoom').addEventListener('change', (e) => { zoom = Number(e.target.value); store.set('zoom', String(zoom)); layout() })
+  $('#address').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return
+    const value = e.target.value.trim()
+    if (value) go(relative(value.startsWith('/') || /^https?:/.test(value) ? value : '/' + value))
+  })
+  $('#reload').addEventListener('click', () => go(current, { reload: true }))
+  function syncChanged() {
+    const on = $('#sync').checked
+    store.set('sync', on ? '1' : '0')
+    if (on) for (const f of frames) if (!f.section.hidden) load(f, current)
+  }
+  $('#sync').addEventListener('change', syncChanged)
+  $('#shortcuts-button').addEventListener('click', () => $('#shortcuts').showModal())
+  function toggleSidebar() {
+    const collapsed = document.body.classList.toggle('collapsed')
+    $('#toggle-sidebar').setAttribute('aria-expanded', String(!collapsed))
+    $('#toggle-sidebar').setAttribute('aria-label', collapsed ? 'Show sidebar' : 'Hide sidebar')
+    $('#toggle-sidebar').title = (collapsed ? 'Show sidebar' : 'Hide sidebar') + ' (\\)'
+    store.set('collapsed', collapsed ? '1' : '0')
+    layout()
+  }
+  $('#toggle-sidebar').addEventListener('click', toggleSidebar)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && (picked || selecting || !$('#list').hidden) && !$('#shortcuts').open) { e.preventDefault(); escape(); return }
+    if (e.target.closest('input[type="text"], select, textarea') || e.metaKey || e.ctrlKey || e.altKey) return
+    if ($('#shortcuts').open) return
+    const views = { 1: 'mobile', 2: 'desktop', 3: 'both' }
+    const key = e.key.toLowerCase()
+    if (views[key]) setView(views[key])
+    else if (key === '\\') toggleSidebar()
+    else if (key === '?') $('#shortcuts').showModal()
+    else if (key === 's') { $('#sync').checked = !$('#sync').checked; syncChanged() }
+    else if (key === 'r') go(current, { reload: true })
+    else if (key === 'c') setSelecting(!selecting)
+    else if (key === '/') { e.preventDefault(); $('#address').focus(); $('#address').select() }
+    else return
+    e.preventDefault()
+  })
+  new ResizeObserver(layout).observe($('#stage'))
+
+  // Select mode. Click an element in either frame to copy its context, with a comment, for an AI agent.
+  // It works by reading the app's page, so it needs the frames on the viewer's origin.
+  let selecting = false
+  let picked = null // { frame, el }
+  for (const f of frames) {
+    f.hover = Object.assign(document.createElement('div'), { className: 'mark' })
+    f.chosen = Object.assign(document.createElement('div'), { className: 'mark chosen' })
+    f.hover.hidden = f.chosen.hidden = true
+    f.viewport.append(f.hover, f.chosen)
+  }
+  const docOf = (f) => { try { return f.iframe.contentDocument } catch { return null } }
+
+  function setSelecting(on) {
+    selecting = on
+    $('#select').setAttribute('aria-pressed', String(on))
+    if (!on) unpick()
+    for (const f of frames) { f.hover.hidden = true; hook(f) }
+    warn('Select needs the app on the same origin as the viewer.', on && frames.every((f) => f.section.hidden || f.crossOrigin))
+  }
+
+  // Listen inside a frame's page. Called on every watch() tick, so a new page gets the listeners too.
+  function hook(f) {
+    const d = docOf(f)
+    if (!d || !d.documentElement) return
+    let style = d.getElementById('viewpoint-select-style')
+    if (selecting && !style) {
+      style = d.createElement('style')
+      style.id = 'viewpoint-select-style'
+      style.textContent = '* { cursor: crosshair !important; }'
+      d.documentElement.append(style)
+    } else if (!selecting && style) style.remove()
+    if (d.viewpointHooked) return
+    d.viewpointHooked = true
+    const target = (e) => { const el = e.target; return el && el.nodeType === 1 ? el.closest('svg') || el : null }
+    d.addEventListener('mousemove', (e) => { if (selecting) mark(f, f.hover, target(e)) }, true)
+    d.addEventListener('mouseleave', () => { f.hover.hidden = true }, true)
+    // Keep the app from reacting to clicks while selecting (menus that open on pointerdown, links).
+    for (const type of ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'dblclick']) {
+      d.addEventListener(type, (e) => { if (selecting) { e.preventDefault(); e.stopPropagation() } }, true)
+    }
+    d.addEventListener('click', (e) => {
+      if (!selecting) return
+      e.preventDefault()
+      e.stopPropagation()
+      const el = target(e)
+      if (el) pick(f, el)
+    }, true)
+    d.addEventListener('keydown', (e) => { if (e.key === 'Escape' && selecting) { e.preventDefault(); escape() } }, true)
+    d.addEventListener('scroll', () => { f.hover.hidden = true; refreshMarks() }, true)
+  }
+
+  // Outline an element. Its box is in the frame's CSS pixels; the frame is scaled.
+  function mark(f, box, el) {
+    if (!el || !el.isConnected) { box.hidden = true; return }
+    const r = el.getBoundingClientRect()
+    const s = f.scale || 1
+    Object.assign(box.style, { left: r.left * s + 'px', top: r.top * s + 'px', width: r.width * s + 'px', height: r.height * s + 'px' })
+    box.hidden = false
+  }
+
+  function refreshMarks() {
+    if (!picked) return
+    if (!picked.el.isConnected || picked.frame.section.hidden) { unpick(); return }
+    mark(picked.frame, picked.frame.chosen, picked.el)
+    placeBox()
+  }
+
+  function pick(f, el) {
+    if (picked) picked.frame.chosen.hidden = true
+    picked = { frame: f, el }
+    f.hover.hidden = true
+    mark(f, f.chosen, el)
+    const info = inspect(f, el)
+    $('#pick-title').textContent = info.title
+    $('#pick-sub').textContent = info.sub
+    $('#pick-status').textContent = ''
+    $('#pick').hidden = false
+    placeBox()
+    $('#pick-comment').focus()
+  }
+
+  function unpick() {
+    if (picked) picked.frame.chosen.hidden = true
+    picked = null
+    $('#pick').hidden = true
+  }
+
+  function escape() {
+    if (!$('#list').hidden) toggleList(false)
+    else if (picked) unpick()
+    else setSelecting(false)
+  }
+
+  // Put the box under the element, or above it when there is no room, inside the window.
+  function placeBox() {
+    const box = $('#pick')
+    if (!picked || box.hidden) return
+    const { frame: f, el } = picked
+    const v = f.viewport.getBoundingClientRect()
+    const r = el.getBoundingClientRect()
+    const s = f.scale || 1
+    const top = v.top + 1 + r.top * s
+    const bottom = v.top + 1 + r.bottom * s
+    const w = box.offsetWidth
+    const h = box.offsetHeight
+    let y = bottom + 8
+    if (y + h > innerHeight - 8) y = top - h - 8
+    y = Math.min(Math.max(8, y), innerHeight - h - 8)
+    const x = Math.min(Math.max(8, v.left + 1 + r.left * s), innerWidth - w - 8)
+    box.style.left = x + 'px'
+    box.style.top = y + 'px'
+  }
+
+  // What the agent gets: where the element is, what it is, and which component renders it.
+  function inspect(f, el) {
+    const w = f.iframe.contentWindow
+    const d = el.ownerDocument
+    const comp = component(w, el)
+    const fw = frameworks(w, d, el)
+    const tag = el.tagName.toLowerCase()
+    const sel = selector(el, d)
+    return { title: comp ? comp.name : `<${tag}>`, sub: [fw[0], sel].filter(Boolean).join(' · '), comp, fw, sel }
+  }
+
+  function contextText(comment) {
+    const { frame: f, el } = picked
+    const info = inspect(f, el)
+    const url = f.iframe.contentWindow.location.href
+    const page = pageFor(relative(url))
+    const lines = []
+    lines.push(`Page: ${page && page.label ? page.label + ' · ' : ''}${url}`)
+    const search = new URL(url).searchParams
+    const states = paramsFor(page).map((p) => {
+      const value = search.get(p.name)
+      const option = (p.options || []).find((o) => (o.value ?? '') === (value ?? (p.default ?? '')))
+      return option && (value !== null || p.default) ? `${p.label || p.name} = ${option.label || option.value}` : null
+    }).filter(Boolean)
+    if (states.length) lines.push(`State: ${states.join('; ')}`)
+    lines.push(`Viewport: ${f.name === 'mobile' ? 'Mobile' : 'Desktop'}, ${f.cssW} × ${Math.round(f.cssH)} CSS px` + (f.name === 'desktop' && zoom !== 1 ? ` (shown at ${Math.round(zoom * 100)}%)` : ''))
+    lines.push(`Element: ${describe(el)}`)
+    const text = (el.innerText ?? el.textContent ?? '').trim().replace(/\s+/g, ' ')
+    if (text) lines.push(`Text: "${text.length > 160 ? text.slice(0, 160) + '…' : text}"`)
+    lines.push(`Selector: ${info.sel}`)
+    const r = el.getBoundingClientRect()
+    lines.push(`Box: ${Math.round(r.width)} × ${Math.round(r.height)} at ${Math.round(r.left)}, ${Math.round(r.top + d0(el).scrollTop)}`)
+    if (info.comp) {
+      lines.push(`Component: ${info.comp.name}${info.comp.file ? ` (${info.comp.file})` : ''}`)
+      if (info.comp.chain && info.comp.chain.length > 1) lines.push(`Inside: ${info.comp.chain.join(' > ')}`)
+    }
+    if (info.fw.length) lines.push(`Framework: ${info.fw.join(', ')}`)
+    if (comment) lines.push('', `Comment: ${comment}`)
+    return lines.join('\n')
+  }
+  const d0 = (el) => el.ownerDocument.scrollingElement || el.ownerDocument.documentElement
+
+  function describe(el) {
+    const attrs = []
+    if (el.id) attrs.push(`id="${el.id}"`)
+    const classes = [...el.classList]
+    if (classes.length) attrs.push(`class="${classes.slice(0, 6).join(' ')}${classes.length > 6 ? ' …' : ''}"`)
+    for (const a of ['role', 'aria-label', 'name', 'type', 'href', 'placeholder', 'alt', 'title', 'data-testid']) {
+      const v = el.getAttribute(a)
+      if (v) attrs.push(`${a}="${v.length > 80 ? v.slice(0, 80) + '…' : v}"`)
+    }
+    return `<${el.tagName.toLowerCase()}${attrs.length ? ' ' + attrs.join(' ') : ''}>`
+  }
+
+  // A short CSS selector that finds only this element: an id or test id when there is one,
+  // otherwise tags with a few plain class names, going up until it is unique.
+  function selector(el, d) {
+    const parts = []
+    const plain = (c) => /^[a-zA-Z_][\w-]*$/.test(c) && !/^(ng-|css-|sc-|svelte-)/.test(c)
+    const unique = () => { try { return d.querySelectorAll(parts.join(' > ')).length === 1 } catch { return false } }
+    for (let node = el; node && node.nodeType === 1 && node !== d.body && node !== d.documentElement && parts.length < 8; node = node.parentElement) {
+      if (node.id && d.querySelectorAll('#' + CSS.escape(node.id)).length === 1) { parts.unshift('#' + CSS.escape(node.id)); break }
+      const testAttr = ['data-testid', 'data-test', 'data-cy'].find((a) => node.hasAttribute(a))
+      let part = node.tagName.toLowerCase()
+      if (testAttr) part += `[${testAttr}="${node.getAttribute(testAttr)}"]`
+      else {
+        part += [...node.classList].filter(plain).slice(0, 2).map((c) => '.' + c).join('')
+        const same = node.parentElement ? [...node.parentElement.children].filter((c) => c.tagName === node.tagName) : []
+        if (same.length > 1) part += `:nth-of-type(${same.indexOf(node) + 1})`
+      }
+      parts.unshift(part)
+      if (unique()) break
+    }
+    return parts.join(' > ')
+  }
+
+  const baseName = (file) => file && file.split(/[\\/]/).pop().replace(/\.[^.]+$/, '')
+  // Paths from the project folder down, like src/components/Cart.vue.
+  const shortFile = (file) => {
+    if (!file) return file
+    const f = file.replace(/\\/g, '/')
+    for (const dir of ['src', 'app', 'pages', 'components', 'lib']) {
+      if (f.startsWith(dir + '/')) return f
+      const i = f.indexOf('/' + dir + '/')
+      if (i >= 0) return f.slice(i + 1)
+    }
+    return f
+  }
+
+  // The component that renders the element, and the components around it, read from the
+  // framework's own dev-mode data. Production builds keep less, so a name may be missing.
+  function component(w, el) {
+    // Angular: the `ng` debugging global, in dev mode.
+    if (w.ng && w.ng.getOwningComponent) {
+      try {
+        let inst = w.ng.getComponent(el) || w.ng.getOwningComponent(el)
+        const chain = []
+        let first = null
+        while (inst && chain.length < 12) {
+          const host = w.ng.getHostElement(inst)
+          const name = inst.constructor.name.replace(/^_+/, '')
+          chain.unshift(name)
+          if (!first) first = { name: `${name} (<${host.tagName.toLowerCase()}>)` }
+          inst = w.ng.getOwningComponent(host)
+        }
+        if (first) return { ...first, chain }
+      } catch {}
+    }
+    for (let node = el; node && node.nodeType === 1; node = node.parentElement) {
+      // Vue 3
+      if (node.__vueParentComponent) {
+        const chain = []
+        let first = null
+        for (let inst = node.__vueParentComponent; inst && chain.length < 12; inst = inst.parent) {
+          const t = inst.type || {}
+          const name = t.name || t.__name || baseName(t.__file) || 'Anonymous'
+          chain.unshift(name)
+          if (!first) first = { name, file: shortFile(t.__file) }
+        }
+        return { ...first, chain }
+      }
+      // Vue 2
+      if (node.__vue__) {
+        const chain = []
+        let first = null
+        for (let vm = node.__vue__; vm && chain.length < 12; vm = vm.$parent) {
+          const o = vm.$options || {}
+          const name = o.name || o._componentTag || baseName(o.__file) || 'Anonymous'
+          chain.unshift(name)
+          if (!first) first = { name, file: shortFile(o.__file) }
+        }
+        return { ...first, chain }
+      }
+      // React (16+): the fiber on the DOM node; walk up to the function and class components.
+      const key = Object.keys(node).find((k) => k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$'))
+      if (key) {
+        const chain = []
+        let first = null
+        for (let fiber = node[key]; fiber && chain.length < 12; fiber = fiber.return) {
+          const t = fiber.type
+          const name = typeof t === 'function' ? t.displayName || t.name
+            : t && typeof t === 'object' ? t.displayName || (t.render && (t.render.displayName || t.render.name)) || (t.type && (t.type.displayName || t.type.name)) : null
+          if (!name) continue
+          chain.unshift(name)
+          if (!first) {
+            const src = fiber._debugSource
+            first = { name, file: src ? `${shortFile(src.fileName)}:${src.lineNumber}` : null }
+          }
+        }
+        if (first) return { ...first, chain }
+      }
+      // Svelte (dev mode marks each element with the file that renders it).
+      if (node.__svelte_meta) {
+        const chain = []
+        let first = null
+        for (let n = node; n && n.nodeType === 1; n = n.parentElement) {
+          const loc = n.__svelte_meta && n.__svelte_meta.loc
+          if (!loc) continue
+          const name = baseName(loc.file)
+          if (chain[0] !== name) chain.unshift(name)
+          if (!first) first = { name, file: `${shortFile(loc.file)}:${loc.line}` }
+        }
+        return { ...first, chain }
+      }
+      // Astro island
+      if (node.tagName === 'ASTRO-ISLAND') {
+        const url = node.getAttribute('component-url')
+        if (url) return { name: baseName(url), file: shortFile(url) }
+      }
+    }
+    // Any framework: the nearest custom element, like an Angular host in a production build.
+    const custom = [...ancestors(el)].find((n) => n.tagName.includes('-') && n.tagName !== 'ASTRO-ISLAND')
+    if (custom) return { name: `<${custom.tagName.toLowerCase()}>` }
+    return null
+  }
+  function* ancestors(el) { for (let n = el; n && n.nodeType === 1; n = n.parentElement) yield n }
+
+  // Frameworks on the page, most specific first.
+  function frameworks(w, d, el) {
+    const found = []
+    const add = (name) => { if (name && !found.includes(name)) found.push(name) }
+    try {
+      if (w.next) add('Next.js' + (w.next.version ? ' ' + w.next.version : ''))
+      else if (d.getElementById('__next') || w.__NEXT_DATA__) add('Next.js')
+      if (w.__NUXT__ || w.useNuxtApp || d.getElementById('__nuxt')) add('Nuxt')
+      if (Object.keys(w).some((k) => k.startsWith('__sveltekit'))) add('SvelteKit')
+      if (w.__remixContext) add('Remix')
+      const generator = d.querySelector('meta[name="generator"]')
+      if (generator && generator.content) add(generator.content)
+      const ng = d.querySelector('[ng-version]')
+      if (ng) add('Angular ' + ng.getAttribute('ng-version'))
+      else if (w.ng && w.ng.getComponent) add('Angular')
+      const vueApp = d.querySelector('[data-v-app]')
+      if (vueApp && vueApp.__vue_app__) add('Vue ' + vueApp.__vue_app__.version)
+      else if (w.Vue && w.Vue.version) add('Vue ' + w.Vue.version)
+      else if ([...ancestors(el)].some((n) => n.__vueParentComponent)) add('Vue 3')
+      else if ([...ancestors(el)].some((n) => n.__vue__)) add('Vue 2')
+      if ([...ancestors(el)].some((n) => Object.keys(n).some((k) => k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$')))) {
+        const hook = w.__REACT_DEVTOOLS_GLOBAL_HOOK__
+        const renderer = hook && hook.renderers && [...hook.renderers.values()][0]
+        add('React' + (renderer && renderer.version ? ' ' + renderer.version : ''))
+      }
+      if (w.__svelte && w.__svelte.v) add('Svelte ' + [...w.__svelte.v][0])
+      else if ([...ancestors(el)].some((n) => n.__svelte_meta)) add('Svelte')
+    } catch {}
+    return found
+  }
+
+  async function copy(text) {
+    try { await navigator.clipboard.writeText(text); return true } catch {}
+    // Older browsers, and pages on plain http other than localhost.
+    const t = Object.assign(document.createElement('textarea'), { value: text })
+    t.style.cssText = 'position:fixed;opacity:0'
+    document.body.append(t)
+    t.select()
+    const ok = document.execCommand('copy')
+    t.remove()
+    return ok
+  }
+
+  // The list: elements saved with Add, copied together as numbered items.
+  const saved = []
+
+  function addPicked() {
+    if (!picked) return
+    const { frame: f, el } = picked
+    const info = inspect(f, el)
+    const comment = $('#pick-comment').value.trim()
+    saved.push({ title: info.title, sel: info.sel, comment, text: contextText(comment) })
+    $('#pick-comment').value = ''
+    unpick()
+    renderList()
+  }
+
+  function listText() {
+    if (saved.length === 1) return saved[0].text
+    return saved.map((item, i) => `${i + 1}. ${item.title} · ${item.sel}\n${item.text}`).join('\n\n')
+  }
+
+  function renderList() {
+    const n = saved.length
+    $('#badge').hidden = n === 0
+    $('#badge').textContent = n
+    $('#badge').setAttribute('aria-label', `Show the selection list (${n} saved)`)
+    $('#pick-copy').textContent = n ? `Copy ${n + 1}` : 'Copy'
+    $('#list-title').textContent = `Selection (${n})`
+    $('#list-items').replaceChildren(...saved.map((item, i) => {
+      const li = document.createElement('li')
+      const what = document.createElement('div')
+      what.className = 'what'
+      const title = document.createElement('strong')
+      title.textContent = `${i + 1}. ${item.title}`
+      const sel = document.createElement('span')
+      sel.textContent = item.sel
+      what.append(title, sel)
+      if (item.comment) {
+        const comment = document.createElement('span')
+        comment.textContent = item.comment
+        what.append(comment)
+      }
+      const remove = Object.assign(document.createElement('button'), { type: 'button', className: 'pick-close', textContent: '×', title: 'Remove' })
+      remove.setAttribute('aria-label', `Remove ${i + 1}`)
+      remove.addEventListener('click', () => { saved.splice(i, 1); renderList() })
+      li.append(what, remove)
+      return li
+    }))
+    if (!n) toggleList(false)
+    placeList()
+  }
+
+  function toggleList(open = $('#list').hidden) {
+    $('#list').hidden = !open || !saved.length
+    $('#badge').setAttribute('aria-expanded', String(!$('#list').hidden))
+    $('#list-status').textContent = ''
+    placeList()
+  }
+
+  // Under the Select button, inside the window.
+  function placeList() {
+    const list = $('#list')
+    if (list.hidden) return
+    const b = $('#select').getBoundingClientRect()
+    list.style.top = b.bottom + 8 + 'px'
+    list.style.left = Math.max(8, Math.min(b.right - list.offsetWidth, innerWidth - list.offsetWidth - 8)) + 'px'
+  }
+
+  // Copy the saved elements and the one in the box (if any), then clear the list.
+  async function copyAll(status) {
+    if (picked) addPicked()
+    if (!saved.length) return
+    const ok = await copy(listText())
+    status.textContent = ok ? `Copied ${saved.length === 1 ? 'it' : saved.length}. Paste into your agent.` : 'Could not copy. Your browser blocked the clipboard.'
+    if (ok) { saved.length = 0; renderList() }
+  }
+
+  async function copyPicked() {
+    if (!picked) return
+    if (saved.length) { await copyAll($('#pick-status')); flash(); return }
+    const ok = await copy(contextText($('#pick-comment').value.trim()))
+    $('#pick-status').textContent = ok ? 'Copied. Paste it into your agent.' : 'Could not copy. Your browser blocked the clipboard.'
+  }
+  // After copying the list the box is gone, so say it on the Select button for a moment.
+  function flash() {
+    const b = $('#select')
+    b.title = 'Copied. Paste into your agent.'
+    warn('Copied. Paste it into your agent.')
+    setTimeout(() => { warn('Copied. Paste it into your agent.', false); b.title = 'Select an element to copy for an agent (C)' }, 2500)
+  }
+
+  $('#select').addEventListener('click', () => setSelecting(!selecting))
+  $('#pick-copy').addEventListener('click', copyPicked)
+  $('#pick-add').addEventListener('click', addPicked)
+  $('#badge').addEventListener('click', () => toggleList())
+  $('#list-close').addEventListener('click', () => toggleList(false))
+  $('#list-clear').addEventListener('click', () => { saved.length = 0; renderList() })
+  $('#list-copy').addEventListener('click', async () => { await copyAll($('#list-status')); if (!saved.length) flash() })
+  addEventListener('resize', placeList)
+  $('#pick-close').addEventListener('click', unpick)
+  $('#pick-comment').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return
+    if (e.metaKey || e.ctrlKey) { e.preventDefault(); copyPicked() }
+    else if (e.shiftKey) { e.preventDefault(); addPicked() }
+  })
+  addEventListener('resize', placeBox)
+
+
+  // Start.
+  async function start() {
+    const file = viewerParams.get('config') || 'viewpoint.json'
+    try {
+      const res = await fetch(file, { cache: 'no-store' })
+      const body = res.ok ? await res.text() : ''
+      // Many dev servers answer a missing file with the app's own HTML page, not a 404.
+      if (!res.ok || /^\s*</.test(body)) throw new Error('missing')
+      let loaded
+      try { loaded = JSON.parse(body) } catch (err) { throw new Error(`${file} is not valid JSON: ${err.message}`) }
+      config = { ...config, ...loaded, viewports: { ...config.viewports, ...(loaded.viewports || {}) } }
+      if (!config.pages || !config.pages.length) config.pages = [{ label: 'Home', path: '/' }]
+    } catch (err) {
+      warn(err.message === 'missing'
+        ? `There is no ${file} next to this page, so the menu has only the home page. Run the skill to write it, or type any path in the address bar.`
+        : `${err.message}. Showing the home page; type any path in the address bar.`)
+    }
+    document.title = config.title ? `${config.title} · Viewpoint` : 'Viewpoint'
+    $('#title').textContent = config.title || 'Viewpoint'
+    $('#subtitle').textContent = config.subtitle || ''
+    if (store.get('sync') === '0') $('#sync').checked = false
+    if (store.get('collapsed') === '1') toggleSidebar()
+    if (!['mobile', 'desktop', 'both'].includes(view)) view = 'both'
+    layout()
+    go(viewerParams.get('path') || config.start || config.pages[0].path)
+    setInterval(watch, 250)
+  }
+  start()
+})()
+</script>
+</body>
+</html>
