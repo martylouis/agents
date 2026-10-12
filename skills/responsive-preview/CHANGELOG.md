@@ -5,6 +5,7 @@ All notable changes to the `responsive-preview` skill, newest first. The version
 ## Unreleased
 
 ### Added
+- Select mode, from the Select button next to the viewport buttons or the `C` key. Click an element in either frame, add a comment, and press **Copy** (or Cmd+Enter) to copy plain text for an AI agent: the comment, the page URL and sidebar state, the viewport, the element's tag, text, selector, and size, and the component that renders it with its parents and file. Components are read from Angular, Vue, React, Svelte, and Astro islands in dev mode, and from the nearest custom element otherwise. `Esc` closes the box, then leaves select mode.
 - The skill adds a `responsive-preview` script to the app's `package.json`. It starts the dev server and opens the viewer, so you run one command instead of starting the server and typing the URL.
 - A height menu above the phone frame: **Full height** fills the window, and **Phone** uses a set phone height (844 by default, `viewports.mobileHeight` in `preview.json`).
 - A zoom menu above the desktop frame, from 100% down to 50%, next to the frame's size. The viewer remembers it.
