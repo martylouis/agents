@@ -3,6 +3,8 @@ name: review
 description: Review a running prototype in a real browser and report what is broken, without building anything. Discovers states when none exist. Writes a review report and one feedback item per finding for /proto:feedback.
 argument-hint: "[plan | route | designs folder] [--audit]"
 disable-model-invocation: true
+metadata:
+  internal: true
 ---
 
 # Review

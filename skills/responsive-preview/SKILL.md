@@ -10,14 +10,15 @@ argument-hint: "[app folder or URL] [--refresh]"
 
 # Responsive preview
 
-Writes two files into the app's static folder:
+Writes two files into the app's static folder, and one script into its `package.json`:
 
-- `preview.html`: the viewer. A sidebar on the left (Mobile, Desktop, or Both; a page menu; one menu per URL param, with a note under the chosen option), an address bar above the frames, and live frames of the app on the right, scaled to fit the screen. The frames stay on the same URL as you click through the app; a switch turns that off.
+- `preview.html`: the viewer. A sidebar on the left (a page menu, and one menu per URL param with a note under the chosen option), an address bar above the frames with Mobile, Desktop, and Both buttons at its left, and live frames of the app below it. The phone frame keeps a phone's width, and the desktop frame fills the rest of the window at the zoom the person picks. The frames stay on the same URL as you click through the app; a switch turns that off.
 - `preview.json`: what the sidebar lists. The person can edit it by hand; the viewer reads it on every load.
+- A `responsive-preview` script that starts the dev server and opens the viewer, so the person runs one command.
 
 The viewer works on the app as it runs, so it shows code changes as soon as the dev server reloads. It reaches each state by its URL, never by clicks, so the app must be able to show a state from its route and query params (see **URL states**).
 
-This skill never changes the app's code. It runs in the main session and needs no sub-agent and no model choice.
+This skill never changes the app's code; the package script is the only change outside the two files. It runs in the main session and needs no sub-agent and no model choice.
 
 ## Arguments
 
@@ -45,7 +46,7 @@ When the folder is not clear (a monorepo, a custom server), ask once which app a
 
 ### 2. Copy the viewer
 
-Copy `assets/preview.html` from this skill's folder into the static folder unchanged. Its second line names its version (`<!-- preview viewer 0.1.0 -->`). When a `preview.html` already exists with the same line, leave it. When the line differs or is missing, replace the file and say so in one line; changes the person wants belong in `preview.json`, not in the viewer.
+Copy `assets/preview.html` from this skill's folder into the static folder unchanged. When a `preview.html` already exists and is the same as this skill's copy, leave it. When it differs, replace it and say so in one line; changes the person wants belong in `preview.json`, not in the viewer.
 
 ### 3. Write the nav
 
@@ -62,7 +63,21 @@ Write `preview.json` next to the viewer, in the format under **preview.json**. T
 
 Order the pages as a person goes through the app (the plan order, or the nav order), not alphabetically. Write labels in the app's own words.
 
-### 4. Check
+### 4. Add the package script
+
+Add a script named `responsive-preview` to the app's `package.json` that starts the dev server and opens the viewer in the browser. When a script with that name already exists, leave it. When the app has no `package.json` (plain HTML), skip this step.
+
+Build it from the app's `dev` script and the dev URL from step 1:
+
+| Dev tool | Script |
+| --- | --- |
+| Vite (Vue, React, Svelte, plain), SvelteKit, Astro 4+ | The `dev` command with `--open /preview.html` added, for example `vite --open /preview.html` or `astro dev --open /preview.html`. These tools open a path once the server is ready. |
+| Anything else (Next.js, Nuxt, Angular, Bun, a custom server) | Open the viewer in the background once the server answers, and keep the dev server in the foreground so Ctrl+C stops it: `(npx --yes wait-on http-get://localhost:3000/preview.html && npx --yes open-cli http://localhost:3000/preview.html) & next dev` |
+| The viewer is in `preview/` (**Other sites**, or an app with no static folder) | Serve that folder and open it the same way: `(npx --yes wait-on http-get://localhost:4400/preview.html && npx --yes open-cli http://localhost:4400/preview.html) & npx --yes serve preview -l 4400`. When `base` is a dev server on this machine, the person starts it as usual, in another terminal. |
+
+Keep the flags the `dev` script already has. The second and third forms need a POSIX shell (macOS, Linux, or WSL); on Windows, say that the person can run the dev server and open the viewer URL by hand.
+
+### 5. Check
 
 When the dev server is running (or you can start it with the dev command), open the viewer URL in a browser, if one is available:
 
@@ -72,16 +87,18 @@ When the dev server is running (or you can start it with the dev command), open 
 
 A state that does not change when its option is chosen is not reachable by URL. List it in the report; do not change the app to fix it. With no browser, give the viewer URL and say it was not checked.
 
-### 5. Report
+### 6. Report
 
 One short message:
 
 ```text
-Preview ready: http://localhost:5173/preview.html
+Preview ready. Run `pnpm responsive-preview` to start the dev server and open http://localhost:5173/preview.html.
 - Pages: 4 (from proto plans 01–03). Params: variant (A, B), drawer, error.
 - Not reachable by URL: Cart · loading (no param in the app yet).
-- Files: public/preview.html, public/preview.json.
+- Files: public/preview.html, public/preview.json, and the `responsive-preview` script in package.json.
 ```
+
+Use the package manager the lockfile names (`pnpm`, `bun`, `yarn`, or `npm run`). Lead with the command, not with whether the dev server was running.
 
 Then one line on git: the two files are plain files in the app; commit them to share the viewer, or add them to `.gitignore` to keep them local. Leave that choice to the person.
 
@@ -108,7 +125,7 @@ When the person owns the site, the better way is to add the two files to its sta
 {
   "title": "Checkout prototype",
   "subtitle": "Plan 02 · Shipping costs",
-  "viewports": { "mobile": 390, "desktop": 1440 },
+  "viewports": { "mobile": 390, "mobileHeight": 844 },
   "params": [
     {
       "name": "variant",
@@ -137,7 +154,7 @@ When the person owns the site, the better way is to add the two files to its sta
 | `title`, `subtitle` | The sidebar heading. |
 | `base` | Optional origin of the app, for **Other sites**. Default: the viewer's own origin. |
 | `start` | Optional first URL. Default: the first page. |
-| `viewports` | Frame widths in CSS pixels. Default 390 and 1440. |
+| `viewports` | The phone frame's size in CSS pixels: `mobile` is its width (default 390) and `mobileHeight` its height when the person picks **Phone** over **Full height** (default 844). The desktop frame has no set size: it fills the window, and its zoom menu sets how many CSS pixels it shows. |
 | `params` | Params shared by every page (like `variant`). Their values stay when the page changes. |
 | `pages[].path` | The URL the page menu opens, with any params it needs. |
 | `pages[].match` | Optional path prefix, so a page with a dynamic segment (`/products/<id>`) still shows its menus when you click to another item. |
@@ -146,4 +163,4 @@ When the person owns the site, the better way is to add the two files to its sta
 | `options[].value` | The param's value. `""` means the param is not in the URL. |
 | `options[].note` | Shown under the menu while that option is chosen (a hypothesis, or what the state shows). |
 
-Above the frames is an address bar for any URL, with icon buttons to reload both frames and open the page in a new tab. The `?` button (or the `?` key) lists the keyboard shortcuts: `1`, `2`, `3` for Mobile, Desktop, Both, `S` for sync, `R` to reload, `\` to hide the sidebar, and `/` for the address bar. The viewer's own URL keeps the frame URL and the viewport (`/preview.html?path=%2Fcart%3Fvariant%3DB&view=both`), so a link to it opens the same view. Another nav file opens with `?config=<file>.json`.
+Above the frames is an address bar for any URL, with icon buttons to reload both frames, and open the page in a new tab. Mobile, Desktop, and Both buttons sit to its left. Above each frame, at its right, is a small menu: the phone's height (**Full height** of the window or a set **Phone** height), and the desktop's zoom (100% down to 50%). The viewer remembers both choices. The `?` button (or the `?` key) lists the keyboard shortcuts: `1`, `2`, `3` for Mobile, Desktop, Both, `S` for sync, `R` to reload, `\` to hide the sidebar, and `/` for the address bar. The viewer's own URL keeps the frame URL and the viewport (`/preview.html?path=%2Fcart%3Fvariant%3DB&view=both`), so a link to it opens the same view. Another nav file opens with `?config=<file>.json`.

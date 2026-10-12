@@ -3,6 +3,8 @@ name: build
 description: Build a UX prototype from decided plans (and optional designs) with builder sub-agents, browser review, and decision records. One confirmation at the start, live progress in the task list, one report at the end.
 argument-hint: "<plans folder | plan file> [designs folder]"
 disable-model-invocation: true
+metadata:
+  internal: true
 ---
 
 # Build

@@ -3,6 +3,8 @@ name: plan
 description: Turn an idea, a brief, or design images into decided plans that /proto:build builds well. A short interview, one decision at a time, then plan files. --explore writes lo-fi variants to compare.
 argument-hint: "<idea text | brief file | designs folder> [--explore]"
 disable-model-invocation: true
+metadata:
+  internal: true
 ---
 
 # Plan

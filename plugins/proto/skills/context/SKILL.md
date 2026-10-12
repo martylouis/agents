@@ -3,6 +3,8 @@ name: context
 description: Create or refresh docs/ux/CONTEXT.md (stack, commands, exact vocabulary, component patterns) and the design summary from the repo and the designs. --refresh after a library or design change; --sync after a design-system release.
 argument-hint: "[designs folder] [--refresh | --sync]"
 disable-model-invocation: true
+metadata:
+  internal: true
 ---
 
 # Context

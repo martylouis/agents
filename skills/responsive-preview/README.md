@@ -3,9 +3,10 @@
 A skill that adds a responsive preview with a variant switcher to any web app: phone and desktop side by side, so you can build, compare, and demo screens, states, and variants on one screen.
 
 ```text
-+----------------+-----------+------------------------------+
-| Mobile Desktop |  Mobile   |  Desktop                     |
-|  [ Both ]      | +-------+ | +--------------------------+ |
++----------------+------------------------------------------+
+|                | [ph] [dt] [both] /cart                   |
+|                |  Mobile   |  Desktop                     |
+|                | +-------+ | +--------------------------+ |
 |                | |       | | |                          | |
 | Page    Cart v | |  app  | | |           app            | |
 | Variant    A v | |       | | |                          | |
@@ -15,7 +16,7 @@ A skill that adds a responsive preview with a variant switcher to any web app: p
 
 ## Use
 
-Run `/responsive-preview` in your app's folder. It writes `preview.html` and `preview.json` into the app's static folder, fills the sidebar from proto plans or the app's routes, and checks the viewer in a browser. Then open `/preview.html` on your dev server. `/responsive-preview --refresh` updates the sidebar after new pages, states, or variants.
+Run `/responsive-preview` in your app's folder. It writes `preview.html` and `preview.json` into the app's static folder, fills the sidebar from proto plans or the app's routes, adds a `responsive-preview` script to `package.json`, and checks the viewer in a browser. Then run the script (for example `pnpm responsive-preview`) to start the dev server and open the viewer. `/responsive-preview --refresh` updates the sidebar after new pages, states, or variants.
 
 ## Install
 
@@ -26,7 +27,7 @@ npx skills add martylouis/agents --skill responsive-preview
 ## How it works
 
 - **One HTML file, any framework.** The viewer is a plain page in the app's static folder (`public/` in Vite, Nuxt, Next.js, Angular 17+, and most others). It is served by the app's own dev server, so it is on the same origin as the app and needs no framework code.
-- **Live frames.** Both frames load the running app, so they update when the dev server reloads. They scale to fit: on a laptop the desktop frame shrinks, and on a large display both run at full size.
+- **Live frames.** Both frames load the running app, so they update when the dev server reloads. The phone frame is a phone's width and either the full height of the window or a set phone height. The desktop frame fills the rest of the window, with a zoom menu next to its size so you can see a wider layout on a small screen.
 - **URL states.** Every page, state, and variant in the sidebar is a URL with named query params, like `/cart?drawer=open&variant=B`. Each menu sets one param, so they combine. An app shows a state from its URL; the viewer never clicks through the app to reach one.
 - **Sync.** Click through the app in one frame and the other follows to the same URL. The sidebar menus follow too. A switch turns sync off.
 - **Shareable.** The viewer's own URL keeps the frame URL and the viewport, so a link opens the same view.

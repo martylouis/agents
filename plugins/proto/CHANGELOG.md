@@ -4,7 +4,8 @@ All notable changes to the `proto` plugin (named `ux-orch` before 0.5.0), newest
 
 ## Unreleased
 
-Nothing yet.
+### Changed
+- The proto skills are marked `metadata.internal: true`, so `npx skills add martylouis/agents` lists only the standalone skills. The proto skills need the plugin's agents and shared files, so they only work when the plugin is installed. Plugin installs in Claude Code and Cursor are not affected.
 
 ## 0.5.0 — 2026-10-11
 
