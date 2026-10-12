@@ -11,14 +11,15 @@ All notable changes to the `viewpoint` skill (named `responsive-preview` in 0.1.
 - A zoom menu above the desktop frame, from 100% down to 50%, next to the frame's size. The viewer remembers it.
 
 ### Changed
-- **Breaking:** the skill is renamed from `responsive-preview` to `viewpoint`, because with select mode it is more than a responsive preview. Run it as `/viewpoint`. To move over, remove the old skill and install the new one with `npx skills add martylouis/agents --skill viewpoint`. The files it writes into apps keep their names, `preview.html` and `preview.json`, so existing apps need no change.
+- The skill is renamed from `responsive-preview` to `viewpoint`, because with select mode it is more than a responsive preview. Run it as `/viewpoint`.
+- The viewer and its nav file live in their own folder, `__viewpoint/index.html` and `__viewpoint/viewpoint.json` in the app's static folder, so they never clash with the app's files. Open `/__viewpoint/index.html` on the dev server.
 - The desktop frame fills the width of the window instead of scaling a 1440 pixel page to fit. Use the zoom menu to see a wider layout. `viewports.desktop` in `preview.json` is no longer used.
 - The Mobile, Desktop, and Both buttons moved from the sidebar to the left of the address bar, as a group of icon buttons.
 - The report leads with the command that opens the viewer.
-- The skill replaces an existing `preview.html` whenever it differs from its own copy, instead of checking the version line.
+- The skill replaces an existing viewer whenever it differs from its own copy, instead of checking the version line.
 
 ### Fixed
-- When `preview.json` is missing, the sidebar says so plainly instead of showing a JSON error. Many dev servers answer a missing file with the app's HTML page, which made the viewer report an unexpected `<` token.
+- When `viewpoint.json` is missing, the sidebar says so plainly instead of showing a JSON error. Many dev servers answer a missing file with the app's HTML page, which made the viewer report an unexpected `<` token.
 
 ## 0.1.0 — 2026-10-10
 

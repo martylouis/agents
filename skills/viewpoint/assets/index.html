@@ -455,8 +455,8 @@
   const $ = (sel) => document.querySelector(sel)
   const viewerParams = new URLSearchParams(location.search)
   const store = {
-    get(key) { try { return localStorage.getItem('preview:' + key) } catch { return null } },
-    set(key, value) { try { localStorage.setItem('preview:' + key, value) } catch {} },
+    get(key) { try { return localStorage.getItem('viewpoint:' + key) } catch { return null } },
+    set(key, value) { try { localStorage.setItem('viewpoint:' + key, value) } catch {} },
   }
 
   let config = { title: 'Viewpoint', base: '', viewports: { mobile: 390, mobileHeight: 844 }, params: [], pages: [{ label: 'Home', path: '/' }] }
@@ -474,7 +474,7 @@
     return frame
   })
 
-  // URLs. Paths in preview.json are relative to `base` (default: this page's origin).
+  // URLs. Paths in viewpoint.json are relative to `base` (default: this page's origin).
   const baseUrl = () => new URL(config.base || location.origin, location.href)
   const full = (path) => new URL(path, baseUrl()).href
   const relative = (url) => {
@@ -738,15 +738,15 @@
   function hook(f) {
     const d = docOf(f)
     if (!d || !d.documentElement) return
-    let style = d.getElementById('preview-select-style')
+    let style = d.getElementById('viewpoint-select-style')
     if (selecting && !style) {
       style = d.createElement('style')
-      style.id = 'preview-select-style'
+      style.id = 'viewpoint-select-style'
       style.textContent = '* { cursor: crosshair !important; }'
       d.documentElement.append(style)
     } else if (!selecting && style) style.remove()
-    if (d.previewHooked) return
-    d.previewHooked = true
+    if (d.viewpointHooked) return
+    d.viewpointHooked = true
     const target = (e) => { const el = e.target; return el && el.nodeType === 1 ? el.closest('svg') || el : null }
     d.addEventListener('mousemove', (e) => { if (selecting) mark(f, f.hover, target(e)) }, true)
     d.addEventListener('mouseleave', () => { f.hover.hidden = true }, true)
@@ -1155,7 +1155,7 @@
 
   // Start.
   async function start() {
-    const file = viewerParams.get('config') || 'preview.json'
+    const file = viewerParams.get('config') || 'viewpoint.json'
     try {
       const res = await fetch(file, { cache: 'no-store' })
       const body = res.ok ? await res.text() : ''

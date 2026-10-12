@@ -16,7 +16,7 @@ A skill that shows any web app in phone and desktop frames side by side, so you 
 
 ## Use
 
-Run `/viewpoint` in your app's folder. It writes `preview.html` and `preview.json` into the app's static folder, fills the sidebar from proto plans or the app's routes, offers to add a `dev:viewpoint` script to `package.json`, and checks the viewer in a browser. Then run the script (for example `pnpm dev:viewpoint`) to start the dev server and open the viewer. `/viewpoint --refresh` updates the sidebar after new pages, states, or variants.
+Run `/viewpoint` in your app's folder. It writes the viewer and its nav file into a `__viewpoint/` folder in the app's static folder, apart from the app's own files, fills the sidebar from proto plans or the app's routes, offers to add a `dev:viewpoint` script to `package.json`, and checks the viewer in a browser. Then run the script (for example `pnpm dev:viewpoint`) to start the dev server and open the viewer. `/viewpoint --refresh` updates the sidebar after new pages, states, or variants.
 
 ## Install
 
@@ -35,14 +35,14 @@ npx skills add martylouis/agents --skill viewpoint
 
 ## The nav file
 
-`preview.json` lists the pages and params. The skill writes it from, in order:
+`__viewpoint/viewpoint.json` lists the pages and params. The skill writes it from, in order:
 
-1. the existing `preview.json` (hand edits are kept),
+1. the existing `viewpoint.json` (hand edits are kept),
 2. proto plans, when the project has them: screens become pages, state URLs become param options, and a Variants table becomes a `variant` menu with each hypothesis under it,
 3. the app's routes and the query params its code reads,
 4. you, when none of these have enough.
 
-Edit it by hand any time; the viewer reads it on every load. The format is in [the skill](SKILL.md#previewjson).
+Edit it by hand any time; the viewer reads it on every load. The format is in [the skill](SKILL.md#viewpointjson).
 
 ## With proto
 
@@ -50,14 +50,14 @@ Edit it by hand any time; the viewer reads it on every load. The format is in [t
 
 ## Other sites
 
-The viewer can show a site you don't run here, like staging or production: the skill puts the files in a `preview/` folder with `base` set to the site, for any static server. Frames on another origin can't sync, and many sites refuse to load in a frame at all. For a site you own, add the files to its static folder instead.
+The viewer can show a site you don't run here, like staging or production: the skill puts the files in a `__viewpoint/` folder with `base` set to the site, for any static server. Frames on another origin can't sync, and many sites refuse to load in a frame at all. For a site you own, add the files to its static folder instead.
 
 ## Contents
 
 ```
 viewpoint/
 ├── SKILL.md                 the skill
-├── assets/preview.html      the viewer, copied into the app unchanged
+├── assets/index.html        the viewer, copied into the app unchanged
 ├── CHANGELOG.md
 └── README.md
 ```
