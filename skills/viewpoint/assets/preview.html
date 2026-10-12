@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- preview viewer 0.1.0 -->
+<!-- viewpoint viewer 0.1.0 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Preview</title>
+<title>Viewpoint</title>
 <style>
   :root {
     --bg: #f4f4f5;
@@ -366,7 +366,7 @@
 <body>
 <aside aria-label="Preview controls">
   <div>
-    <h1 id="title">Preview</h1>
+    <h1 id="title">Viewpoint</h1>
     <p class="sub" id="subtitle"></p>
   </div>
 
@@ -459,7 +459,7 @@
     set(key, value) { try { localStorage.setItem('preview:' + key, value) } catch {} },
   }
 
-  let config = { title: 'Preview', base: '', viewports: { mobile: 390, mobileHeight: 844 }, params: [], pages: [{ label: 'Home', path: '/' }] }
+  let config = { title: 'Viewpoint', base: '', viewports: { mobile: 390, mobileHeight: 844 }, params: [], pages: [{ label: 'Home', path: '/' }] }
   let view = viewerParams.get('view') || store.get('view') || 'both'
   let mobileHeight = store.get('mobileHeight') === 'fixed' ? 'fixed' : 'full' // full: the window's height; fixed: a phone's
   let zoom = Number(store.get('zoom')) || 1 // desktop zoom; the desktop frame always fills the width
@@ -1170,8 +1170,8 @@
         ? `There is no ${file} next to this page, so the menu has only the home page. Run the skill to write it, or type any path in the address bar.`
         : `${err.message}. Showing the home page; type any path in the address bar.`)
     }
-    document.title = config.title ? `${config.title} · Preview` : 'Preview'
-    $('#title').textContent = config.title || 'Preview'
+    document.title = config.title ? `${config.title} · Viewpoint` : 'Viewpoint'
+    $('#title').textContent = config.title || 'Viewpoint'
     $('#subtitle').textContent = config.subtitle || ''
     if (store.get('sync') === '0') $('#sync').checked = false
     if (store.get('collapsed') === '1') toggleSidebar()

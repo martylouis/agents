@@ -1,6 +1,6 @@
 ---
-name: responsive-preview
-description: Responsive preview with a variant switcher. Adds a side-by-side mobile and desktop preview of a running web app at /preview.html, with a sidebar that switches pages, states, and design variants through URL params. Works with any framework, and reads proto plans when they exist.
+name: viewpoint
+description: Viewpoint shows a running web app in phone and desktop frames side by side, with a sidebar that switches pages, states, and design variants through URL params, and a select mode that copies any element's context and your comment for an AI agent. Works with any framework, and reads proto plans when they exist.
 license: MIT
 metadata:
   version: 0.1.0
@@ -8,13 +8,13 @@ metadata:
 argument-hint: "[app folder or URL] [--refresh]"
 ---
 
-# Responsive preview
+# Viewpoint
 
 Writes two files into the app's static folder, and, when the person says yes, one script into its `package.json`:
 
 - `preview.html`: the viewer. A sidebar on the left (a page menu, and one menu per URL param with a note under the chosen option), an address bar above the frames with Mobile, Desktop, and Both buttons at its left, and live frames of the app below it. The phone frame keeps a phone's width, and the desktop frame fills the rest of the window at the zoom the person picks. The frames stay on the same URL as you click through the app; a switch turns that off.
 - `preview.json`: what the sidebar lists. The person can edit it by hand; the viewer reads it on every load.
-- A `dev:responsive-preview` script that starts the dev server and opens the viewer, so the person runs one command.
+- A `dev:viewpoint` script that starts the dev server and opens the viewer, so the person runs one command.
 
 The viewer works on the app as it runs, so it shows code changes as soon as the dev server reloads. It reaches each state by its URL, never by clicks, so the app must be able to show a state from its route and query params (see **URL states**).
 
@@ -24,10 +24,10 @@ This skill never changes the app's code; the package script, when the person wan
 
 | Argument | Example | Meaning |
 | --- | --- | --- |
-| none | `/responsive-preview` | The app in the current folder |
-| folder | `/responsive-preview apps/web` | The app in that folder |
-| URL | `/responsive-preview https://staging.example.com` | A site you don't run here (see **Other sites**) |
-| `--refresh` | `/responsive-preview --refresh` | Update `preview.json` from the sources again, and the viewer when this skill has a newer one |
+| none | `/viewpoint` | The app in the current folder |
+| folder | `/viewpoint apps/web` | The app in that folder |
+| URL | `/viewpoint https://staging.example.com` | A site you don't run here (see **Other sites**) |
+| `--refresh` | `/viewpoint --refresh` | Update `preview.json` from the sources again, and the viewer when this skill has a newer one |
 
 ## Steps
 
@@ -65,7 +65,7 @@ Order the pages as a person goes through the app (the plan order, or the nav ord
 
 ### 4. Offer the package script
 
-Ask once whether to add a `dev:responsive-preview` script to the app's `package.json` that starts the dev server and opens the viewer in the browser. Propose yes, and show the script line you would add. Add it only after a yes. Skip the question when a script with that name already exists (leave it as it is), and when the app has no `package.json` (plain HTML).
+Ask once whether to add a `dev:viewpoint` script to the app's `package.json` that starts the dev server and opens the viewer in the browser. Propose yes, and show the script line you would add. Add it only after a yes. Skip the question when a script with that name already exists (leave it as it is), and when the app has no `package.json` (plain HTML).
 
 Build it from the app's `dev` script and the dev URL from step 1:
 
@@ -92,10 +92,10 @@ A state that does not change when its option is chosen is not reachable by URL. 
 One short message:
 
 ```text
-Preview ready. Run `pnpm dev:responsive-preview` to start the dev server and open http://localhost:5173/preview.html.
+Preview ready. Run `pnpm dev:viewpoint` to start the dev server and open http://localhost:5173/preview.html.
 - Pages: 4 (from proto plans 01–03). Params: variant (A, B), drawer, error.
 - Not reachable by URL: Cart · loading (no param in the app yet).
-- Files: public/preview.html, public/preview.json, and the `dev:responsive-preview` script in package.json.
+- Files: public/preview.html, public/preview.json, and the `dev:viewpoint` script in package.json.
 ```
 
 Use the package manager the lockfile names (`pnpm`, `bun`, `yarn`, or `npm run`). When the person said no to the script, give the dev command and the viewer URL instead. Lead with the command, not with whether the dev server was running.

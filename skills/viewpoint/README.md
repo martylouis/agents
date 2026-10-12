@@ -1,6 +1,6 @@
-# Responsive preview
+# Viewpoint
 
-A skill that adds a responsive preview with a variant switcher to any web app: phone and desktop side by side, so you can build, compare, and demo screens, states, and variants on one screen.
+A skill that shows any web app in phone and desktop frames side by side, so you can build, compare, and demo screens, states, and variants on one screen, and point your agent at exactly the element you want changed.
 
 ```text
 +----------------+------------------------------------------+
@@ -16,12 +16,12 @@ A skill that adds a responsive preview with a variant switcher to any web app: p
 
 ## Use
 
-Run `/responsive-preview` in your app's folder. It writes `preview.html` and `preview.json` into the app's static folder, fills the sidebar from proto plans or the app's routes, offers to add a `dev:responsive-preview` script to `package.json`, and checks the viewer in a browser. Then run the script (for example `pnpm dev:responsive-preview`) to start the dev server and open the viewer. `/responsive-preview --refresh` updates the sidebar after new pages, states, or variants.
+Run `/viewpoint` in your app's folder. It writes `preview.html` and `preview.json` into the app's static folder, fills the sidebar from proto plans or the app's routes, offers to add a `dev:viewpoint` script to `package.json`, and checks the viewer in a browser. Then run the script (for example `pnpm dev:viewpoint`) to start the dev server and open the viewer. `/viewpoint --refresh` updates the sidebar after new pages, states, or variants.
 
 ## Install
 
 ```bash
-npx skills add martylouis/agents --skill responsive-preview
+npx skills add martylouis/agents --skill viewpoint
 ```
 
 ## How it works
@@ -46,7 +46,7 @@ Edit it by hand any time; the viewer reads it on every load. The format is in [t
 
 ## With proto
 
-[`proto`](../../plugins/proto/README.md) builds prototypes whose states and variants open from their URLs, so the viewer can show every planned state. Run `/responsive-preview` after `/proto:build`, and `--refresh` after new plans or variants. Proto does not need this skill, and this skill does not need proto.
+[`proto`](../../plugins/proto/README.md) builds prototypes whose states and variants open from their URLs, so the viewer can show every planned state. Run `/viewpoint` after `/proto:build`, and `--refresh` after new plans or variants. Proto does not need this skill, and this skill does not need proto.
 
 ## Other sites
 
@@ -55,7 +55,7 @@ The viewer can show a site you don't run here, like staging or production: the s
 ## Contents
 
 ```
-responsive-preview/
+viewpoint/
 ├── SKILL.md                 the skill
 ├── assets/preview.html      the viewer, copied into the app unchanged
 ├── CHANGELOG.md

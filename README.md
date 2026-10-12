@@ -16,12 +16,12 @@ Single skills that need no plugin. They follow the [Agent Skills](https://agents
 
 | Skill | What it does |
 | --- | --- |
-| [`responsive-preview`](skills/responsive-preview/README.md) | Responsive preview with a variant switcher: your running app in phone and desktop frames side by side, with a sidebar that switches pages, states, and variants through URL params. |
+| [`viewpoint`](skills/viewpoint/README.md) | Your running app in phone and desktop frames side by side, with a sidebar that switches pages, states, and variants through URL params, and a select mode that copies an element's context and your comment for an AI agent. |
 
 Install one with the [skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
-npx skills add martylouis/agents --skill responsive-preview
+npx skills add martylouis/agents --skill viewpoint
 ```
 
 ## Examples
