@@ -16,7 +16,7 @@ A skill that adds a responsive preview with a variant switcher to any web app: p
 
 ## Use
 
-Run `/responsive-preview` in your app's folder. It writes `preview.html` and `preview.json` into the app's static folder, fills the sidebar from proto plans or the app's routes, adds a `responsive-preview` script to `package.json`, and checks the viewer in a browser. Then run the script (for example `pnpm responsive-preview`) to start the dev server and open the viewer. `/responsive-preview --refresh` updates the sidebar after new pages, states, or variants.
+Run `/responsive-preview` in your app's folder. It writes `preview.html` and `preview.json` into the app's static folder, fills the sidebar from proto plans or the app's routes, offers to add a `dev:responsive-preview` script to `package.json`, and checks the viewer in a browser. Then run the script (for example `pnpm dev:responsive-preview`) to start the dev server and open the viewer. `/responsive-preview --refresh` updates the sidebar after new pages, states, or variants.
 
 ## Install
 

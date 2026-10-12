@@ -10,15 +10,15 @@ argument-hint: "[app folder or URL] [--refresh]"
 
 # Responsive preview
 
-Writes two files into the app's static folder, and one script into its `package.json`:
+Writes two files into the app's static folder, and, when the person says yes, one script into its `package.json`:
 
 - `preview.html`: the viewer. A sidebar on the left (a page menu, and one menu per URL param with a note under the chosen option), an address bar above the frames with Mobile, Desktop, and Both buttons at its left, and live frames of the app below it. The phone frame keeps a phone's width, and the desktop frame fills the rest of the window at the zoom the person picks. The frames stay on the same URL as you click through the app; a switch turns that off.
 - `preview.json`: what the sidebar lists. The person can edit it by hand; the viewer reads it on every load.
-- A `responsive-preview` script that starts the dev server and opens the viewer, so the person runs one command.
+- A `dev:responsive-preview` script that starts the dev server and opens the viewer, so the person runs one command.
 
 The viewer works on the app as it runs, so it shows code changes as soon as the dev server reloads. It reaches each state by its URL, never by clicks, so the app must be able to show a state from its route and query params (see **URL states**).
 
-This skill never changes the app's code; the package script is the only change outside the two files. It runs in the main session and needs no sub-agent and no model choice.
+This skill never changes the app's code; the package script, when the person wants it, is the only change outside the two files. It runs in the main session and needs no sub-agent and no model choice.
 
 ## Arguments
 
@@ -63,9 +63,9 @@ Write `preview.json` next to the viewer, in the format under **preview.json**. T
 
 Order the pages as a person goes through the app (the plan order, or the nav order), not alphabetically. Write labels in the app's own words.
 
-### 4. Add the package script
+### 4. Offer the package script
 
-Add a script named `responsive-preview` to the app's `package.json` that starts the dev server and opens the viewer in the browser. When a script with that name already exists, leave it. When the app has no `package.json` (plain HTML), skip this step.
+Ask once whether to add a `dev:responsive-preview` script to the app's `package.json` that starts the dev server and opens the viewer in the browser. Propose yes, and show the script line you would add. Add it only after a yes. Skip the question when a script with that name already exists (leave it as it is), and when the app has no `package.json` (plain HTML).
 
 Build it from the app's `dev` script and the dev URL from step 1:
 
@@ -92,13 +92,13 @@ A state that does not change when its option is chosen is not reachable by URL. 
 One short message:
 
 ```text
-Preview ready. Run `pnpm responsive-preview` to start the dev server and open http://localhost:5173/preview.html.
+Preview ready. Run `pnpm dev:responsive-preview` to start the dev server and open http://localhost:5173/preview.html.
 - Pages: 4 (from proto plans 01–03). Params: variant (A, B), drawer, error.
 - Not reachable by URL: Cart · loading (no param in the app yet).
-- Files: public/preview.html, public/preview.json, and the `responsive-preview` script in package.json.
+- Files: public/preview.html, public/preview.json, and the `dev:responsive-preview` script in package.json.
 ```
 
-Use the package manager the lockfile names (`pnpm`, `bun`, `yarn`, or `npm run`). Lead with the command, not with whether the dev server was running.
+Use the package manager the lockfile names (`pnpm`, `bun`, `yarn`, or `npm run`). When the person said no to the script, give the dev command and the viewer URL instead. Lead with the command, not with whether the dev server was running.
 
 Then one line on git: the two files are plain files in the app; commit them to share the viewer, or add them to `.gitignore` to keep them local. Leave that choice to the person.
 
