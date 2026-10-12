@@ -209,6 +209,7 @@
     transition: background 0.15s, color 0.15s;
   }
   .toolbar .icon:hover { background: var(--control); color: var(--text); }
+  .toolbar .icon[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
   .toolbar .icon svg { width: 16px; height: 16px; }
   .spacer { flex: 1; }
   kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; text-align: center; }
@@ -255,6 +256,7 @@
   .frame-head select:hover { border-color: var(--border); color: var(--text); }
   .frame-head option { font-size: 13px; }
   .viewport {
+    position: relative;
     overflow: hidden;
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -262,6 +264,54 @@
     box-shadow: var(--frame-shadow);
   }
   .viewport iframe { display: block; border: 0; transform-origin: 0 0; background: #fff; }
+  /* Select mode: outlines drawn over the frames, and the box with the comment. */
+  .mark { position: absolute; pointer-events: none; border: 1.5px solid var(--focus); border-radius: 3px; background: color-mix(in srgb, var(--focus) 8%, transparent); }
+  .mark.chosen { border-width: 2px; background: color-mix(in srgb, var(--focus) 14%, transparent); }
+  .mark[hidden] { display: none; }
+  .pick {
+    position: fixed;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 320px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
+  }
+  .pick[hidden] { display: none; }
+  .pick-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .pick-head strong { font-size: 13px; overflow-wrap: anywhere; }
+  .pick .note { overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+  .pick textarea {
+    width: 100%;
+    min-height: 64px;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    resize: vertical;
+  }
+  .pick .row .note { font-family: inherit; font-size: 12px; }
+  .pick-copy {
+    flex: none;
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .pick-copy { margin-left: auto; }
+  .pick-close { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 16px; line-height: 1; cursor: pointer; }
+  .pick-close:hover { background: var(--control); color: var(--text); }
 </style>
 </head>
 <body>
@@ -302,11 +352,20 @@
     <dt><kbd>R</kbd></dt><dd>Reload both frames</dd>
     <dt><kbd>\</kbd></dt><dd>Hide or show the sidebar</dd>
     <dt><kbd>/</kbd></dt><dd>Go to the address bar</dd>
+    <dt><kbd>C</kbd></dt><dd>Select an element to copy for an agent</dd>
+    <dt><kbd>Esc</kbd></dt><dd>Close the selected element, then leave select mode</dd>
     <dt><kbd>?</kbd></dt><dd>Show these shortcuts</dd>
   </dl>
   <p class="note">Shortcuts work after you click the sidebar or the space around the frames, not inside a frame.</p>
   <form method="dialog"><button>Close</button></form>
 </dialog>
+
+<div class="pick" id="pick" role="dialog" aria-labelledby="pick-title" hidden>
+  <div class="pick-head"><strong id="pick-title"></strong><button type="button" class="pick-close" id="pick-close" aria-label="Close" title="Close (Esc)">×</button></div>
+  <p class="note" id="pick-sub"></p>
+  <textarea id="pick-comment" aria-label="Comment for the agent" placeholder="Comment for the agent (optional)"></textarea>
+  <div class="row"><span class="note" id="pick-status" role="status"></span><button type="button" class="pick-copy" id="pick-copy" title="Copy (⌘ Enter)">Copy</button></div>
+</div>
 
 <main>
   <div class="toolbar">
@@ -316,6 +375,7 @@
       <button type="button" data-view="desktop" aria-pressed="false" aria-label="Desktop" title="Desktop (2)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="8.5" rx="1.5"/><path d="M5.5 13.75h5"/><path d="M8 11.25v2.5"/></svg></button>
       <button type="button" data-view="both" aria-pressed="true" aria-label="Both" title="Both (3)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="0.75" y="3.25" width="9" height="6.75" rx="1.25"/><path d="M3.5 13.25h3.5"/><path d="M5.25 10v3.25"/><rect x="11.5" y="4.75" width="3.75" height="8.5" rx="1"/></svg></button>
     </div>
+    <button type="button" class="icon" id="select" aria-pressed="false" aria-label="Select an element" title="Select an element to copy for an agent (C)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 13.25H3.75a1 1 0 0 1-1-1V3.75a1 1 0 0 1 1-1h8.5a1 1 0 0 1 1 1V6.5"/><path d="m8.25 8.25 6 2-2.5 1-1 2.5z"/></svg></button>
     <input type="text" id="address" aria-label="Address" title="Type a path and press Enter to open it in both frames" spellcheck="false" autocomplete="off">
     <button type="button" class="icon" id="reload" aria-label="Reload" title="Reload (R)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.25 8a5.25 5.25 0 1 1-1.54-3.71"/><path d="M13.25 2.5v3h-3"/></svg></button>
     <a class="icon" id="open" href="/" target="_blank" rel="noopener" aria-label="Open in new tab" title="Open in new tab"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.75h3.75V6.5"/><path d="M13.25 2.75 7.5 8.5"/><path d="M12 9.5v2.75a1 1 0 0 1-1 1H3.75a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1H6.5"/></svg></a>
@@ -466,6 +526,8 @@
 
   // Watch each frame. A click inside the app changes its location, and the other frame follows.
   function watch() {
+    for (const f of frames) hook(f)
+    refreshMarks()
     for (const f of frames) {
       if (f.loading) continue
       let path
@@ -526,6 +588,7 @@
       size(desk, w, h, zoom)
       desk.size.textContent = `${w} × ${h}`
     }
+    refreshMarks()
   }
 
   function size(f, w, h, scale) {
@@ -534,6 +597,7 @@
     f.iframe.style.width = w + 'px'
     f.iframe.style.height = h + 'px'
     f.iframe.style.transform = `scale(${scale})`
+    Object.assign(f, { scale, cssW: w, cssH: h })
   }
 
   function setView(next) {
@@ -575,6 +639,7 @@
   }
   $('#toggle-sidebar').addEventListener('click', toggleSidebar)
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && (picked || selecting) && !$('#shortcuts').open) { e.preventDefault(); escape(); return }
     if (e.target.closest('input[type="text"], select, textarea') || e.metaKey || e.ctrlKey || e.altKey) return
     if ($('#shortcuts').open) return
     const views = { 1: 'mobile', 2: 'desktop', 3: 'both' }
@@ -584,11 +649,357 @@
     else if (key === '?') $('#shortcuts').showModal()
     else if (key === 's') { $('#sync').checked = !$('#sync').checked; syncChanged() }
     else if (key === 'r') go(current, { reload: true })
+    else if (key === 'c') setSelecting(!selecting)
     else if (key === '/') { e.preventDefault(); $('#address').focus(); $('#address').select() }
     else return
     e.preventDefault()
   })
   new ResizeObserver(layout).observe($('#stage'))
+
+  // Select mode. Click an element in either frame to copy its context, with a comment, for an AI agent.
+  // It works by reading the app's page, so it needs the frames on the viewer's origin.
+  let selecting = false
+  let picked = null // { frame, el }
+  for (const f of frames) {
+    f.hover = Object.assign(document.createElement('div'), { className: 'mark' })
+    f.chosen = Object.assign(document.createElement('div'), { className: 'mark chosen' })
+    f.hover.hidden = f.chosen.hidden = true
+    f.viewport.append(f.hover, f.chosen)
+  }
+  const docOf = (f) => { try { return f.iframe.contentDocument } catch { return null } }
+
+  function setSelecting(on) {
+    selecting = on
+    $('#select').setAttribute('aria-pressed', String(on))
+    if (!on) unpick()
+    for (const f of frames) { f.hover.hidden = true; hook(f) }
+    warn('Select needs the app on the same origin as the viewer.', on && frames.every((f) => f.section.hidden || f.crossOrigin))
+  }
+
+  // Listen inside a frame's page. Called on every watch() tick, so a new page gets the listeners too.
+  function hook(f) {
+    const d = docOf(f)
+    if (!d || !d.documentElement) return
+    let style = d.getElementById('preview-select-style')
+    if (selecting && !style) {
+      style = d.createElement('style')
+      style.id = 'preview-select-style'
+      style.textContent = '* { cursor: crosshair !important; }'
+      d.documentElement.append(style)
+    } else if (!selecting && style) style.remove()
+    if (d.previewHooked) return
+    d.previewHooked = true
+    const target = (e) => { const el = e.target; return el && el.nodeType === 1 ? el.closest('svg') || el : null }
+    d.addEventListener('mousemove', (e) => { if (selecting) mark(f, f.hover, target(e)) }, true)
+    d.addEventListener('mouseleave', () => { f.hover.hidden = true }, true)
+    // Keep the app from reacting to clicks while selecting (menus that open on pointerdown, links).
+    for (const type of ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'dblclick']) {
+      d.addEventListener(type, (e) => { if (selecting) { e.preventDefault(); e.stopPropagation() } }, true)
+    }
+    d.addEventListener('click', (e) => {
+      if (!selecting) return
+      e.preventDefault()
+      e.stopPropagation()
+      const el = target(e)
+      if (el) pick(f, el)
+    }, true)
+    d.addEventListener('keydown', (e) => { if (e.key === 'Escape' && selecting) { e.preventDefault(); escape() } }, true)
+    d.addEventListener('scroll', () => { f.hover.hidden = true; refreshMarks() }, true)
+  }
+
+  // Outline an element. Its box is in the frame's CSS pixels; the frame is scaled.
+  function mark(f, box, el) {
+    if (!el || !el.isConnected) { box.hidden = true; return }
+    const r = el.getBoundingClientRect()
+    const s = f.scale || 1
+    Object.assign(box.style, { left: r.left * s + 'px', top: r.top * s + 'px', width: r.width * s + 'px', height: r.height * s + 'px' })
+    box.hidden = false
+  }
+
+  function refreshMarks() {
+    if (!picked) return
+    if (!picked.el.isConnected || picked.frame.section.hidden) { unpick(); return }
+    mark(picked.frame, picked.frame.chosen, picked.el)
+    placeBox()
+  }
+
+  function pick(f, el) {
+    if (picked) picked.frame.chosen.hidden = true
+    picked = { frame: f, el }
+    f.hover.hidden = true
+    mark(f, f.chosen, el)
+    const info = inspect(f, el)
+    $('#pick-title').textContent = info.title
+    $('#pick-sub').textContent = info.sub
+    $('#pick-status').textContent = ''
+    $('#pick').hidden = false
+    placeBox()
+    $('#pick-comment').focus()
+  }
+
+  function unpick() {
+    if (picked) picked.frame.chosen.hidden = true
+    picked = null
+    $('#pick').hidden = true
+  }
+
+  function escape() {
+    if (picked) unpick()
+    else setSelecting(false)
+  }
+
+  // Put the box under the element, or above it when there is no room, inside the window.
+  function placeBox() {
+    const box = $('#pick')
+    if (!picked || box.hidden) return
+    const { frame: f, el } = picked
+    const v = f.viewport.getBoundingClientRect()
+    const r = el.getBoundingClientRect()
+    const s = f.scale || 1
+    const top = v.top + 1 + r.top * s
+    const bottom = v.top + 1 + r.bottom * s
+    const w = box.offsetWidth
+    const h = box.offsetHeight
+    let y = bottom + 8
+    if (y + h > innerHeight - 8) y = top - h - 8
+    y = Math.min(Math.max(8, y), innerHeight - h - 8)
+    const x = Math.min(Math.max(8, v.left + 1 + r.left * s), innerWidth - w - 8)
+    box.style.left = x + 'px'
+    box.style.top = y + 'px'
+  }
+
+  // What the agent gets: where the element is, what it is, and which component renders it.
+  function inspect(f, el) {
+    const w = f.iframe.contentWindow
+    const d = el.ownerDocument
+    const comp = component(w, el)
+    const fw = frameworks(w, d, el)
+    const tag = el.tagName.toLowerCase()
+    const sel = selector(el, d)
+    return { title: comp ? comp.name : `<${tag}>`, sub: [fw[0], sel].filter(Boolean).join(' · '), comp, fw, sel }
+  }
+
+  function contextText(comment) {
+    const { frame: f, el } = picked
+    const info = inspect(f, el)
+    const url = f.iframe.contentWindow.location.href
+    const page = pageFor(relative(url))
+    const lines = []
+    if (comment) lines.push(comment, '')
+    lines.push(`Page: ${page && page.label ? page.label + ' · ' : ''}${url}`)
+    const search = new URL(url).searchParams
+    const states = paramsFor(page).map((p) => {
+      const value = search.get(p.name)
+      const option = (p.options || []).find((o) => (o.value ?? '') === (value ?? (p.default ?? '')))
+      return option && (value !== null || p.default) ? `${p.label || p.name} = ${option.label || option.value}` : null
+    }).filter(Boolean)
+    if (states.length) lines.push(`State: ${states.join('; ')}`)
+    lines.push(`Viewport: ${f.name === 'mobile' ? 'Mobile' : 'Desktop'}, ${f.cssW} × ${Math.round(f.cssH)} CSS px` + (f.name === 'desktop' && zoom !== 1 ? ` (shown at ${Math.round(zoom * 100)}%)` : ''))
+    lines.push(`Element: ${describe(el)}`)
+    const text = (el.innerText ?? el.textContent ?? '').trim().replace(/\s+/g, ' ')
+    if (text) lines.push(`Text: "${text.length > 160 ? text.slice(0, 160) + '…' : text}"`)
+    lines.push(`Selector: ${info.sel}`)
+    const r = el.getBoundingClientRect()
+    lines.push(`Box: ${Math.round(r.width)} × ${Math.round(r.height)} at ${Math.round(r.left)}, ${Math.round(r.top + d0(el).scrollTop)}`)
+    if (info.comp) {
+      lines.push(`Component: ${info.comp.name}${info.comp.file ? ` (${info.comp.file})` : ''}`)
+      if (info.comp.chain && info.comp.chain.length > 1) lines.push(`Inside: ${info.comp.chain.join(' > ')}`)
+    }
+    if (info.fw.length) lines.push(`Framework: ${info.fw.join(', ')}`)
+    return lines.join('\n')
+  }
+  const d0 = (el) => el.ownerDocument.scrollingElement || el.ownerDocument.documentElement
+
+  function describe(el) {
+    const attrs = []
+    if (el.id) attrs.push(`id="${el.id}"`)
+    const classes = [...el.classList]
+    if (classes.length) attrs.push(`class="${classes.slice(0, 6).join(' ')}${classes.length > 6 ? ' …' : ''}"`)
+    for (const a of ['role', 'aria-label', 'name', 'type', 'href', 'placeholder', 'alt', 'title', 'data-testid']) {
+      const v = el.getAttribute(a)
+      if (v) attrs.push(`${a}="${v.length > 80 ? v.slice(0, 80) + '…' : v}"`)
+    }
+    return `<${el.tagName.toLowerCase()}${attrs.length ? ' ' + attrs.join(' ') : ''}>`
+  }
+
+  // A short CSS selector that finds only this element: an id or test id when there is one,
+  // otherwise tags with a few plain class names, going up until it is unique.
+  function selector(el, d) {
+    const parts = []
+    const plain = (c) => /^[a-zA-Z_][\w-]*$/.test(c) && !/^(ng-|css-|sc-|svelte-)/.test(c)
+    const unique = () => { try { return d.querySelectorAll(parts.join(' > ')).length === 1 } catch { return false } }
+    for (let node = el; node && node.nodeType === 1 && node !== d.body && node !== d.documentElement && parts.length < 8; node = node.parentElement) {
+      if (node.id && d.querySelectorAll('#' + CSS.escape(node.id)).length === 1) { parts.unshift('#' + CSS.escape(node.id)); break }
+      const testAttr = ['data-testid', 'data-test', 'data-cy'].find((a) => node.hasAttribute(a))
+      let part = node.tagName.toLowerCase()
+      if (testAttr) part += `[${testAttr}="${node.getAttribute(testAttr)}"]`
+      else {
+        part += [...node.classList].filter(plain).slice(0, 2).map((c) => '.' + c).join('')
+        const same = node.parentElement ? [...node.parentElement.children].filter((c) => c.tagName === node.tagName) : []
+        if (same.length > 1) part += `:nth-of-type(${same.indexOf(node) + 1})`
+      }
+      parts.unshift(part)
+      if (unique()) break
+    }
+    return parts.join(' > ')
+  }
+
+  const baseName = (file) => file && file.split(/[\\/]/).pop().replace(/\.[^.]+$/, '')
+  // Paths from the project folder down, like src/components/Cart.vue.
+  const shortFile = (file) => {
+    if (!file) return file
+    const f = file.replace(/\\/g, '/')
+    for (const dir of ['src', 'app', 'pages', 'components', 'lib']) {
+      if (f.startsWith(dir + '/')) return f
+      const i = f.indexOf('/' + dir + '/')
+      if (i >= 0) return f.slice(i + 1)
+    }
+    return f
+  }
+
+  // The component that renders the element, and the components around it, read from the
+  // framework's own dev-mode data. Production builds keep less, so a name may be missing.
+  function component(w, el) {
+    // Angular: the `ng` debugging global, in dev mode.
+    if (w.ng && w.ng.getOwningComponent) {
+      try {
+        let inst = w.ng.getComponent(el) || w.ng.getOwningComponent(el)
+        const chain = []
+        let first = null
+        while (inst && chain.length < 12) {
+          const host = w.ng.getHostElement(inst)
+          const name = inst.constructor.name.replace(/^_+/, '')
+          chain.unshift(name)
+          if (!first) first = { name: `${name} (<${host.tagName.toLowerCase()}>)` }
+          inst = w.ng.getOwningComponent(host)
+        }
+        if (first) return { ...first, chain }
+      } catch {}
+    }
+    for (let node = el; node && node.nodeType === 1; node = node.parentElement) {
+      // Vue 3
+      if (node.__vueParentComponent) {
+        const chain = []
+        let first = null
+        for (let inst = node.__vueParentComponent; inst && chain.length < 12; inst = inst.parent) {
+          const t = inst.type || {}
+          const name = t.name || t.__name || baseName(t.__file) || 'Anonymous'
+          chain.unshift(name)
+          if (!first) first = { name, file: shortFile(t.__file) }
+        }
+        return { ...first, chain }
+      }
+      // Vue 2
+      if (node.__vue__) {
+        const chain = []
+        let first = null
+        for (let vm = node.__vue__; vm && chain.length < 12; vm = vm.$parent) {
+          const o = vm.$options || {}
+          const name = o.name || o._componentTag || baseName(o.__file) || 'Anonymous'
+          chain.unshift(name)
+          if (!first) first = { name, file: shortFile(o.__file) }
+        }
+        return { ...first, chain }
+      }
+      // React (16+): the fiber on the DOM node; walk up to the function and class components.
+      const key = Object.keys(node).find((k) => k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$'))
+      if (key) {
+        const chain = []
+        let first = null
+        for (let fiber = node[key]; fiber && chain.length < 12; fiber = fiber.return) {
+          const t = fiber.type
+          const name = typeof t === 'function' ? t.displayName || t.name
+            : t && typeof t === 'object' ? t.displayName || (t.render && (t.render.displayName || t.render.name)) || (t.type && (t.type.displayName || t.type.name)) : null
+          if (!name) continue
+          chain.unshift(name)
+          if (!first) {
+            const src = fiber._debugSource
+            first = { name, file: src ? `${shortFile(src.fileName)}:${src.lineNumber}` : null }
+          }
+        }
+        if (first) return { ...first, chain }
+      }
+      // Svelte (dev mode marks each element with the file that renders it).
+      if (node.__svelte_meta) {
+        const chain = []
+        let first = null
+        for (let n = node; n && n.nodeType === 1; n = n.parentElement) {
+          const loc = n.__svelte_meta && n.__svelte_meta.loc
+          if (!loc) continue
+          const name = baseName(loc.file)
+          if (chain[0] !== name) chain.unshift(name)
+          if (!first) first = { name, file: `${shortFile(loc.file)}:${loc.line}` }
+        }
+        return { ...first, chain }
+      }
+      // Astro island
+      if (node.tagName === 'ASTRO-ISLAND') {
+        const url = node.getAttribute('component-url')
+        if (url) return { name: baseName(url), file: shortFile(url) }
+      }
+    }
+    // Any framework: the nearest custom element, like an Angular host in a production build.
+    const custom = [...ancestors(el)].find((n) => n.tagName.includes('-') && n.tagName !== 'ASTRO-ISLAND')
+    if (custom) return { name: `<${custom.tagName.toLowerCase()}>` }
+    return null
+  }
+  function* ancestors(el) { for (let n = el; n && n.nodeType === 1; n = n.parentElement) yield n }
+
+  // Frameworks on the page, most specific first.
+  function frameworks(w, d, el) {
+    const found = []
+    const add = (name) => { if (name && !found.includes(name)) found.push(name) }
+    try {
+      if (w.next) add('Next.js' + (w.next.version ? ' ' + w.next.version : ''))
+      else if (d.getElementById('__next') || w.__NEXT_DATA__) add('Next.js')
+      if (w.__NUXT__ || w.useNuxtApp || d.getElementById('__nuxt')) add('Nuxt')
+      if (Object.keys(w).some((k) => k.startsWith('__sveltekit'))) add('SvelteKit')
+      if (w.__remixContext) add('Remix')
+      const generator = d.querySelector('meta[name="generator"]')
+      if (generator && generator.content) add(generator.content)
+      const ng = d.querySelector('[ng-version]')
+      if (ng) add('Angular ' + ng.getAttribute('ng-version'))
+      else if (w.ng && w.ng.getComponent) add('Angular')
+      const vueApp = d.querySelector('[data-v-app]')
+      if (vueApp && vueApp.__vue_app__) add('Vue ' + vueApp.__vue_app__.version)
+      else if (w.Vue && w.Vue.version) add('Vue ' + w.Vue.version)
+      else if ([...ancestors(el)].some((n) => n.__vueParentComponent)) add('Vue 3')
+      else if ([...ancestors(el)].some((n) => n.__vue__)) add('Vue 2')
+      if ([...ancestors(el)].some((n) => Object.keys(n).some((k) => k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$')))) {
+        const hook = w.__REACT_DEVTOOLS_GLOBAL_HOOK__
+        const renderer = hook && hook.renderers && [...hook.renderers.values()][0]
+        add('React' + (renderer && renderer.version ? ' ' + renderer.version : ''))
+      }
+      if (w.__svelte && w.__svelte.v) add('Svelte ' + [...w.__svelte.v][0])
+      else if ([...ancestors(el)].some((n) => n.__svelte_meta)) add('Svelte')
+    } catch {}
+    return found
+  }
+
+  async function copy(text) {
+    try { await navigator.clipboard.writeText(text); return true } catch {}
+    // Older browsers, and pages on plain http other than localhost.
+    const t = Object.assign(document.createElement('textarea'), { value: text })
+    t.style.cssText = 'position:fixed;opacity:0'
+    document.body.append(t)
+    t.select()
+    const ok = document.execCommand('copy')
+    t.remove()
+    return ok
+  }
+
+  async function copyPicked() {
+    if (!picked) return
+    const ok = await copy(contextText($('#pick-comment').value.trim()))
+    $('#pick-status').textContent = ok ? 'Copied. Paste it into your agent.' : 'Could not copy. Your browser blocked the clipboard.'
+  }
+
+  $('#select').addEventListener('click', () => setSelecting(!selecting))
+  $('#pick-copy').addEventListener('click', copyPicked)
+  $('#pick-close').addEventListener('click', unpick)
+  $('#pick-comment').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); copyPicked() } })
+  addEventListener('resize', placeBox)
+
 
   // Start.
   async function start() {
