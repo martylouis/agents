@@ -16,6 +16,7 @@
     --accent: #18181b;
     --accent-text: #ffffff;
     --focus: #2563eb;
+    --danger: #b91c1c;
     --frame-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.06);
     --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2363636b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
     color-scheme: light;
@@ -31,6 +32,7 @@
       --accent: #f4f4f5;
       --accent-text: #18181b;
       --focus: #60a5fa;
+      --danger: #f87171;
       --frame-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
       --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
       color-scheme: dark;
@@ -283,8 +285,7 @@
     box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
   }
   .pick[hidden] { display: none; }
-  .pick-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .pick-head strong { font-size: 13px; overflow-wrap: anywhere; }
+  .pick-title { font-size: 13px; overflow-wrap: anywhere; }
   .pick .note { overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
   .pick textarea {
     width: 100%;
@@ -297,20 +298,8 @@
     font: inherit;
     resize: vertical;
   }
-  .pick .row .note { font-family: inherit; font-size: 12px; }
-  .pick-copy {
-    flex: none;
-    padding: 6px 14px;
-    border: 0;
-    border-radius: 8px;
-    background: var(--accent);
-    color: var(--accent-text);
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-  }
   .actions { display: flex; gap: 6px; margin-left: auto; }
-  .pick-add {
+  .pick-button {
     padding: 6px 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -319,7 +308,11 @@
     font: inherit;
     cursor: pointer;
   }
-  .pick-add:hover { background: var(--control); }
+  .pick-button:hover { background: var(--control); }
+  .pick-primary { border-color: var(--accent); background: var(--accent); color: var(--accent-text); font-weight: 600; }
+  .pick-primary:hover { background: var(--accent); opacity: 0.9; }
+  .pick-delete { border-color: transparent; padding-left: 8px; padding-right: 8px; color: var(--danger); }
+  .pick-delete:hover { background: var(--control); }
   /* Select and its menu, grouped like the viewport buttons. */
   .split { display: flex; flex: none; gap: 2px; padding: 2px; border-radius: 9px; background: var(--control); }
   .split .icon { width: 30px; height: 28px; border-radius: 7px; }
@@ -378,9 +371,6 @@
   }
   .pin[hidden] { display: none; }
   .markers-hidden .pin { display: none; }
-  .pick-delete { margin-right: auto; }
-  .pick-close { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 16px; line-height: 1; cursor: pointer; }
-  .pick-close:hover { background: var(--control); color: var(--text); }
 </style>
 </head>
 <body>
@@ -430,10 +420,10 @@
 </dialog>
 
 <div class="pick" id="pick" role="dialog" aria-labelledby="pick-title" hidden>
-  <div class="pick-head"><strong id="pick-title"></strong><button type="button" class="pick-close" id="pick-close" aria-label="Close" title="Close (Esc)">×</button></div>
+  <strong class="pick-title" id="pick-title"></strong>
   <p class="note" id="pick-sub"></p>
   <textarea id="pick-comment" aria-label="Comment for the agent" placeholder="What should change?"></textarea>
-  <div class="row"><button type="button" class="pick-close pick-delete" id="pick-delete" aria-label="Remove this annotation" title="Remove this annotation" hidden><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.75 4.25h10.5"/><path d="M6.25 4.25v-1.5h3.5v1.5"/><path d="M4 4.25l.6 8.6a1.25 1.25 0 0 0 1.25 1.15h4.3a1.25 1.25 0 0 0 1.25-1.15l.6-8.6"/></svg></button><span class="note" id="pick-status" role="status"></span><span class="actions"><button type="button" class="pick-add" id="pick-add" title="Add as an annotation and pick another (⇧ Enter)">Add</button><button type="button" class="pick-copy" id="pick-copy" title="Copy (⌘ Enter)">Copy</button></span></div>
+  <div class="row"><button type="button" class="pick-button pick-delete" id="pick-delete" hidden>Delete</button><span class="actions"><button type="button" class="pick-button" id="pick-cancel" title="Cancel (Esc)">Cancel</button><button type="button" class="pick-button pick-primary" id="pick-add" title="Add (⌘ Enter)">Add</button></span></div>
 </div>
 
 <div class="menu" id="select-menu" role="menu" aria-label="Annotations" aria-describedby="menu-count" hidden>
@@ -812,13 +802,12 @@
     $('#pick-comment').value = index >= 0 ? saved[index].comment : ''
     $('#pick-delete').hidden = index < 0
     $('#pick-add').textContent = index >= 0 ? 'Save' : 'Add'
-    updateCopyLabel()
+    $('#pick-add').title = (index >= 0 ? 'Save' : 'Add') + ' (⌘ Enter)'
     f.hover.hidden = true
     mark(f, f.chosen, el)
     const info = inspect(f, el)
     $('#pick-title').textContent = info.title
     $('#pick-sub').textContent = info.sub
-    $('#pick-status').textContent = ''
     $('#pick').hidden = false
     placeBox()
     $('#pick-comment').focus()
@@ -1117,7 +1106,6 @@
     })
     $('#menu-count').textContent = `Selected: ${saved.length}`
     for (const id of ['#menu-copy', '#menu-markers', '#menu-clear']) $(id).setAttribute('aria-disabled', String(!saved.length))
-    updateCopyLabel()
     placePins()
   }
 
@@ -1134,11 +1122,6 @@
       pin.style.top = y + 'px'
       pin.hidden = y > f.viewport.clientHeight || x > f.viewport.clientWidth || r.bottom < 0
     }
-  }
-
-  function updateCopyLabel() {
-    const n = saved.length + (picked && picked.index < 0 ? 1 : 0)
-    $('#pick-copy').textContent = n > 1 ? `Copy ${n}` : 'Copy'
   }
 
   // The menu next to Select.
@@ -1160,13 +1143,6 @@
     flash(await copy(listText()), saved.length)
   }
 
-  async function copyPicked() {
-    if (!picked) return
-    if (saved.length && !(saved.length === 1 && picked.index === 0)) return copyAll()
-    const ok = await copy(contextText($('#pick-comment').value.trim()))
-    $('#pick-status').textContent = ok ? 'Copied. Paste it into your agent.' : 'Could not copy. Your browser blocked the clipboard.'
-  }
-
   // After copying from the menu the box is gone, so say it in the sidebar for a moment.
   function flash(ok, n) {
     const text = ok ? `Copied ${n === 1 ? 'the annotation' : n + ' annotations'}. Paste into your agent.` : 'Could not copy. Your browser blocked the clipboard.'
@@ -1175,7 +1151,7 @@
   }
 
   $('#select').addEventListener('click', () => setSelecting(!selecting))
-  $('#pick-copy').addEventListener('click', copyPicked)
+  $('#pick-cancel').addEventListener('click', unpick)
   $('#pick-add').addEventListener('click', addPicked)
   $('#pick-delete').addEventListener('click', removePicked)
   $('#select-menu-button').addEventListener('click', () => toggleMenu())
@@ -1196,11 +1172,9 @@
   })
   document.addEventListener('pointerdown', (e) => { if (!e.target.closest('#select-menu, #select-menu-button')) toggleMenu(false) })
   renderPins()
-  $('#pick-close').addEventListener('click', unpick)
   $('#pick-comment').addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return
-    if (e.metaKey || e.ctrlKey) { e.preventDefault(); copyPicked() }
-    else if (e.shiftKey) { e.preventDefault(); addPicked() }
+    if (e.metaKey || e.ctrlKey || e.shiftKey) { e.preventDefault(); addPicked() }
   })
   addEventListener('resize', placeBox)
 
