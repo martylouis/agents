@@ -334,6 +334,7 @@
     box-shadow: 0 8px 28px rgb(0 0 0 / 0.14);
   }
   .menu[hidden] { display: none; }
+  .menu-switch { justify-content: space-between; margin: 4px -4px -4px; padding: 10px 14px; border-top: 1px solid var(--border); font-size: 13px; }
   .menu-count { margin: -4px -4px 4px; padding: 10px 14px 8px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 12px; }
   .menu button {
     display: flex;
@@ -431,6 +432,7 @@
   <button type="button" role="menuitem" id="menu-copy"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.25" y="5.25" width="8.5" height="8.5" rx="1.5"/><path d="M10.75 5.25V3.75a1.5 1.5 0 0 0-1.5-1.5h-5a1.5 1.5 0 0 0-1.5 1.5v5a1.5 1.5 0 0 0 1.5 1.5h1.5"/></svg>Copy all</button>
   <button type="button" role="menuitem" id="menu-markers"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.75 8s2.25-4.25 6.25-4.25S14.25 8 14.25 8 12 12.25 8 12.25 1.75 8 1.75 8z"/><circle cx="8" cy="8" r="1.75"/></svg><span>Hide markers</span></button>
   <button type="button" role="menuitem" id="menu-clear"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.75 4.25h10.5"/><path d="M6.25 4.25v-1.5h3.5v1.5"/><path d="M4 4.25l.6 8.6a1.25 1.25 0 0 0 1.25 1.15h4.3a1.25 1.25 0 0 0 1.25-1.15l.6-8.6"/><path d="M6.75 7v4.5M9.25 7v4.5"/></svg>Clear all</button>
+  <label class="switch menu-switch"><span>Clear after copy</span><input type="checkbox" role="menuitemcheckbox" id="menu-autoclear"></label>
 </div>
 
 <main>
@@ -1140,7 +1142,11 @@
   async function copyAll() {
     if (picked) addPicked()
     if (!saved.length) return
-    flash(await copy(listText()), saved.length)
+    const n = saved.length
+    const ok = await copy(listText())
+    flash(ok, n)
+    // With Clear after copy on, a copy empties the list and its markers.
+    if (ok && $('#menu-autoclear').checked) { saved.length = 0; renderPins() }
   }
 
   // After copying from the menu the box is gone, so say it in the sidebar for a moment.
@@ -1163,10 +1169,12 @@
     $('#menu-markers span').textContent = hidden ? 'Show markers' : 'Hide markers'
   })
   $('#menu-clear').addEventListener('click', () => { if (!saved.length) return; toggleMenu(false); saved.length = 0; unpick(); renderPins() })
+  $('#menu-autoclear').addEventListener('change', (e) => store.set('autoclear', e.target.checked ? '1' : '0'))
+  if (store.get('autoclear') === '1') $('#menu-autoclear').checked = true
   $('#select-menu').addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
     e.preventDefault()
-    const items = [...$('#select-menu').querySelectorAll('button')]
+    const items = [...$('#select-menu').querySelectorAll('button, input')]
     const i = items.indexOf(document.activeElement)
     items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus()
   })
