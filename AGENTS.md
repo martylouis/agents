@@ -24,4 +24,4 @@ Changelogs, READMEs, and skills are read by people, sometimes with a screen read
 
 - Use the template in `.github/pull_request_template.md`.
 - Run `claude plugin validate .` before you push. The repo has no CI.
-- Test a plugin change by loading the clone with `--plugin-dir` (README → Install).
+- Test a plugin or skill change in an app under `examples/`, loading the clone with `--plugin-dir` (README → Install). Say in the PR which example you used.
