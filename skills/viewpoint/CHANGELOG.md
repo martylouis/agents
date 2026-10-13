@@ -19,6 +19,7 @@ All notable changes to the `viewpoint` skill (named `responsive-preview` in 0.1.
 - The skill replaces an existing viewer whenever it differs from its own copy, instead of checking the version line.
 
 ### Fixed
+- The space between the phone frame and the desktop frame is 16 pixels, down from 24, so it matches the padding around the frames.
 - While the annotation box is open, hovering and clicking in the frames no longer picks another element. A click puts you back in the comment box; Cancel, Add, or Save first.
 - When `viewpoint.json` is missing, the sidebar says so plainly instead of showing a JSON error. Many dev servers answer a missing file with the app's HTML page, which made the viewer report an unexpected `<` token.
 
