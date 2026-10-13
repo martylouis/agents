@@ -1,13 +1,10 @@
 # Working on this repo
 
-This repo holds Marty's agent plugins (`plugins/`) and standalone skills (`skills/`). The root [README](README.md) is the full guide. Follow these rules in every change.
+This repo holds agent plugins (`plugins/`) and standalone skills (`skills/`). The root [README](README.md) is the full guide. Follow these rules in every change.
 
 ## Versions and changelogs
 
-- Do not change a version in a regular PR. Versions change only in a release PR, and only when Marty asks for a release.
-- Add your changes to the plugin's or skill's `CHANGELOG.md` under `## Unreleased`, in Added, Changed, Removed, or Fixed. Leave out headings you don't use.
-- Everything stays under `0.x`. Never propose `1.0.0`; Marty decides when something is stable.
-- Releases follow README → Releases. A release is a merged release PR. Do not create GitHub releases or git tags.
+- Change a version only when you're asked for a release, and follow README → Releases when you are. Otherwise add a line to the plugin's or skill's `CHANGELOG.md` under `## Unreleased`, in Added, Changed, Removed, or Fixed.
 
 ## Plugins and skills
 
@@ -24,4 +21,4 @@ Changelogs, READMEs, and skills are read by people, sometimes with a screen read
 
 - Use the template in `.github/pull_request_template.md`.
 - Run `claude plugin validate .` before you push. The repo has no CI.
-- Test a plugin change by loading the clone with `--plugin-dir` (README → Install).
+- Test a plugin or skill change in an app under `examples/`, loading the clone with `--plugin-dir` (README → Install). Say in the PR which example you used.
