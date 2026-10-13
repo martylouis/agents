@@ -314,12 +314,16 @@
   .pick-delete { border-color: transparent; padding-left: 8px; padding-right: 8px; color: var(--danger); }
   .pick-delete:hover { background: var(--control); }
   /* Select and its menu, grouped like the viewport buttons. */
-  .split { display: flex; flex: none; gap: 2px; padding: 2px; border-radius: 9px; background: var(--control); }
-  .split .icon { width: 30px; height: 28px; border-radius: 7px; }
-  .split .icon.menu-button { width: 20px; }
+  /* Select and its menu read as one split button; select mode fills both halves. */
+  .split { display: flex; flex: none; overflow: hidden; border: 1px solid var(--border); border-radius: 9px; background: var(--panel); }
+  .split .icon { width: 32px; height: 28px; border-radius: 0; }
+  .split .icon.menu-button { width: 22px; border-left: 1px solid var(--border); }
   .split .icon.menu-button svg { width: 12px; height: 12px; }
-  .split .icon:hover { background: var(--panel); }
-  .split .icon[aria-expanded="true"] { background: var(--panel); color: var(--text); }
+  .split .icon:hover, .split .icon[aria-expanded="true"] { background: var(--control); color: var(--text); }
+  .split.on { border-color: var(--accent); background: var(--accent); }
+  .split.on .icon, .split.on .icon[aria-pressed="true"] { background: transparent; color: var(--accent-text); }
+  .split.on .icon.menu-button { border-left-color: color-mix(in srgb, var(--accent-text) 25%, transparent); }
+  .split.on .icon:hover, .split.on .icon[aria-expanded="true"] { background: color-mix(in srgb, var(--accent-text) 14%, transparent); }
   .menu {
     position: fixed;
     z-index: 11;
@@ -742,6 +746,7 @@
   function setSelecting(on) {
     selecting = on
     $('#select').setAttribute('aria-pressed', String(on))
+    $('#select').parentElement.classList.toggle('on', on)
     if (!on) unpick()
     for (const f of frames) { f.hover.hidden = true; hook(f) }
     warn('Select needs the app on the same origin as the viewer.', on && frames.every((f) => f.section.hidden || f.crossOrigin))
