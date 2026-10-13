@@ -315,9 +315,12 @@
   .pick-delete:hover { background: var(--control); }
   /* Select and its menu, grouped like the viewport buttons. */
   /* Select and its menu read as one split button; select mode fills both halves. */
-  .split { display: flex; flex: none; overflow: hidden; border: 1px solid var(--border); border-radius: 9px; background: var(--panel); }
-  .split .icon { width: 32px; height: 28px; border-radius: 0; }
-  .split .icon.menu-button { width: 22px; border-left: 1px solid var(--border); }
+  .split { position: relative; display: flex; flex: none; border: 1px solid var(--border); border-radius: 9px; background: var(--panel); }
+  .split .icon { width: 32px; height: 28px; border-radius: 8px 0 0 8px; }
+  .split .icon.menu-button { width: 22px; border-left: 1px solid var(--border); border-radius: 0 8px 8px 0; }
+  /* How many annotations there are. Shown only; the chevron opens the menu. */
+  .split .count { position: absolute; top: -7px; right: -7px; min-width: 18px; height: 18px; padding: 0 4px; border: 2px solid var(--panel); border-radius: 999px; background: var(--focus); color: #fff; font-size: 10px; font-weight: 700; line-height: 14px; text-align: center; pointer-events: none; }
+  .split .count[hidden] { display: none; }
   .split .icon.menu-button svg { width: 12px; height: 12px; }
   .split .icon:hover, .split .icon[aria-expanded="true"] { background: var(--control); color: var(--text); }
   .split.on { border-color: var(--accent); background: var(--accent); }
@@ -451,7 +454,7 @@
     <input type="text" id="address" aria-label="Address" title="Type a path and press Enter to open it in both frames" spellcheck="false" autocomplete="off">
     <span class="split" role="group" aria-label="Select">
       <button type="button" class="icon" id="select" aria-pressed="false" aria-label="Select an element" title="Select an element to copy for an agent (C)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 13.25H3.75a1 1 0 0 1-1-1V3.75a1 1 0 0 1 1-1h8.5a1 1 0 0 1 1 1V6.5"/><path d="m8.25 8.25 6 2-2.5 1-1 2.5z"/></svg></button>
-      <button type="button" class="icon menu-button" id="select-menu-button" aria-haspopup="menu" aria-expanded="false" aria-controls="select-menu" aria-label="Annotation actions" title="Annotation actions"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+      <button type="button" class="icon menu-button" id="select-menu-button" aria-haspopup="menu" aria-expanded="false" aria-controls="select-menu" aria-label="Annotation actions" title="Annotation actions"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button><span class="count" id="select-count" aria-hidden="true" hidden></span>
     </span>
     <a class="icon" id="open" href="/" target="_blank" rel="noopener" aria-label="Open in new tab" title="Open in new tab"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.75h3.75V6.5"/><path d="M13.25 2.75 7.5 8.5"/><path d="M12 9.5v2.75a1 1 0 0 1-1 1H3.75a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1H6.5"/></svg></a>
   </div>
@@ -1112,6 +1115,9 @@
       item.frame.viewport.append(pin)
     })
     $('#menu-count').textContent = `Selected: ${saved.length}`
+    $('#select-count').textContent = saved.length
+    $('#select-count').hidden = !saved.length
+    $('#select-menu-button').setAttribute('aria-label', saved.length ? `Annotation actions, ${saved.length} selected` : 'Annotation actions')
     for (const id of ['#menu-copy', '#menu-markers', '#menu-clear']) $(id).setAttribute('aria-disabled', String(!saved.length))
     placePins()
   }
