@@ -766,10 +766,12 @@
       style.textContent = '* { cursor: crosshair !important; }'
       d.documentElement.append(style)
     } else if (!selecting && style) style.remove()
+    // No crosshair while the panel is open, since nothing else can be picked then.
+    if (style) style.disabled = !!picked
     if (d.viewpointHooked) return
     d.viewpointHooked = true
     const target = (e) => { const el = e.target; return el && el.nodeType === 1 ? el.closest('svg') || el : null }
-    d.addEventListener('mousemove', (e) => { if (selecting) mark(f, f.hover, target(e)) }, true)
+    d.addEventListener('mousemove', (e) => { if (selecting && !picked) mark(f, f.hover, target(e)) }, true)
     d.addEventListener('pointerdown', () => toggleMenu(false), true)
     d.addEventListener('mouseleave', () => { f.hover.hidden = true }, true)
     // Keep the app from reacting to clicks while selecting (menus that open on pointerdown, links).
@@ -780,6 +782,8 @@
       if (!selecting) return
       e.preventDefault()
       e.stopPropagation()
+      // While the panel is open, finish or cancel it before picking another element.
+      if (picked) { $('#pick-comment').focus(); return }
       const el = target(e)
       if (el) pick(f, el)
     }, true)
@@ -809,6 +813,7 @@
     // Clicking an annotated element (or its pin) edits that annotation.
     const index = saved.findIndex((item) => item.frame === f && item.el === el)
     picked = { frame: f, el, index }
+    for (const fr of frames) hook(fr)
     $('#pick-comment').value = index >= 0 ? saved[index].comment : ''
     $('#pick-delete').hidden = index < 0
     $('#pick-add').textContent = index >= 0 ? 'Save' : 'Add'
@@ -827,6 +832,7 @@
     if (picked) picked.frame.chosen.hidden = true
     picked = null
     $('#pick').hidden = true
+    for (const f of frames) hook(f)
   }
 
   function escape() {
@@ -1110,7 +1116,7 @@
       const pin = Object.assign(document.createElement('button'), { type: 'button', className: 'pin', textContent: i + 1 })
       pin.setAttribute('aria-label', `Annotation ${i + 1}${item.comment ? ': ' + item.comment : ''}`)
       pin.title = item.comment || item.title
-      pin.addEventListener('click', () => pick(item.frame, item.el))
+      pin.addEventListener('click', () => { if (picked) $('#pick-comment').focus(); else pick(item.frame, item.el) })
       item.pin = pin
       item.frame.viewport.append(pin)
     })
