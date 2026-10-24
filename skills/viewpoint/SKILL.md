@@ -3,7 +3,7 @@ name: viewpoint
 description: Viewpoint shows a running web app in phone and desktop frames side by side, with a sidebar that switches pages, states, and design variants through URL params, and a select mode that copies any element's context and your comment for an AI agent. Works with any framework, and reads proto plans when they exist.
 license: MIT
 metadata:
-  version: 0.1.0
+  version: 0.2.0
   author: Marty Thierry
 argument-hint: "[app folder or URL] [--refresh]"
 ---
