@@ -42,6 +42,8 @@ Read `package.json` (and the framework config) for the framework, the dev comman
 | Angular before 17 (no `public/`) | `src/assets/` | `/assets/__viewpoint/index.html` |
 | Plain HTML, no build | the folder with `index.html` | `/__viewpoint/index.html` |
 
+Also read the app's base path, the path the app is served under: Vite `base`, Next.js `basePath`, Nuxt `app.baseURL`, SvelteKit `paths.base`, Astro `base`, or Angular `baseHref`. Most apps have none, which means `/`. When it is something else, such as `/shop/`, the viewer URL and every page path start with it: `/shop/__viewpoint/index.html` and `/shop/cart`. This is not the `base` field in `viewpoint.json`, which is another site's origin (see **Other sites**).
+
 When the folder is not clear (a monorepo, a custom server), ask once which app and where its static files go, with your best guess as the proposed answer.
 
 ### 2. Copy the viewer
@@ -61,6 +63,8 @@ Write `viewpoint.json` next to the viewer, in the format under **viewpoint.json*
 3. **The app's routes and code**: the router config or the file-based pages folder (Nuxt `pages/`, Next `app/` or `pages/`, SvelteKit `src/routes/`). Give a route with a dynamic segment a real sample value from the app's mock data. For params, search the code for query reads (`route.query.x`, `useRoute().query`, `useSearchParams`, `searchParams.get('x')`, `queryParamMap`, `ActivatedRoute`) and list the values the code compares them to.
 4. **The person.** When the first three give fewer than two pages, ask once for the pages and states to show, with the routes you found as the proposed answer.
 
+Start every page path with the app's base path from step 1, because the viewer opens paths from the root of the origin.
+
 Order the pages as a person goes through the app (the plan order, or the nav order), not alphabetically. Write labels in the app's own words.
 
 ### 4. Offer the package script
@@ -75,7 +79,7 @@ Build it from the app's `dev` script and the dev URL from step 1:
 | Anything else (Next.js, Nuxt, Angular, Bun, a custom server) | Open the viewer in the background once the server answers, and keep the dev server in the foreground so Ctrl+C stops it: `(npx --yes wait-on http-get://localhost:3000/__viewpoint/index.html && npx --yes open-cli http://localhost:3000/__viewpoint/index.html) & next dev` |
 | The viewer is in `__viewpoint/` in the current folder (**Other sites**, or an app with no static folder) | Serve that folder and open it the same way: `(npx --yes wait-on http-get://localhost:4400/ && npx --yes open-cli http://localhost:4400/) & npx --yes serve __viewpoint -l 4400`. When `base` is a dev server on this machine, the person starts it as usual, in another terminal. |
 
-Keep the flags the `dev` script already has. The second and third forms need a POSIX shell (macOS, Linux, or WSL); on Windows, say that the person can run the dev server and open the viewer URL by hand.
+Use the viewer URL from step 1, with the app's base path. Keep the flags the `dev` script already has. The second and third forms need a POSIX shell (macOS, Linux, or WSL); on Windows, say that the person can run the dev server and open the viewer URL by hand.
 
 ### 5. Check
 
@@ -87,6 +91,16 @@ When the dev server is running (or you can start it with the dev command), open 
 
 A state that does not change when its option is chosen is not reachable by URL. List it in the report; do not change the app to fix it. With no browser, give the viewer URL and say it was not checked.
 
+#### Parent host
+
+The dev server answers every client route with the app's page, so the check above passes there. A static host that serves several apps from one origin can still answer the same route with its own page, which breaks the frames when the person opens the viewer through that host. Check for this only when the app's base path is not `/`; skip it otherwise.
+
+1. Look for a parent host in the folders above the app. Signs of one: a `package.json` with a `preview`, `serve`, or `start` script that serves a build folder holding several apps (for example a root `vite preview` of `dist/`, with the app in `dist/<app>/`), or an app build `outDir` that points into a shared folder, such as `../../dist/<app>`. When you find no parent host, skip this check. When the signs point two ways, ask once, with your best guess as the proposed answer.
+2. When the parent host is running, request two URLs from it: the app's base path (`/shop/`), and one page path from `viewpoint.json` that is not the app's index (`/shop/cart`). Compare the two HTML responses. The route passes when it returns the same app page as the base path, meaning the same `<title>` and the same entry script. When it returns another page, such as the parent's own `index.html`, list it in the report as a parent host failure. When every page in `viewpoint.json` is the app's index with only query params, the base path request is the whole check.
+3. When the parent host is not running, do not start it. Say in the report that the app dev server was checked and the parent host was not, and give the command to try once it runs: `curl -s http://localhost:4173/shop/cart | grep -i '<title>'`.
+
+A passing dev server is never a pass for the parent host. Never change the parent host's server or config; name the fix in the report instead: paths without a file extension under the app's base path must return that app's `index.html`.
+
 ### 6. Report
 
 One short message:
@@ -97,6 +111,14 @@ Preview ready. Run `pnpm dev:viewpoint` to start the dev server and open http://
 - Not reachable by URL: Cart · loading (no param in the app yet).
 - Files: public/__viewpoint/index.html, public/__viewpoint/viewpoint.json, and the `dev:viewpoint` script in package.json.
 ```
+
+When the parent host check in step 5 failed, add a line after the reachability line, for example:
+
+```text
+- Parent host: http://localhost:4173/shop/cart returns the parent's page, not the app. Paths without a file extension under /shop/ must return the app's index.html there.
+```
+
+When the parent host was not running, the line says so and gives the curl command from step 5. Leave the line out when the check passed or was skipped.
 
 Use the package manager the lockfile names (`pnpm`, `bun`, `yarn`, or `npm run`). When the person said no to the script, give the dev command and the viewer URL instead. Lead with the command, not with whether the dev server was running.
 

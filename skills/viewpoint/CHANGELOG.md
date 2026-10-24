@@ -9,6 +9,7 @@ All notable changes to the `viewpoint` skill (named `responsive-preview` in 0.1.
 - The skill offers to add a `dev:viewpoint` script to the app's `package.json`, and adds it after a yes. It starts the dev server and opens the viewer, so you run one command instead of starting the server and typing the URL.
 - A height menu above the phone frame: **Full height** fills the window, and **Phone** uses a set phone height (844 by default, `viewports.mobileHeight` in `preview.json`).
 - A zoom menu above the desktop frame, from 100% down to 50%, next to the frame's size. The viewer remembers it.
+- A parent host check for apps served under a base path other than `/`. When a static host above the app serves several apps from one origin, the skill asks it for one of the app's routes and reports when the host answers with its own page instead of the app's. It names the fix and never changes the host. When the host is not running, the report says it was not checked and gives a curl command to try.
 
 ### Changed
 - The skill is renamed from `responsive-preview` to `viewpoint`, because with select mode it is more than a responsive preview. Run it as `/viewpoint`.
@@ -19,6 +20,7 @@ All notable changes to the `viewpoint` skill (named `responsive-preview` in 0.1.
 - The skill replaces an existing viewer whenever it differs from its own copy, instead of checking the version line.
 
 ### Fixed
+- The viewer URL, the page paths, and the `dev:viewpoint` script include the app's base path (Vite `base`, Next.js `basePath`, and the like), so an app served under a path such as `/shop/` opens the viewer at `/shop/__viewpoint/index.html`.
 - The space between the phone frame and the desktop frame is 16 pixels, down from 24, so it matches the padding around the frames.
 - While the annotation box is open, hovering and clicking in the frames no longer picks another element. A click puts you back in the comment box; Cancel, Add, or Save first.
 - When `viewpoint.json` is missing, the sidebar says so plainly instead of showing a JSON error. Many dev servers answer a missing file with the app's HTML page, which made the viewer report an unexpected `<` token.
